@@ -4,10 +4,9 @@ version: 1
 depend: [Arconix]
 main: com.songoda.epicanchors.EpicAnchorsPlugin
 author: songoda
-api-version: 1.13
 commands:
   EpicAnchors:
     description: I have no idea.
     default: true
-    aliases: [eca]
+    aliases: [ea]
     usage: /<command> [reload]
