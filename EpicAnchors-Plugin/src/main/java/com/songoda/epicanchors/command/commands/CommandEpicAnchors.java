@@ -19,8 +19,8 @@ public class CommandEpicAnchors extends AbstractCommand {
 
         sender.sendMessage(TextComponent.formatText("&6/EpicAnchors&7 - Displays this page."));
         if (sender.hasPermission("epicanchors.admin")) {
-            sender.sendMessage(TextComponent.formatText("&6/eca reload &7Reload the Configuration and Language files."));
-            sender.sendMessage(TextComponent.formatText("&6/eca give <player> <amount in hours> &7 - Gives an operator the ability to spawn a ChunkAnchor of his or her choice."));
+            sender.sendMessage(TextComponent.formatText("&6/ea reload &7Reload the Configuration and Language files."));
+            sender.sendMessage(TextComponent.formatText("&6/ea give <player/all> <amount in hours> &7 - Gives an operator the ability to spawn a ChunkAnchor of his or her choice."));
         }
         sender.sendMessage("");
 

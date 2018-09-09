@@ -1,11 +1,11 @@
 package com.songoda.epicanchors.events;
 
 import com.songoda.epicanchors.anchor.EAnchor;
-import com.songoda.epicanchors.anchor.ELevel;
-import com.songoda.epicanchors.api.anchor.Level;
-import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.api.anchor.Anchor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -29,18 +29,20 @@ public class BlockListeners implements Listener {
 
         if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) return;
 
-        if (instance.getLevelFromItem(item) == 0) return;
+        if (instance.getTicksFromItem(item) == 0) return;
 
-        Level level = instance.getLevelManager().getLevel(instance.getLevelFromItem(item));
-
-        instance.getAnchorManager().addAnchor(event.getBlock().getLocation(), new EAnchor(event.getBlock().getLocation(), level));
+        instance.getAnchorManager().addAnchor(event.getBlock().getLocation(), new EAnchor(event.getBlock().getLocation(), instance.getTicksFromItem(item)));
 
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        Anchor anchor = instance.getAnchorManager().getAnchor(event.getBlock().getLocation());
 
+        if (instance.getConfig().getBoolean("Main.Allow Anchor Breaking")) {
+            ItemStack item = instance.makeAnchorItem(anchor.getTicksLeft());
+            anchor.getLocation().getWorld().dropItemNaturally(anchor.getLocation(), item);
+        }
         instance.getAnchorManager().removeAnchor(event.getBlock().getLocation());
-
     }
 }

@@ -1,10 +1,7 @@
 package com.songoda.epicanchors.command.commands;
 
 import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.epicanchors.anchor.ELevel;
-import com.songoda.epicanchors.api.anchor.Level;
 import com.songoda.epicanchors.command.AbstractCommand;
-import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -26,9 +23,7 @@ public class CommandGive extends AbstractCommand {
             return true;
         }
 
-        Level level = instance.getLevelManager().getLevel(Integer.parseInt(args[2]));
-
-        ItemStack itemStack = instance.makeAnchorItem(level);
+        ItemStack itemStack = instance.makeAnchorItem(Integer.parseInt(args[2]) * 20 * 60 * 60);
 
         if (!args[1].trim().toLowerCase().equals("all")) {
             Player player = Bukkit.getOfflinePlayer(args[1]).getPlayer();

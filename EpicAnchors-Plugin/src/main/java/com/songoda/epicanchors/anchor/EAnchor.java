@@ -3,16 +3,17 @@ package com.songoda.epicanchors.anchor;
 
 import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.api.methods.formatting.TimeComponent;
-import com.songoda.epicanchors.api.anchor.Anchor;
-import com.songoda.epicanchors.api.anchor.Level;
-import com.songoda.epicanchors.utils.Methods;
+import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import com.songoda.epicanchors.api.anchor.Anchor;
+import com.songoda.epicanchors.utils.Methods;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +23,6 @@ public class EAnchor implements Anchor {
 
     private Location location;
     private int ticksLeft;
-
-    public EAnchor(Location location, Level level) {
-        this(location, level.getTicks());
-    }
 
     public EAnchor(Location location, int ticksLeft) {
         this.location = location;
@@ -61,7 +58,23 @@ public class EAnchor implements Anchor {
         inventory.setItem(25, Methods.getBackgroundGlass(true));
         inventory.setItem(26, Methods.getBackgroundGlass(true));
 
-        ItemStack item = instance.makeAnchorItem(EpicAnchorsPlugin.getInstance().getLevelManager().getLowestLevel());
+        ItemStack itemXP = new ItemStack(Material.valueOf(instance.getConfig().getString("Interfaces.XP Icon")), 1);
+        ItemMeta itemmetaXP = itemXP.getItemMeta();
+        itemmetaXP.setDisplayName(instance.getLocale().getMessage("interface.button.addtimewithxp"));
+        ArrayList<String> loreXP = new ArrayList<>();
+        loreXP.add(instance.getLocale().getMessage("interface.button.addtimewithxplore", Integer.toString(instance.getConfig().getInt("Main.XP Cost"))));
+        itemmetaXP.setLore(loreXP);
+        itemXP.setItemMeta(itemmetaXP);
+
+        ItemStack itemECO = new ItemStack(Material.valueOf(instance.getConfig().getString("Interfaces.Economy Icon")), 1);
+        ItemMeta itemmetaECO = itemECO.getItemMeta();
+        itemmetaECO.setDisplayName(instance.getLocale().getMessage("interface.button.addtimewitheconomy"));
+        ArrayList<String> loreECO = new ArrayList<>();
+        loreECO.add(instance.getLocale().getMessage("interface.button.addtimewitheconomylore", Arconix.pl().getApi().format().formatEconomy(instance.getConfig().getInt("Main.Economy Cost"))));
+        itemmetaECO.setLore(loreECO);
+        itemECO.setItemMeta(itemmetaECO);
+
+        ItemStack item = instance.makeAnchorItem(ticksLeft);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(TextComponent.formatText(instance.getLocale().getMessage("interface.anchor.smalltitle")));
         List<String> lore = new ArrayList<>();
@@ -72,8 +85,52 @@ public class EAnchor implements Anchor {
         item.setItemMeta(meta);
         inventory.setItem(13, item);
 
+
+        if (instance.getConfig().getBoolean("Main.Add Time With Economy")) {
+            inventory.setItem(11, itemXP);
+        }
+
+        if (instance.getConfig().getBoolean("Main.Add Time With XP")) {
+            inventory.setItem(15, itemECO);
+        }
+
         player.openInventory(inventory);
         EpicAnchorsPlugin.getInstance().getMenuHandler().addPlayer(player, location);
+    }
+
+    public void addTime(String type, Player player) {
+        EpicAnchorsPlugin instance = EpicAnchorsPlugin.getInstance();
+
+        if (type.equals("ECO")) {
+            if (instance.getServer().getPluginManager().getPlugin("Vault") != null) {
+                RegisteredServiceProvider<Economy> rsp = instance.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+                net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
+                double cost = instance.getConfig().getDouble("Main.Add Time With Economy");
+                if (econ.has(player, cost)) {
+                    econ.withdrawPlayer(player, cost);
+                } else {
+                    player.sendMessage(instance.getLocale().getMessage("event.upgrade.cannotafford"));
+                    return;
+                }
+            } else {
+                player.sendMessage("Vault is not installed.");
+                return;
+            }
+        } else if (type.equals("XP")) {
+            int cost = instance.getConfig().getInt("Main.Add Time With XP");
+            if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
+                if (player.getGameMode() != GameMode.CREATIVE) {
+                    player.setLevel(player.getLevel() - cost);
+                }
+            } else {
+                player.sendMessage(instance.getLocale().getMessage("event.upgrade.cannotafford"));
+                return;
+            }
+
+            ticksLeft = ticksLeft + 20 * 60 * 30;
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
+            player.getWorld().spawnParticle(Particle.SPELL_WITCH, getLocation().add(.5,.5,.5), 100, .5, .5, .5);
+        }
     }
 
     @Override

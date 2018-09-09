@@ -1,13 +1,12 @@
 package com.songoda.epicanchors.events;
 
 import com.songoda.epicanchors.anchor.EAnchor;
-import com.songoda.epicanchors.anchor.ELevel;
 import com.songoda.epicanchors.api.anchor.Anchor;
-import com.songoda.epicanchors.api.anchor.Level;
 import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,18 +36,17 @@ public class InteractListeners implements Listener {
         Player player = e.getPlayer();
         ItemStack item = player.getItemInHand();
         if (item.getType() == Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material"))) {
-            if (instance.getLevelFromItem(item) == 0) return;
+            if (instance.getTicksFromItem(item) == 0) return;
 
-            Level level = instance.getLevelManager().getLevel(instance.getLevelFromItem(item));
 
-            anchor.setTicksLeft(anchor.getTicksLeft() + level.getTicks());
+            anchor.setTicksLeft(anchor.getTicksLeft() + instance.getTicksFromItem(item));
 
             if (player.getGameMode() != GameMode.CREATIVE)
                 Methods.takeItem(player, 1);
 
-            player.playSound(player.getLocation(), Sound.valueOf("LEVEL_UP"), 2F, 25.0F);
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
 
-            player.getWorld().playEffect(anchor.getLocation().add(.5,.5,.5), org.bukkit.Effect.valueOf("WITCH_MAGIC"), 1, 0);
+            player.getWorld().spawnParticle(Particle.SPELL_WITCH, anchor.getLocation().add(.5,.5,.5), 100, .5, .5, .5);
 
             e.setCancelled(true);
 

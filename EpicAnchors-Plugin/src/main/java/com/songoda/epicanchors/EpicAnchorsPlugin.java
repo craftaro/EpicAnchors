@@ -5,13 +5,9 @@ import com.songoda.arconix.api.utils.ConfigWrapper;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.anchor.EAnchorManager;
-import com.songoda.epicanchors.anchor.ELevel;
-import com.songoda.epicanchors.anchor.ELevelManager;
 import com.songoda.epicanchors.api.EpicAnchors;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.api.anchor.AnchorManager;
-import com.songoda.epicanchors.api.anchor.Level;
-import com.songoda.epicanchors.api.anchor.LevelManager;
 import com.songoda.epicanchors.command.CommandManager;
 import com.songoda.epicanchors.events.BlockListeners;
 import com.songoda.epicanchors.events.InteractListeners;
@@ -38,7 +34,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
     private SettingsManager settingsManager;
     private EAnchorManager anchorManager;
-    private ELevelManager levelManager;
     private MenuHandler menuHandler;
 
     public References references = null;
@@ -49,7 +44,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         return INSTANCE;
     }
 
-    private void checkVersion() {
+    private boolean checkVersion() {
         int workingVersion = 13;
         int currentVersion = Integer.parseInt(Bukkit.getServer().getClass()
                 .getPackage().getName().split("\\.")[3].split("_")[1]);
@@ -60,13 +55,15 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "You installed the 1." + workingVersion + "+ only version of " + this.getDescription().getName() + " on a 1." + currentVersion + " server. Since you are on the wrong version we disabled the plugin for you. Please install correct version to continue using " + this.getDescription().getName() + ".");
                 Bukkit.getConsoleSender().sendMessage("");
             }, 20L);
+            return false;
         }
+        return true;
     }
 
     @Override
     public void onEnable() {
         // Check to make sure the Bukkit version is compatible.
-        checkVersion();
+        if (!checkVersion()) return;
 
         INSTANCE = this;
         CommandSender console = Bukkit.getConsoleSender();
@@ -88,7 +85,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
         setupConfig();
 
-        loadLevelManager();
         loadAnchorsFromFile();
 
         new AnchorHandler(this);
@@ -115,6 +111,13 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         console.sendMessage(TextComponent.formatText("&a============================="));
     }
 
+    private void setupConfig() {
+        settingsManager.updateSettings();
+
+        getConfig().options().copyDefaults(true);
+        saveConfig();
+    }
+
     private void loadAnchorsFromFile() {
         if (dataFile.getConfig().contains("Anchors")) {
             for (String locationStr : dataFile.getConfig().getConfigurationSection("Anchors").getKeys(false)) {
@@ -125,21 +128,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
                 anchorManager.addAnchor(location, anchor);
             }
-        }
-    }
-
-    private void loadLevelManager() {
-        // Load an instance of LevelManager
-        levelManager = new ELevelManager();
-
-        /*
-         * Register Levels into LevelManager from configuration.
-         */
-        levelManager.clear();
-        for (String levelName : getConfig().getConfigurationSection("settings.levels").getKeys(false)) {
-            int level = Integer.valueOf(levelName.split("-")[1]);
-            int ticks = getConfig().getInt("settings.levels." + levelName + ".Ticks");
-            levelManager.addLevel(level, ticks);
         }
     }
 
@@ -161,22 +149,8 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         //this.saveConfig();
     }
 
-
-    private void setupConfig() {
-        settingsManager.updateSettings();
-
-        getConfig().addDefault("settings.levels.Level-1.Ticks", 20 * 60 * 60); //1 Hours
-
-        getConfig().addDefault("settings.levels.Level-2.Ticks", 20 * 60 * 60 * 3); //3 Hours
-
-        getConfig().addDefault("settings.levels.Level-3.Ticks", 20 * 60 * 60 * 5); //5 Hours
-
-        getConfig().options().copyDefaults(true);
-        saveConfig();
-    }
-
     @Override
-    public int getLevelFromItem(ItemStack item) {
+    public int getTicksFromItem(ItemStack item) {
         if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) return 0;
         if (item.getItemMeta().getDisplayName().contains(":")) {
             return NumberUtils.toInt(item.getItemMeta().getDisplayName().replace("\u00A7", "").split(":")[0], 0);
@@ -185,17 +159,12 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
     }
 
     @Override
-    public ItemStack makeAnchorItem(Level level) {
+    public ItemStack makeAnchorItem(int ticks) {
         ItemStack item = new ItemStack(Material.valueOf(EpicAnchorsPlugin.getInstance().getConfig().getString("Main.Anchor Block Material")), 1);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(Arconix.pl().getApi().format().formatText(Methods.formatName(level, true)));
+        meta.setDisplayName(Arconix.pl().getApi().format().formatText(Methods.formatName(ticks, true)));
         item.setItemMeta(meta);
         return item;
-    }
-
-    @Override
-    public LevelManager getLevelManager() {
-        return levelManager;
     }
 
     public MenuHandler getMenuHandler() {

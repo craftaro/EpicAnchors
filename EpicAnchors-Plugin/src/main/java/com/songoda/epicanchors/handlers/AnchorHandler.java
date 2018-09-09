@@ -71,7 +71,7 @@ public class AnchorHandler {
                 for (int z = cz; z < cz + 16; z++) {
                     for (int y = 0; y < location.getWorld().getMaxHeight(); y++) {
                         Block block = location.getWorld().getBlockAt(x, y, z);
-                        if (block.getType() != Material.MOB_SPAWNER) continue;
+                        if (block.getType() != Material.SPAWNER) continue;
                         Spawner spawner = EpicSpawnersAPI.getSpawnerManager().getSpawnerFromWorld(block.getLocation());
                         if (!delays.containsKey(block.getLocation())) {
                             if (block == null || block.getLocation() == null || spawner == null) continue;

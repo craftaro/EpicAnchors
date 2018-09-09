@@ -2,14 +2,9 @@ package com.songoda.epicanchors.utils;
 
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
-import com.songoda.epicanchors.anchor.ELevel;
-import com.songoda.epicanchors.api.anchor.Level;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class Methods {
 
@@ -42,8 +37,8 @@ public class Methods {
             }
     }
 
-    public static String formatName(Level level, boolean full) {
-        int ticks = (((level.getTicks() / 20) / 60) / 60);
+    public static String formatName(int ticks2, boolean full) {
+        int ticks = (((ticks2 / 20) / 60) / 60);
         String hours = "Hours";
         if (ticks == 1) hours = "Hour";
 
@@ -51,7 +46,7 @@ public class Methods {
 
         String info = "";
         if (full) {
-            info += Arconix.pl().getApi().format().convertToInvisibleString(level.getLevel() + ":");
+            info += Arconix.pl().getApi().format().convertToInvisibleString(ticks2 + ":");
         }
 
         return info + Arconix.pl().getApi().format().formatText(name);
