@@ -105,7 +105,7 @@ public class EAnchor implements Anchor {
             if (instance.getServer().getPluginManager().getPlugin("Vault") != null) {
                 RegisteredServiceProvider<Economy> rsp = instance.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
                 net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
-                double cost = instance.getConfig().getDouble("Main.Add Time With Economy");
+                double cost = instance.getConfig().getDouble("Main.Economy Cost");
                 if (econ.has(player, cost)) {
                     econ.withdrawPlayer(player, cost);
                 } else {
@@ -117,7 +117,7 @@ public class EAnchor implements Anchor {
                 return;
             }
         } else if (type.equals("XP")) {
-            int cost = instance.getConfig().getInt("Main.Add Time With XP");
+            int cost = instance.getConfig().getInt("Main.XP Cost");
             if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
                 if (player.getGameMode() != GameMode.CREATIVE) {
                     player.setLevel(player.getLevel() - cost);
@@ -126,11 +126,11 @@ public class EAnchor implements Anchor {
                 player.sendMessage(instance.getLocale().getMessage("event.upgrade.cannotafford"));
                 return;
             }
-
-            ticksLeft = ticksLeft + 20 * 60 * 30;
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
-            player.getWorld().spawnParticle(Particle.SPELL_WITCH, getLocation().add(.5,.5,.5), 100, .5, .5, .5);
         }
+
+        ticksLeft = ticksLeft + 20 * 60 * 30;
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
+        player.getWorld().spawnParticle(Particle.SPELL_WITCH, getLocation().add(.5,.5,.5), 100, .5, .5, .5);
     }
 
     @Override
