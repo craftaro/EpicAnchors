@@ -31,6 +31,11 @@ public class InteractListeners implements Listener {
 
         if (instance.getAnchorManager().getAnchor(e.getClickedBlock().getLocation()) == null) return;
 
+        if (!instance.canBuild(e.getPlayer(), e.getClickedBlock().getLocation())) {
+            e.setCancelled(true);
+            return;
+        }
+
         Anchor anchor = instance.getAnchorManager().getAnchor(e.getClickedBlock().getLocation());
 
         Player player = e.getPlayer();

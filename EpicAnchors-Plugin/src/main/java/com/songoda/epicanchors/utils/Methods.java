@@ -2,6 +2,7 @@ package com.songoda.epicanchors.utils;
 
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.api.EpicAnchors;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -38,11 +39,13 @@ public class Methods {
     }
 
     public static String formatName(int ticks2, boolean full) {
-        int ticks = (((ticks2 / 20) / 60) / 60);
-        String hours = "Hours";
-        if (ticks == 1) hours = "Hour";
+        int hours = ((ticks2 / 20) / 60) / 60;
+        int minutes = ((ticks2 / 20) / 60) - hours * 60;
 
-        String name = "&eAnchor &8(&7" + ticks + " " + hours + "&8)";
+        String remaining = minutes == 0 ? String.format("%sh", hours) : String.format("%sh %sm", hours, minutes);
+
+
+        String name = EpicAnchorsPlugin.getInstance().getConfig().getString("Main.Name-Tag").replace("{REMAINING}", remaining);
 
         String info = "";
         if (full) {

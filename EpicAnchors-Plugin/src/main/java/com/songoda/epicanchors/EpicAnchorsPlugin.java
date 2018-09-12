@@ -1,5 +1,6 @@
 package com.songoda.epicanchors;
 
+import com.google.common.base.Preconditions;
 import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.api.utils.ConfigWrapper;
 import com.songoda.arconix.plugin.Arconix;
@@ -8,12 +9,15 @@ import com.songoda.epicanchors.anchor.EAnchorManager;
 import com.songoda.epicanchors.api.EpicAnchors;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.api.anchor.AnchorManager;
+import com.songoda.epicanchors.api.utils.ClaimableProtectionPluginHook;
+import com.songoda.epicanchors.api.utils.ProtectionPluginHook;
 import com.songoda.epicanchors.command.CommandManager;
 import com.songoda.epicanchors.events.BlockListeners;
 import com.songoda.epicanchors.events.InteractListeners;
 import com.songoda.epicanchors.events.InventoryListeners;
 import com.songoda.epicanchors.handlers.AnchorHandler;
 import com.songoda.epicanchors.handlers.MenuHandler;
+import com.songoda.epicanchors.hooks.*;
 import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.utils.SettingsManager;
 import org.apache.commons.lang.math.NumberUtils;
@@ -22,13 +26,24 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
     public ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
+
+    private List<ProtectionPluginHook> protectionHooks = new ArrayList<>();
+    private ClaimableProtectionPluginHook factionsHook, townyHook, aSkyblockHook, uSkyblockHook;
+
+    private ConfigWrapper hooksFile = new ConfigWrapper(this, "", "hooks.yml");
 
     private static EpicAnchorsPlugin INSTANCE;
 
@@ -92,11 +107,23 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         // Command registration
         this.getCommand("EpicAnchors").setExecutor(new CommandManager(this));
 
-        // Event registration
-        getServer().getPluginManager().registerEvents(new BlockListeners(this), this);
-        getServer().getPluginManager().registerEvents(new InteractListeners(this), this);
-        getServer().getPluginManager().registerEvents(new InventoryListeners(this), this);
+        PluginManager pluginManager = Bukkit.getPluginManager();
 
+        // Event registration
+        pluginManager.registerEvents(new BlockListeners(this), this);
+        pluginManager.registerEvents(new InteractListeners(this), this);
+        pluginManager.registerEvents(new InventoryListeners(this), this);
+
+        // Register default hooks
+        if (pluginManager.isPluginEnabled("ASkyBlock")) this.register(HookASkyBlock::new);
+        if (pluginManager.isPluginEnabled("FactionsFramework")) this.register(HookFactions::new);
+        if (pluginManager.isPluginEnabled("GriefPrevention")) this.register(HookGriefPrevention::new);
+        if (pluginManager.isPluginEnabled("Kingdoms")) this.register(HookKingdoms::new);
+        if (pluginManager.isPluginEnabled("PlotSquared")) this.register(HookPlotSquared::new);
+        if (pluginManager.isPluginEnabled("RedProtect")) this.register(HookRedProtect::new);
+        if (pluginManager.isPluginEnabled("Towny")) this.register(HookTowny::new);
+        if (pluginManager.isPluginEnabled("USkyBlock")) this.register(HookUSkyBlock::new);
+        if (pluginManager.isPluginEnabled("WorldGuard")) this.register(HookWorldGuard::new);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
         console.sendMessage(TextComponent.formatText("&a============================="));
@@ -149,6 +176,43 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         //this.saveConfig();
     }
 
+
+    private void register(Supplier<ProtectionPluginHook> hookSupplier) {
+        this.registerProtectionHook(hookSupplier.get());
+    }
+
+
+    @Override
+    public void registerProtectionHook(ProtectionPluginHook hook) {
+        Preconditions.checkNotNull(hook, "Cannot register null hook");
+        Preconditions.checkNotNull(hook.getPlugin(), "Protection plugin hook returns null plugin instance (#getPlugin())");
+
+        JavaPlugin hookPlugin = hook.getPlugin();
+        for (ProtectionPluginHook existingHook : protectionHooks) {
+            if (existingHook.getPlugin().equals(hookPlugin)) {
+                throw new IllegalArgumentException("Hook already registered");
+            }
+        }
+
+        this.hooksFile.getConfig().addDefault("hooks." + hookPlugin.getName(), true);
+        if (!hooksFile.getConfig().getBoolean("hooks." + hookPlugin.getName(), true)) return;
+        this.hooksFile.getConfig().options().copyDefaults(true);
+        this.hooksFile.saveConfig();
+
+        this.protectionHooks.add(hook);
+        this.getLogger().info("Registered protection hook for plugin: " + hook.getPlugin().getName());
+    }
+
+    public boolean canBuild(Player player, Location location) {
+        if (player.hasPermission(getDescription().getName() + ".bypass")) {
+            return true;
+        }
+
+        for (ProtectionPluginHook hook : protectionHooks)
+            if (!hook.canBuild(player, location)) return false;
+        return true;
+    }
+
     @Override
     public int getTicksFromItem(ItemStack item) {
         if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) return 0;
@@ -163,6 +227,12 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         ItemStack item = new ItemStack(Material.valueOf(EpicAnchorsPlugin.getInstance().getConfig().getString("Main.Anchor Block Material")), 1);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Arconix.pl().getApi().format().formatText(Methods.formatName(ticks, true)));
+        ArrayList<String> lore = new ArrayList<>();
+        String[] parts = getConfig().getString("Main.Anchor-Lore").split("\\|");
+        for (String line : parts) {
+            lore.add(Arconix.pl().getApi().format().formatText(line));
+        }
+        meta.setLore(lore);
         item.setItemMeta(meta);
         return item;
     }
