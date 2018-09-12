@@ -237,6 +237,19 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         return item;
     }
 
+    public void bust(Location location) {
+        if (!getAnchorManager().isAnchor(location)) return;
+
+        Anchor anchor = getAnchorManager().getAnchor(location);
+
+        if (getConfig().getBoolean("Main.Allow Anchor Breaking")) {
+            ItemStack item = makeAnchorItem(anchor.getTicksLeft());
+            anchor.getLocation().getWorld().dropItemNaturally(anchor.getLocation(), item);
+        }
+        location.getBlock().setType(Material.AIR);
+        getAnchorManager().removeAnchor(location);
+    }
+
     public MenuHandler getMenuHandler() {
         return menuHandler;
     }

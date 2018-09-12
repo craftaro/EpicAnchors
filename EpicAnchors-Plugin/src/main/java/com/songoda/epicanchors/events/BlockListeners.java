@@ -34,15 +34,4 @@ public class BlockListeners implements Listener {
         instance.getAnchorManager().addAnchor(event.getBlock().getLocation(), new EAnchor(event.getBlock().getLocation(), instance.getTicksFromItem(item)));
 
     }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onBlockBreak(BlockBreakEvent event) {
-        Anchor anchor = instance.getAnchorManager().getAnchor(event.getBlock().getLocation());
-
-        if (instance.getConfig().getBoolean("Main.Allow Anchor Breaking")) {
-            ItemStack item = instance.makeAnchorItem(anchor.getTicksLeft());
-            anchor.getLocation().getWorld().dropItemNaturally(anchor.getLocation(), item);
-        }
-        instance.getAnchorManager().removeAnchor(event.getBlock().getLocation());
-    }
 }

@@ -11,5 +11,7 @@ public interface AnchorManager {
 
     Anchor getAnchor(Location location);
 
+    boolean isAnchor(Location location);
+
     Map<Location, Anchor> getAnchors();
 }

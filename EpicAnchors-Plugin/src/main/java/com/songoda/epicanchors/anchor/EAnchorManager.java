@@ -14,7 +14,7 @@ public class EAnchorManager implements AnchorManager {
 
     @Override
     public Anchor addAnchor(Location location, Anchor anchor) {
-        return registeredAnchors.put(location, anchor);
+        return registeredAnchors.put(roundLocation(location), anchor);
     }
 
     @Override
@@ -24,7 +24,12 @@ public class EAnchorManager implements AnchorManager {
 
     @Override
     public Anchor getAnchor(Location location) {
-        return registeredAnchors.get(location);
+        return registeredAnchors.get(roundLocation(location));
+    }
+
+    @Override
+    public boolean isAnchor(Location location) {
+        return registeredAnchors.containsKey(location);
     }
 
     @Override
