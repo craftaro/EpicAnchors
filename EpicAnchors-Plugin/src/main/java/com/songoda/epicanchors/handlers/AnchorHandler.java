@@ -17,8 +17,13 @@ public class AnchorHandler {
     private EpicAnchorsPlugin instance;
     private Map<Location, Integer> delays = new HashMap<>();
 
+    private boolean epicSpawners;
+
     public AnchorHandler(EpicAnchorsPlugin instance) {
         this.instance = instance;
+
+        epicSpawners =  instance.getServer().getPluginManager().getPlugin("EpicSpawners") != null;
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doAnchorCheck, 0, 20); //ToDo: way to fast.
         Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doParticle, 0, 2); //ToDo: way to fast.
     }
@@ -37,8 +42,6 @@ public class AnchorHandler {
             Arconix.pl().getApi().packetLibrary.getParticleManager().broadcastParticle(location1, xx, yy, zz, 0, "REDSTONE", 1);
         }
     }
-
-    private boolean epicSpawners = instance.getServer().getPluginManager().getPlugin("EpicSpawners") != null;
 
     private void doAnchorCheck() {
         for (Anchor anchor : instance.getAnchorManager().getAnchors().values()) {
