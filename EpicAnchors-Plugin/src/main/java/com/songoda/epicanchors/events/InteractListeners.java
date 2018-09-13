@@ -27,13 +27,14 @@ public class InteractListeners implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockInteract(PlayerInteractEvent e) {
         if (e.getClickedBlock() == null) return;
+
+        if (instance.getAnchorManager().getAnchor(e.getClickedBlock().getLocation()) == null) return;
+
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
             instance.bust(e.getClickedBlock().getLocation());
             e.setCancelled(true);
             return;
         }
-
-        if (instance.getAnchorManager().getAnchor(e.getClickedBlock().getLocation()) == null) return;
 
         if (!instance.canBuild(e.getPlayer(), e.getClickedBlock().getLocation())) {
             e.setCancelled(true);
