@@ -11,16 +11,16 @@ import org.bukkit.inventory.ItemStack;
 public class CommandGive extends AbstractCommand {
 
     public CommandGive(AbstractCommand abstractCommand) {
-        super("give", "epicanchors.admin", abstractCommand);
+        super("give", abstractCommand, false);
     }
 
     @Override
-    protected boolean runCommand(EpicAnchorsPlugin instance, CommandSender sender, String... args) {
-        if (args.length != 3) return true;
+    protected ReturnType runCommand(EpicAnchorsPlugin instance, CommandSender sender, String... args) {
+        if (args.length != 3) return ReturnType.SYNTAX_ERROR;
 
         if (Bukkit.getPlayer(args[1]) == null && !args[1].trim().toLowerCase().equals("all")) {
             sender.sendMessage("Not a player...");
-            return true;
+            return ReturnType.SYNTAX_ERROR;
         }
 
         ItemStack itemStack = instance.makeAnchorItem(Integer.parseInt(args[2]) * 20 * 60 * 60);
@@ -35,6 +35,21 @@ public class CommandGive extends AbstractCommand {
                 player.sendMessage(TextComponent.formatText(instance.getLocale().getMessage("command.give.success")));
             }
         }
-        return true;
+        return ReturnType.SUCCESS;
+    }
+
+    @Override
+    public String getPermissionNode() {
+        return "epicanchors.admin";
+    }
+
+    @Override
+    public String getSyntax() {
+        return "ea give <player/all> <amount in hours>";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Gives an operator the ability to spawn a ChunkAnchor of his or her choice.";
     }
 }

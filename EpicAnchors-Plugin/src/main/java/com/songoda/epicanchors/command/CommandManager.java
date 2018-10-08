@@ -8,8 +8,10 @@ import com.songoda.epicanchors.command.commands.CommandReload;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CommandManager implements CommandExecutor {
@@ -37,13 +39,13 @@ public class CommandManager implements CommandExecutor {
         for (AbstractCommand abstractCommand : commands) {
             if (abstractCommand.getCommand().equalsIgnoreCase(command.getName())) {
                 if (strings.length == 0) {
-                    processPerms(abstractCommand, commandSender, strings);
+                    processRequirements(abstractCommand, commandSender, strings);
                     return true;
                 }
             } else if (strings.length != 0 && abstractCommand.getParent() != null && abstractCommand.getParent().getCommand().equalsIgnoreCase(command.getName())) {
                 String cmd = strings[0];
                 if (cmd.equalsIgnoreCase(abstractCommand.getCommand())) {
-                    processPerms(abstractCommand, commandSender, strings);
+                    processRequirements(abstractCommand, commandSender, strings);
                     return true;
                 }
             }
@@ -52,12 +54,23 @@ public class CommandManager implements CommandExecutor {
         return true;
     }
 
-    private void processPerms(AbstractCommand command, CommandSender sender, String[] strings) {
+    private void processRequirements(AbstractCommand command, CommandSender sender, String[] strings) {
+        if (!(sender instanceof Player) && command.isNoConsole()) {
+            sender.sendMessage("You must be a player to use this command.");
+            return;
+        }
         if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
-            command.runCommand(instance, sender, strings);
+            AbstractCommand.ReturnType returnType = command.runCommand(instance, sender, strings);
+            if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
+                sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&cInvalid Syntax!"));
+                sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
+            }
             return;
         }
         sender.sendMessage(instance.references.getPrefix() + instance.getLocale().getMessage("event.general.nopermission"));
+    }
 
+    public List<AbstractCommand> getCommands() {
+        return Collections.unmodifiableList(commands);
     }
 }

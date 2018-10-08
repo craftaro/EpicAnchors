@@ -51,6 +51,8 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
     private EAnchorManager anchorManager;
     private MenuHandler menuHandler;
 
+    private CommandManager commandManager;
+
     public References references = null;
 
     private Locale locale;
@@ -97,6 +99,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         this.menuHandler = new MenuHandler(this);
         this.anchorManager = new EAnchorManager();
         this.settingsManager = new SettingsManager(this);
+        this.commandManager = new CommandManager(this);
 
         setupConfig();
 
@@ -256,6 +259,10 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
     public Locale getLocale() {
         return locale;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 
     @Override

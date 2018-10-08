@@ -1,6 +1,6 @@
 #General Messages
 
-general.nametag.prefix = "&8[&6EpicWorldAnchors&8]"
+general.nametag.prefix = "&8[&6EpicAnchors&8]"
 general.nametag.next = "&9Next"
 general.nametag.back = "&9Back"
 general.nametag.nameformat = "&eLevel %level% &fFurnace"
