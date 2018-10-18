@@ -6,6 +6,6 @@ build:
   image: maven:3.3.9-jdk-8
   script: "mvn clean package"
   artifacts:
-    name: "Core"
+    name: "EpicAnchors"
     paths:
       - "*.jar"
