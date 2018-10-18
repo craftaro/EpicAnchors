@@ -140,10 +140,5 @@
             <artifactId>epicspawners</artifactId>
             <version>LATEST</version>
         </dependency>
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard</artifactId>
-            <version>6.2.2</version>
-        </dependency>
     </dependencies>
 </project>
