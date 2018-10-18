@@ -10,7 +10,7 @@ done. So make sure to stay up to date with the latest
 updates for it.
 
 Link to download:
-http://jenkins.songoda.com/job/Arconix/
+https://gitlab.com/Songoda/Arconix/-/jobs/artifacts/master/download?job=build
 
 If you need help you can always join our
 discord in which is listed at the bottom of all of 
