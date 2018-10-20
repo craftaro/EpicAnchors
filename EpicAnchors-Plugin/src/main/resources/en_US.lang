@@ -20,3 +20,4 @@ command.give.success = "&7You have been given a ChunkAnchor."
 #Event Messages
 
 event.general.nopermission = "&cYou do not have permission to do that."
+event.upgrade.cannotafford = "&cYou cant afford that"

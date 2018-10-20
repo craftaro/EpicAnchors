@@ -34,7 +34,7 @@ public class CommandEpicAnchors extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/EpicHoppers";
+        return "/EpicAnchors";
     }
 
     @Override

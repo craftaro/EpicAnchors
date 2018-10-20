@@ -28,11 +28,11 @@ public class InventoryListeners implements Listener {
 
         event.setCancelled(true);
 
-        if (event.getSlot() == 11 && instance.getConfig().getBoolean("Main.Add Time With XP")) {
+        if (event.getSlot() == 15 && instance.getConfig().getBoolean("Main.Add Time With XP")) {
             if (!event.getCurrentItem().getItemMeta().getDisplayName().equals("§l")) {
                 ((EAnchor) anchor).addTime("XP", player);
             }
-        } else if (event.getSlot() == 15 && instance.getConfig().getBoolean("Main.Add Time With Economy")) {
+        } else if (event.getSlot() == 11 && instance.getConfig().getBoolean("Main.Add Time With Economy")) {
             if (!event.getCurrentItem().getItemMeta().getDisplayName().equals("§l")) {
                 ((EAnchor) anchor).addTime("ECO", player);
             }

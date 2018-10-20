@@ -87,11 +87,11 @@ public class EAnchor implements Anchor {
 
 
         if (instance.getConfig().getBoolean("Main.Add Time With Economy")) {
-            inventory.setItem(11, itemXP);
+            inventory.setItem(11, itemECO);
         }
 
         if (instance.getConfig().getBoolean("Main.Add Time With XP")) {
-            inventory.setItem(15, itemECO);
+            inventory.setItem(15, itemXP);
         }
 
         player.openInventory(inventory);
