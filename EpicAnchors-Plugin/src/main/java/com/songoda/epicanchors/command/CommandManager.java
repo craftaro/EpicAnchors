@@ -5,6 +5,7 @@ import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.command.commands.CommandEpicAnchors;
 import com.songoda.epicanchors.command.commands.CommandGive;
 import com.songoda.epicanchors.command.commands.CommandReload;
+import com.songoda.epicanchors.command.commands.CommandSettings;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,6 +28,7 @@ public class CommandManager implements CommandExecutor {
 
         addCommand(new CommandGive(commandEpicAnchors));
         addCommand(new CommandReload(commandEpicAnchors));
+        addCommand(new CommandSettings(commandEpicAnchors));
     }
 
     private AbstractCommand addCommand(AbstractCommand abstractCommand) {

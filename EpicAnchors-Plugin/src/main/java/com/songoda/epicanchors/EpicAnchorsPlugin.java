@@ -253,6 +253,10 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         getAnchorManager().removeAnchor(location);
     }
 
+    public SettingsManager getSettingsManager() {
+        return settingsManager;
+    }
+
     public MenuHandler getMenuHandler() {
         return menuHandler;
     }

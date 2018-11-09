@@ -45,7 +45,7 @@ public class CommandGive extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "ea give <player/all> <amount in hours>";
+        return "/ea give <player/all> <amount in hours>";
     }
 
     @Override
