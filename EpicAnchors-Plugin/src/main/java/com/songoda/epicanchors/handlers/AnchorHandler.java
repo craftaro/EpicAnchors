@@ -31,6 +31,7 @@ public class AnchorHandler {
     private void doParticle() {
         for (Anchor anchor : instance.getAnchorManager().getAnchors().values()) {
             Location location1 = anchor.getLocation().add(.5, .5, .5);
+            if (location1 == null || location1.getWorld() == null) continue;
             float xx = (float) (0 + (Math.random() * .15));
             float yy = (float) (0 + (Math.random() * 1));
             float zz = (float) (0 + (Math.random() * .15));

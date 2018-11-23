@@ -1,6 +1,6 @@
 name: EpicAnchors
 description: EpicAnchors
-version: 1.1.6
+version: 1.1.7
 depend: [Arconix]
 softdepend: [EpicSpawners, Towny, RedProtect, Kingdoms, PlotsSquared, GriefPrevention, USkyBlock, ASkyBlock, WorldGuard, Factions, Vault]
 main: com.songoda.epicanchors.EpicAnchorsPlugin
