@@ -4,6 +4,7 @@ import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import org.bukkit.Material;
+import org.bukkit.PortalType;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class BlockListeners implements Listener {
@@ -37,5 +39,11 @@ public class BlockListeners implements Listener {
 
         instance.getAnchorManager().addAnchor(event.getBlock().getLocation(), new EAnchor(event.getBlock().getLocation(), instance.getTicksFromItem(item)));
 
+    }
+
+    @EventHandler
+    public void onPortalCreation(EntityCreatePortalEvent e) {
+        if (e.getBlocks().size() < 1) return;
+        if (instance.getAnchorManager().isAnchor(e.getBlocks().get(0).getLocation())) e.setCancelled(true);
     }
 }
