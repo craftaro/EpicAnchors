@@ -1,9 +1,5 @@
 package com.songoda.epicanchors.anchor;
 
-
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.api.methods.formatting.TimeComponent;
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.utils.Methods;
@@ -32,9 +28,9 @@ public class EAnchor implements Anchor {
     public void overview(Player player) {
         EpicAnchorsPlugin instance = EpicAnchorsPlugin.getInstance();
 
-        String timeRemaining = TimeComponent.makeReadable((long) (ticksLeft / 20) * 1000) + " remaining.";
+        String timeRemaining = Methods.makeReadable((long) (ticksLeft / 20) * 1000) + " remaining.";
 
-        Inventory inventory = Bukkit.createInventory(null, 27, TextComponent.formatText(instance.getLocale().getMessage("interface.anchor.title")));
+        Inventory inventory = Bukkit.createInventory(null, 27, Methods.formatText(instance.getLocale().getMessage("interface.anchor.title")));
 
         int nu = 0;
         while (nu != 27) {
@@ -70,16 +66,16 @@ public class EAnchor implements Anchor {
         ItemMeta itemmetaECO = itemECO.getItemMeta();
         itemmetaECO.setDisplayName(instance.getLocale().getMessage("interface.button.addtimewitheconomy"));
         ArrayList<String> loreECO = new ArrayList<>();
-        loreECO.add(instance.getLocale().getMessage("interface.button.addtimewitheconomylore", Arconix.pl().getApi().format().formatEconomy(instance.getConfig().getInt("Main.Economy Cost"))));
+        loreECO.add(instance.getLocale().getMessage("interface.button.addtimewitheconomylore", Methods.formatEconomy(instance.getConfig().getInt("Main.Economy Cost"))));
         itemmetaECO.setLore(loreECO);
         itemECO.setItemMeta(itemmetaECO);
 
         ItemStack item = instance.makeAnchorItem(ticksLeft);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(TextComponent.formatText(instance.getLocale().getMessage("interface.anchor.smalltitle")));
+        meta.setDisplayName(Methods.formatText(instance.getLocale().getMessage("interface.anchor.smalltitle")));
         List<String> lore = new ArrayList<>();
 
-        lore.add(TextComponent.formatText("&7" + timeRemaining));
+        lore.add(Methods.formatText("&7" + timeRemaining));
 
         meta.setLore(lore);
         item.setItemMeta(meta);

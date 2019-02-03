@@ -1,9 +1,8 @@
 package com.songoda.epicanchors.command.commands;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.epicanchors.api.EpicAnchors;
 import com.songoda.epicanchors.command.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.utils.Methods;
 import org.bukkit.command.CommandSender;
 
 public class CommandReload extends AbstractCommand {
@@ -15,7 +14,7 @@ public class CommandReload extends AbstractCommand {
     @Override
     protected ReturnType runCommand(EpicAnchorsPlugin instance, CommandSender sender, String... args) {
         instance.reload();
-        sender.sendMessage(TextComponent.formatText(instance.references.getPrefix() + "&7Configuration and Language files reloaded."));
+        sender.sendMessage(Methods.formatText(instance.references.getPrefix() + "&7Configuration and Language files reloaded."));
         return ReturnType.SUCCESS;
     }
 

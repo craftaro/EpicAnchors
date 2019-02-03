@@ -1,11 +1,11 @@
 package com.songoda.epicanchors.command;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.command.commands.CommandEpicAnchors;
 import com.songoda.epicanchors.command.commands.CommandGive;
 import com.songoda.epicanchors.command.commands.CommandReload;
 import com.songoda.epicanchors.command.commands.CommandSettings;
+import com.songoda.epicanchors.utils.Methods;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -52,7 +52,7 @@ public class CommandManager implements CommandExecutor {
                 }
             }
         }
-        commandSender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&7The command you entered does not exist or is spelt incorrectly."));
+        commandSender.sendMessage(instance.references.getPrefix() + Methods.formatText("&7The command you entered does not exist or is spelt incorrectly."));
         return true;
     }
 
@@ -64,8 +64,8 @@ public class CommandManager implements CommandExecutor {
         if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
             AbstractCommand.ReturnType returnType = command.runCommand(instance, sender, strings);
             if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
-                sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&cInvalid Syntax!"));
-                sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
+                sender.sendMessage(instance.references.getPrefix() + Methods.formatText("&cInvalid Syntax!"));
+                sender.sendMessage(instance.references.getPrefix() + Methods.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
             }
             return;
         }

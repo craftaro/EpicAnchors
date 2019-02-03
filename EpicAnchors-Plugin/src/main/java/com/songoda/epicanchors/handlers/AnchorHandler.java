@@ -1,6 +1,5 @@
 package com.songoda.epicanchors.handlers;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.api.anchor.Anchor;
@@ -35,12 +34,12 @@ public class AnchorHandler {
             float xx = (float) (0 + (Math.random() * .15));
             float yy = (float) (0 + (Math.random() * 1));
             float zz = (float) (0 + (Math.random() * .15));
-            Arconix.pl().getApi().packetLibrary.getParticleManager().broadcastParticle(location1, xx, yy, zz, 0, "SPELL", 5);
+            location1.getWorld().spawnParticle(Particle.SPELL, location1, 5, xx, yy, zz, 5);
 
             xx = (float) (0 + (Math.random() * .75));
             yy = (float) (0 + (Math.random() * 1));
             zz = (float) (0 + (Math.random() * .75));
-            Arconix.pl().getApi().packetLibrary.getParticleManager().broadcastParticle(location1, xx, yy, zz, 0, "REDSTONE", 1);
+            location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1);
         }
     }
 
@@ -65,7 +64,7 @@ public class AnchorHandler {
 
             if (ticksLeft <= 0) {
                 instance.getAnchorManager().removeAnchor(location);
-                Arconix.pl().getApi().packetLibrary.getParticleManager().broadcastParticle(location.clone().add(.5, .5, .5), 0, 0, 0, 0, "LAVA", 10);
+                location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(.5, .5, .5), 5, 0, 0, 0, 5);
                 location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 10, 10);
                 location.getBlock().setType(Material.AIR);
                 instance.getMenuHandler().removeAnchor(location);

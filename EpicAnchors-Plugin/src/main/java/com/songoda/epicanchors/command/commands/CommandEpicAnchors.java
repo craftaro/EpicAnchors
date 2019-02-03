@@ -1,9 +1,8 @@
 package com.songoda.epicanchors.command.commands;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.epicanchors.api.EpicAnchors;
 import com.songoda.epicanchors.command.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.utils.Methods;
 import org.bukkit.command.CommandSender;
 
 public class CommandEpicAnchors extends AbstractCommand {
@@ -15,11 +14,11 @@ public class CommandEpicAnchors extends AbstractCommand {
     @Override
     protected ReturnType runCommand(EpicAnchorsPlugin instance, CommandSender sender, String... args) {
         sender.sendMessage("");
-        sender.sendMessage(TextComponent.formatText(instance.references.getPrefix() + "&7Version " + instance.getDescription().getVersion() + " Created with <3 by &5&l&oBrianna"));
+        sender.sendMessage(Methods.formatText(instance.references.getPrefix() + "&7Version " + instance.getDescription().getVersion() + " Created with <3 by &5&l&oBrianna"));
 
         for (AbstractCommand command : instance.getCommandManager().getCommands()) {
             if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
-                sender.sendMessage(TextComponent.formatText("&8 - &a" + command.getSyntax() + "&7 - " + command.getDescription()));
+                sender.sendMessage(Methods.formatText("&8 - &a" + command.getSyntax() + "&7 - " + command.getDescription()));
             }
         }
         sender.sendMessage("");

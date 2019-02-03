@@ -1,8 +1,8 @@
 package com.songoda.epicanchors.command.commands;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.epicanchors.command.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,11 +28,11 @@ public class CommandGive extends AbstractCommand {
         if (!args[1].trim().toLowerCase().equals("all")) {
             Player player = Bukkit.getOfflinePlayer(args[1]).getPlayer();
             player.getInventory().addItem(itemStack);
-            player.sendMessage(TextComponent.formatText(instance.getLocale().getMessage("command.give.success")));
+            player.sendMessage(Methods.formatText(instance.getLocale().getMessage("command.give.success")));
         } else {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.getInventory().addItem(itemStack);
-                player.sendMessage(TextComponent.formatText(instance.getLocale().getMessage("command.give.success")));
+                player.sendMessage(Methods.formatText(instance.getLocale().getMessage("command.give.success")));
             }
         }
         return ReturnType.SUCCESS;

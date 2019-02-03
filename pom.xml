@@ -46,23 +46,14 @@
     <repositories>
         <repository>
             <id>private</id>
-            <url>http://repo.songoda.com/repository/private</url>
-        </repository>
-        <repository>
-            <id>vault</id>
-            <url>http://repo.songoda.com/repository/vault</url>
+            <url>http://repo.songoda.com/artifactory/private/</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.13.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>arconix</artifactId>
-            <version>LATEST</version>
+            <version>1.13.2</version>
         </dependency>
         <dependency>
             <groupId>org</groupId>
@@ -70,9 +61,9 @@
             <version>LATEST</version>
         </dependency>
         <dependency>
-            <groupId>net.milkbowl.vault</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
+            <groupId>net.milkbowl</groupId>
+            <artifactId>vault</artifactId>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>me.ryanhamshire</groupId>

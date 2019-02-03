@@ -1,9 +1,6 @@
 package com.songoda.epicanchors;
 
 import com.google.common.base.Preconditions;
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.api.utils.ConfigWrapper;
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.anchor.EAnchorManager;
 import com.songoda.epicanchors.api.EpicAnchors;
@@ -18,6 +15,7 @@ import com.songoda.epicanchors.events.InventoryListeners;
 import com.songoda.epicanchors.handlers.AnchorHandler;
 import com.songoda.epicanchors.handlers.MenuHandler;
 import com.songoda.epicanchors.hooks.*;
+import com.songoda.epicanchors.utils.ConfigWrapper;
 import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.utils.SettingsManager;
 import org.apache.commons.lang.math.NumberUtils;
@@ -84,9 +82,9 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
         INSTANCE = this;
         CommandSender console = Bukkit.getConsoleSender();
-        console.sendMessage(TextComponent.formatText("&a============================="));
-        console.sendMessage(TextComponent.formatText("&7EpicAnchors " + this.getDescription().getVersion() + " by &5Brianna <3&7!"));
-        console.sendMessage(TextComponent.formatText("&7Action: &aEnabling&7..."));
+        console.sendMessage(Methods.formatText("&a============================="));
+        console.sendMessage(Methods.formatText("&7EpicAnchors " + this.getDescription().getVersion() + " by &5Brianna <3&7!"));
+        console.sendMessage(Methods.formatText("&7Action: &aEnabling&7..."));
 
         // Locales
         Locale.init(this);
@@ -129,16 +127,16 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         if (pluginManager.isPluginEnabled("WorldGuard")) this.register(HookWorldGuard::new);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
-        console.sendMessage(TextComponent.formatText("&a============================="));
+        console.sendMessage(Methods.formatText("&a============================="));
     }
 
     public void onDisable() {
         saveToFile();
         CommandSender console = Bukkit.getConsoleSender();
-        console.sendMessage(TextComponent.formatText("&a============================="));
-        console.sendMessage(TextComponent.formatText("&7EpicAnchors " + this.getDescription().getVersion() + " by &5Brianna <3!"));
-        console.sendMessage(TextComponent.formatText("&7Action: &cDisabling&7..."));
-        console.sendMessage(TextComponent.formatText("&a============================="));
+        console.sendMessage(Methods.formatText("&a============================="));
+        console.sendMessage(Methods.formatText("&7EpicAnchors " + this.getDescription().getVersion() + " by &5Brianna <3!"));
+        console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
+        console.sendMessage(Methods.formatText("&a============================="));
     }
 
     private void setupConfig() {
@@ -151,7 +149,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
     private void loadAnchorsFromFile() {
         if (dataFile.getConfig().contains("Anchors")) {
             for (String locationStr : dataFile.getConfig().getConfigurationSection("Anchors").getKeys(false)) {
-                Location location = Arconix.pl().getApi().serialize().unserializeLocation(locationStr);
+                Location location = Methods.unserializeLocation(locationStr);
                 int ticksLeft = dataFile.getConfig().getInt("Anchors." + locationStr + ".ticksLeft");
 
                 EAnchor anchor = new EAnchor(location, ticksLeft);
@@ -164,7 +162,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
     private void saveToFile() {
         dataFile.getConfig().set("Anchors", null);
         for (Anchor anchor : anchorManager.getAnchors().values()) {
-            String locationStr = Arconix.pl().getApi().serialize().serializeLocation(anchor.getLocation());
+            String locationStr = Methods.serializeLocation(anchor.getLocation());
             dataFile.getConfig().set("Anchors." + locationStr + ".ticksLeft", anchor.getTicksLeft());
         }
         dataFile.saveConfig();
@@ -229,11 +227,11 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
     public ItemStack makeAnchorItem(int ticks) {
         ItemStack item = new ItemStack(Material.valueOf(EpicAnchorsPlugin.getInstance().getConfig().getString("Main.Anchor Block Material")), 1);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(Arconix.pl().getApi().format().formatText(Methods.formatName(ticks, true)));
+        meta.setDisplayName(Methods.formatText(Methods.formatName(ticks, true)));
         ArrayList<String> lore = new ArrayList<>();
         String[] parts = getConfig().getString("Main.Anchor-Lore").split("\\|");
         for (String line : parts) {
-            lore.add(Arconix.pl().getApi().format().formatText(line));
+            lore.add(Methods.formatText(line));
         }
         meta.setLore(lore);
         item.setItemMeta(meta);
