@@ -186,3 +186,11 @@ target/classes/com/songoda/epicanchors/hooks/HookTowny\.class
 target/classes/com/songoda/epicanchors/hooks/HookUSkyBlock\.class
 
 target/classes/com/songoda/epicanchors/hooks/HookWorldGuard\.class
+
+target/classes/com/songoda/epicanchors/command/AbstractCommand\$ReturnType\.class
+
+target/classes/com/songoda/epicanchors/command/commands/CommandSettings\.class
+
+target/classes/com/songoda/epicanchors/utils/ConfigWrapper\.class
+
+target/classes/SettingDefinitions\.yml
