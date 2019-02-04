@@ -174,7 +174,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         this.references = new References();
         this.loadAnchorsFromFile();
         this.reloadConfig();
-        //this.saveConfig();
+        this.setupConfig();
     }
 
 
