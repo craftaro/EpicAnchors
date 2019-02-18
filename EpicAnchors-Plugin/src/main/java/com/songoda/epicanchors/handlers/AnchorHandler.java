@@ -93,11 +93,8 @@ public class AnchorHandler {
                             delays.remove(block.getLocation());
                         }
                     }
-
                 }
             }
-
         }
-
     }
 }
