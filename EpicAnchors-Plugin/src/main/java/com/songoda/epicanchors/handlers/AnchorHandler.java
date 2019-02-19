@@ -39,7 +39,7 @@ public class AnchorHandler {
             xx = (float) (0 + (Math.random() * .75));
             yy = (float) (0 + (Math.random() * 1));
             zz = (float) (0 + (Math.random() * .75));
-            location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1);
+            location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1, new Particle.DustOptions(Color.WHITE, 1F));
         }
     }
 
