@@ -25,29 +25,37 @@ public class InteractListeners implements Listener {
 
 
     @EventHandler(ignoreCancelled = true)
-    public void onBlockInteract(PlayerInteractEvent e) {
-        if (e.getClickedBlock() == null) return;
+    public void onBlockInteract(PlayerInteractEvent event) {
+        if (event.getClickedBlock() == null) return;
 
-        if (instance.getAnchorManager().getAnchor(e.getClickedBlock().getLocation()) == null) return;
+        if (instance.getAnchorManager().getAnchor(event.getClickedBlock().getLocation()) == null) return;
 
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            instance.bust(e.getClickedBlock().getLocation());
-            e.setCancelled(true);
+        if (!instance.canBuild(event.getPlayer(), event.getClickedBlock().getLocation())) {
+            event.setCancelled(true);
             return;
         }
 
-        if (!instance.canBuild(e.getPlayer(), e.getClickedBlock().getLocation())) {
-            e.setCancelled(true);
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            instance.bust(event.getClickedBlock().getLocation());
+            event.setCancelled(true);
             return;
         }
 
-        Anchor anchor = instance.getAnchorManager().getAnchor(e.getClickedBlock().getLocation());
 
-        Player player = e.getPlayer();
+        Anchor anchor = instance.getAnchorManager().getAnchor(event.getClickedBlock().getLocation());
+
+
+        Player player = event.getPlayer();
         ItemStack item = player.getItemInHand();
+
+        if (item.getType() == Material.ENDER_EYE
+                && Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material")) == Material.END_PORTAL_FRAME) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (item.getType() == Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material"))) {
             if (instance.getTicksFromItem(item) == 0) return;
-
 
             anchor.setTicksLeft(anchor.getTicksLeft() + instance.getTicksFromItem(item));
 
@@ -58,7 +66,7 @@ public class InteractListeners implements Listener {
 
             player.getWorld().spawnParticle(Particle.SPELL_WITCH, anchor.getLocation().add(.5,.5,.5), 100, .5, .5, .5);
 
-            e.setCancelled(true);
+            event.setCancelled(true);
 
             return;
         }
