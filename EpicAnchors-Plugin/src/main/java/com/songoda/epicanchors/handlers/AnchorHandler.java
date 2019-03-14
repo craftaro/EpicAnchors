@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AnchorHandler {
 
@@ -52,12 +53,8 @@ public class AnchorHandler {
 
             Location location = anchor.getLocation();
 
-            location.getChunk().load();
-
             Chunk chunk = location.getChunk();
-
-            int cx = chunk.getX() << 4;
-            int cz = chunk.getZ() << 4;
+            chunk.load();
 
             int ticksLeft = anchor.getTicksLeft();
             anchor.setTicksLeft(ticksLeft - 20);
@@ -71,30 +68,27 @@ public class AnchorHandler {
                 chunk.unload();
             }
 
-
             if (!epicSpawners) continue;
 
-            for (int x = cx; x < cx + 16; x++) {
-                for (int z = cz; z < cz + 16; z++) {
-                    for (int y = 0; y < location.getWorld().getMaxHeight(); y++) {
-                        Block block = location.getWorld().getBlockAt(x, y, z);
-                        if (block.getType() != Material.SPAWNER) continue;
-                        Spawner spawner = EpicSpawnersAPI.getSpawnerManager().getSpawnerFromWorld(block.getLocation());
-                        if (!delays.containsKey(block.getLocation())) {
-                            if (block == null || block.getLocation() == null || spawner == null) continue;
-                            delays.put(block.getLocation(), spawner.updateDelay());
-                            continue;
-                        }
-                        int delay = delays.get(block.getLocation());
-                        delay -= 20;
-                        delays.put(block.getLocation(), delay);
-                        if (delay <= 0) {
-                            spawner.spawn();
-                            delays.remove(block.getLocation());
-                        }
-                    }
+            EpicSpawnersAPI.getSpawnerManager().getSpawners().stream()
+                    .filter(spawner -> spawner.getWorld().isChunkLoaded(spawner.getX() >> 4, spawner.getZ() >> 4)
+                            && chunk == spawner.getLocation().getChunk()).forEach(spawner -> {
+                Block block = spawner.getLocation().getBlock();
+
+                if (!delays.containsKey(block.getLocation())) {
+                    if (block.getLocation() == null) return;
+                    delays.put(block.getLocation(), spawner.updateDelay());
+                    return;
                 }
-            }
+                int delay = delays.get(block.getLocation());
+                delay -= 20;
+                delays.put(block.getLocation(), delay);
+                if (delay <= 0) {
+                    spawner.spawn();
+                    delays.remove(block.getLocation());
+                }
+
+            });
         }
     }
 }
