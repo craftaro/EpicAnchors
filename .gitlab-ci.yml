@@ -8,4 +8,4 @@ build:
   artifacts:
     name: "EpicAnchors"
     paths:
-      - "/builds/Songoda/EpicAnchors/target/*.jar"
+      - "/builds/$CI_PROJECT_PATH/*.jar"
