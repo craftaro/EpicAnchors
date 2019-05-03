@@ -1,4 +1,4 @@
-package com.songoda.epicanchors.events;
+package com.songoda.epicanchors.listeners;
 
 import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.api.anchor.Anchor;

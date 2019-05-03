@@ -14,7 +14,7 @@ public class CommandReload extends AbstractCommand {
     @Override
     protected ReturnType runCommand(EpicAnchorsPlugin instance, CommandSender sender, String... args) {
         instance.reload();
-        sender.sendMessage(Methods.formatText(instance.references.getPrefix() + "&7Configuration and Language files reloaded."));
+        sender.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + "&7Configuration and Language files reloaded."));
         return ReturnType.SUCCESS;
     }
 

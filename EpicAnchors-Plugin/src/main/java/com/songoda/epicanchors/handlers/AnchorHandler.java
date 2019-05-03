@@ -1,16 +1,16 @@
 package com.songoda.epicanchors.handlers;
 
 import com.songoda.epicanchors.EpicAnchorsPlugin;
-import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicspawners.api.EpicSpawnersAPI;
-import com.songoda.epicspawners.api.spawner.Spawner;
+import net.minecraft.server.v1_14_R1.EntityInsentient;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AnchorHandler {
 
@@ -24,14 +24,14 @@ public class AnchorHandler {
 
         epicSpawners =  instance.getServer().getPluginManager().getPlugin("EpicSpawners") != null;
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doAnchorCheck, 0, 20); //ToDo: way to fast.
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doAnchorCheck, 0, 1); //ToDo: way to fast.
         Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doParticle, 0, 2); //ToDo: way to fast.
     }
 
     private void doParticle() {
         for (Anchor anchor : instance.getAnchorManager().getAnchors().values()) {
             Location location1 = anchor.getLocation().add(.5, .5, .5);
-            if (location1 == null || location1.getWorld() == null) continue;
+            if (location1.getWorld() == null) continue;
             float xx = (float) (0 + (Math.random() * .15));
             float yy = (float) (0 + (Math.random() * 1));
             float zz = (float) (0 + (Math.random() * .15));
@@ -55,6 +55,14 @@ public class AnchorHandler {
 
             Chunk chunk = location.getChunk();
             chunk.load();
+
+            // Load entities
+            for (Entity entity : chunk.getEntities()) {
+                if (!(entity instanceof LivingEntity)) continue;
+
+                ((EntityInsentient)entity).movementTick();
+
+            }
 
             int ticksLeft = anchor.getTicksLeft();
             anchor.setTicksLeft(ticksLeft - 20);

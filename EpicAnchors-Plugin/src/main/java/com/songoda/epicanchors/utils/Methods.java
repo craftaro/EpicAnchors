@@ -50,35 +50,27 @@ public class Methods {
     }
 
     public static ItemStack getGlass() {
-        try {
-            EpicAnchorsPlugin instance = EpicAnchorsPlugin.getInstance();
-            return getGlass(instance.getConfig().getBoolean("Interfaces.Replace Glass Type 1 With Rainbow Glass"), instance.getConfig().getInt("Interfaces.Glass Type 1"));
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
-        return null;
+        EpicAnchorsPlugin instance = EpicAnchorsPlugin.getInstance();
+        return Methods.getGlass(instance.getConfig().getBoolean("Interfaces.Replace Glass Type 1 With Rainbow Glass"), instance.getConfig().getInt("Interfaces.Glass Type 1"));
     }
 
     public static ItemStack getBackgroundGlass(boolean type) {
-        try {
-            EpicAnchorsPlugin instance = EpicAnchorsPlugin.getInstance();
-            if (type)
-                return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 2"));
-            else
-                return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 3"));
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
-        return null;
+        EpicAnchorsPlugin instance = EpicAnchorsPlugin.getInstance();
+        if (type)
+            return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 2"));
+        else
+            return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 3"));
     }
 
     private static ItemStack getGlass(Boolean rainbow, int type) {
         int randomNum = 1 + (int) (Math.random() * 6);
         ItemStack glass;
         if (rainbow) {
-            glass = new ItemStack(Material.LEGACY_STAINED_GLASS_PANE, 1, (short) randomNum);
+            glass = new ItemStack(EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
+                    Material.LEGACY_STAINED_GLASS_PANE :  Material.valueOf("STAINED_GLASS_PANE"), 1, (short) randomNum);
         } else {
-            glass = new ItemStack(Material.LEGACY_STAINED_GLASS_PANE, 1, (short) type);
+            glass = new ItemStack(EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
+                    Material.LEGACY_STAINED_GLASS_PANE :  Material.valueOf("STAINED_GLASS_PANE"), 1, (short) type);
         }
         ItemMeta glassmeta = glass.getItemMeta();
         glassmeta.setDisplayName("§l");

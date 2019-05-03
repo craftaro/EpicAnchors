@@ -22,9 +22,8 @@ import java.util.regex.Pattern;
  * Created by songo on 6/4/2017.
  */
 public class SettingsManager implements Listener {
-    private static final Pattern SETTINGS_PATTERN = Pattern.compile("(.{1,28}(?:\\s|$))|(.{0,28})", Pattern.DOTALL);
 
-    private static ConfigWrapper defs;
+    private static final Pattern SETTINGS_PATTERN = Pattern.compile("(.{1,28}(?:\\s|$))|(.{0,28})", Pattern.DOTALL);
     private final EpicAnchorsPlugin instance;
     private String pluginName = "EpicAnchors";
     private Map<Player, String> cat = new HashMap<>();
@@ -32,10 +31,6 @@ public class SettingsManager implements Listener {
 
     public SettingsManager(EpicAnchorsPlugin plugin) {
         this.instance = plugin;
-
-        plugin.saveResource("SettingDefinitions.yml", true);
-        defs = new ConfigWrapper(plugin, "", "SettingDefinitions.yml");
-        defs.createNewFile("Loading data file", pluginName + " SettingDefinitions file");
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
@@ -49,14 +44,14 @@ public class SettingsManager implements Listener {
             return;
         }
 
-        if (event.getInventory().getTitle().equals(pluginName + " Settings Manager")) {
+        if (event.getView().getTitle().equals(pluginName + " Settings Manager")) {
             event.setCancelled(true);
             if (clickedItem.getType().name().contains("STAINED_GLASS")) return;
 
             String type = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
             this.cat.put((Player) event.getWhoClicked(), type);
             this.openEditor((Player) event.getWhoClicked());
-        } else if (event.getInventory().getTitle().equals(pluginName + " Settings Editor")) {
+        } else if (event.getView().getTitle().equals(pluginName + " Settings Editor")) {
             event.setCancelled(true);
             if (clickedItem.getType().name().contains("STAINED_GLASS")) return;
 
@@ -88,18 +83,19 @@ public class SettingsManager implements Listener {
             config.set(value, event.getMessage());
         }
 
-        this.finishEditing(player);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(EpicAnchorsPlugin.getInstance(), () ->
+                this.finishEditing(player), 0L);
+
         event.setCancelled(true);
     }
 
-    public void finishEditing(Player player) {
+    private void finishEditing(Player player) {
         this.current.remove(player);
         this.instance.saveConfig();
         this.openEditor(player);
     }
 
-
-    public void editObject(Player player, String current) {
+    private void editObject(Player player, String current) {
         this.current.put(player, ChatColor.stripColor(current));
 
         player.closeInventory();
@@ -120,7 +116,7 @@ public class SettingsManager implements Listener {
 
         int slot = 10;
         for (String key : instance.getConfig().getDefaultSection().getKeys(false)) {
-            ItemStack item = new ItemStack(Material.WHITE_WOOL, 1, (byte) (slot - 9)); //ToDo: Make this function as it was meant to.
+            ItemStack item = new ItemStack(instance.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.WHITE_WOOL : Material.valueOf("WOOL"), 1, (byte) (slot - 9)); //ToDo: Make this function as it was meant to.
             ItemMeta meta = item.getItemMeta();
             meta.setLore(Collections.singletonList(Methods.formatText("&6Click To Edit This Category.")));
             meta.setDisplayName(Methods.formatText("&f&l" + key));
@@ -132,7 +128,7 @@ public class SettingsManager implements Listener {
         player.openInventory(inventory);
     }
 
-    public void openEditor(Player player) {
+    private void openEditor(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 54, pluginName + " Settings Editor");
         FileConfiguration config = instance.getConfig();
 
@@ -151,18 +147,8 @@ public class SettingsManager implements Listener {
                 item.setType(Material.PAPER);
                 lore.add(Methods.formatText("&9" + config.getString(fKey)));
             } else if (config.isInt(fKey)) {
-                item.setType(Material.CLOCK);
+                item.setType(instance.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.CLOCK : Material.valueOf("WATCH"));
                 lore.add(Methods.formatText("&5" + config.getInt(fKey)));
-            }
-
-            if (defs.getConfig().contains(fKey)) {
-                String text = defs.getConfig().getString(key);
-
-                Matcher m = SETTINGS_PATTERN.matcher(text);
-                while (m.find()) {
-                    if (m.end() != text.length() || m.group().length() != 0)
-                        lore.add(Methods.formatText("&7" + m.group()));
-                }
             }
 
             meta.setLore(lore);
@@ -176,15 +162,17 @@ public class SettingsManager implements Listener {
     }
 
     public void updateSettings() {
-        for (settings s : settings.values()) {
-            instance.getConfig().addDefault(s.setting, s.option);
+        FileConfiguration config = instance.getConfig();
+
+        for (Setting setting : Setting.values()) {
+            config.addDefault(setting.setting, setting.option);
         }
     }
 
-    public enum settings {
+    public enum Setting {
         o1("Main.Name-Tag", "&eAnchor &8(&7{REMAINING}&8)"),
         o2("Main.Anchor-Lore", "&7Place down to keep that chunk|&7loaded until the time runs out."),
-        o3("Main.Anchor Block Material", "END_PORTAL_FRAME"),
+        o3("Main.Anchor Block Material", EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "END_PORTAL_FRAME" : "ENDER_PORTAL_FRAME"),
         o4("Main.Add Time With Economy", true),
         o5("Main.Economy Cost", 5000.0),
         o6("Main.Add Time With XP", true),
@@ -194,15 +182,36 @@ public class SettingsManager implements Listener {
         o10("Interfaces.XP Icon", "EXPERIENCE_BOTTLE"),
         o11("Interfaces.Glass Type 1", 7),
         o12("Interfaces.Glass Type 2", 11),
-        o13("Interfaces.Glass Type 3", 3);
+        o13("Interfaces.Glass Type 3", 3),
+
+        LANGUGE_MODE("System.Language Mode", "en_US");
 
         private String setting;
         private Object option;
 
-        settings(String setting, Object option) {
+        Setting(String setting, Object option) {
             this.setting = setting;
             this.option = option;
         }
+
+        public List<String> getStringList() {
+            return EpicAnchorsPlugin.getInstance().getConfig().getStringList(setting);
+        }
+
+        public boolean getBoolean() {
+            return EpicAnchorsPlugin.getInstance().getConfig().getBoolean(setting);
+        }
+
+        public int getInt() {
+            return EpicAnchorsPlugin.getInstance().getConfig().getInt(setting);
+        }
+
+        public String getString() {
+            return EpicAnchorsPlugin.getInstance().getConfig().getString(setting);
+        }
+
+        public char getChar() { return EpicAnchorsPlugin.getInstance().getConfig().getString(setting).charAt(0); }
+
 
     }
 }

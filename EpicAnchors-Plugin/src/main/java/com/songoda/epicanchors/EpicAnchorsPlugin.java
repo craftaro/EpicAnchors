@@ -9,15 +9,20 @@ import com.songoda.epicanchors.api.anchor.AnchorManager;
 import com.songoda.epicanchors.api.utils.ClaimableProtectionPluginHook;
 import com.songoda.epicanchors.api.utils.ProtectionPluginHook;
 import com.songoda.epicanchors.command.CommandManager;
-import com.songoda.epicanchors.events.BlockListeners;
-import com.songoda.epicanchors.events.InteractListeners;
-import com.songoda.epicanchors.events.InventoryListeners;
+import com.songoda.epicanchors.listeners.BlockListeners;
+import com.songoda.epicanchors.listeners.InteractListeners;
+import com.songoda.epicanchors.listeners.InventoryListeners;
 import com.songoda.epicanchors.handlers.AnchorHandler;
 import com.songoda.epicanchors.handlers.MenuHandler;
 import com.songoda.epicanchors.hooks.*;
 import com.songoda.epicanchors.utils.ConfigWrapper;
 import com.songoda.epicanchors.utils.Methods;
+import com.songoda.epicanchors.utils.ServerVersion;
 import com.songoda.epicanchors.utils.SettingsManager;
+import com.songoda.epicanchors.utils.updateModules.LocaleModule;
+import com.songoda.update.Plugin;
+import com.songoda.update.SongodaUpdate;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,6 +48,8 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
     private ConfigWrapper hooksFile = new ConfigWrapper(this, "", "hooks.yml");
 
+    private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
+
     private static EpicAnchorsPlugin INSTANCE;
 
     private SettingsManager settingsManager;
@@ -51,7 +58,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
     private CommandManager commandManager;
 
-    public References references = null;
+    private References references;
 
     private Locale locale;
 
@@ -59,47 +66,35 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         return INSTANCE;
     }
 
-    private boolean checkVersion() {
-        int workingVersion = 13;
-        int currentVersion = Integer.parseInt(Bukkit.getServer().getClass()
-                .getPackage().getName().split("\\.")[3].split("_")[1]);
-
-        if (currentVersion < workingVersion) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-                Bukkit.getConsoleSender().sendMessage("");
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "You installed the 1." + workingVersion + "+ only version of " + this.getDescription().getName() + " on a 1." + currentVersion + " server. Since you are on the wrong version we disabled the plugin for you. Please install correct version to continue using " + this.getDescription().getName() + ".");
-                Bukkit.getConsoleSender().sendMessage("");
-            }, 20L);
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public void onEnable() {
-        // Check to make sure the Bukkit version is compatible.
-        if (!checkVersion()) return;
-
         INSTANCE = this;
         CommandSender console = Bukkit.getConsoleSender();
         console.sendMessage(Methods.formatText("&a============================="));
         console.sendMessage(Methods.formatText("&7EpicAnchors " + this.getDescription().getVersion() + " by &5Brianna <3&7!"));
         console.sendMessage(Methods.formatText("&7Action: &aEnabling&7..."));
 
+        this.settingsManager = new SettingsManager(this);
+
+        setupConfig();
+
         // Locales
+        String langMode = SettingsManager.Setting.LANGUGE_MODE.getString();
         Locale.init(this);
         Locale.saveDefaultLocale("en_US");
-        this.locale = Locale.getLocale(getConfig().getString("Locale", "en_US"));
+        this.locale = Locale.getLocale(langMode);
+
+        //Running Songoda Updater
+        Plugin plugin = new Plugin(this, 31);
+        plugin.addModule(new LocaleModule());
+        SongodaUpdate.load(plugin);
 
         dataFile.createNewFile("Loading Data File", "EpicAnchors Data File");
 
         this.references = new References();
         this.menuHandler = new MenuHandler(this);
         this.anchorManager = new EAnchorManager();
-        this.settingsManager = new SettingsManager(this);
         this.commandManager = new CommandManager(this);
-
-        setupConfig();
 
         loadAnchorsFromFile();
 
@@ -251,6 +246,21 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         getAnchorManager().removeAnchor(location);
     }
 
+    public ServerVersion getServerVersion() {
+        return serverVersion;
+    }
+
+    public boolean isServerVersion(ServerVersion version) {
+        return serverVersion == version;
+    }
+    public boolean isServerVersion(ServerVersion... versions) {
+        return ArrayUtils.contains(versions, serverVersion);
+    }
+
+    public boolean isServerVersionAtLeast(ServerVersion version) {
+        return serverVersion.ordinal() >= version.ordinal();
+    }
+
     public SettingsManager getSettingsManager() {
         return settingsManager;
     }
@@ -270,5 +280,9 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
     @Override
     public AnchorManager getAnchorManager() {
         return anchorManager;
+    }
+
+    public References getReferences() {
+        return references;
     }
 }
