@@ -1,4 +1,4 @@
-package com.songoda.epicanchors.events;
+package com.songoda.epicanchors.listeners;
 
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.anchor.EAnchor;
@@ -19,7 +19,7 @@ public class InventoryListeners implements Listener {
 
     @EventHandler()
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory() == null || event.getRawSlot() >= event.getView().getTopInventory().getSize()) return;
+        if (event.getRawSlot() >= event.getView().getTopInventory().getSize()) return;
 
         Player player = (Player) event.getWhoClicked();
         if (!instance.getMenuHandler().isPlayerInMenu(player)) return;

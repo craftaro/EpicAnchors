@@ -1,16 +1,12 @@
-package com.songoda.epicanchors.events;
+package com.songoda.epicanchors.listeners;
 
 import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
-import com.songoda.epicanchors.api.anchor.Anchor;
 import org.bukkit.Material;
-import org.bukkit.PortalType;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.ItemStack;
