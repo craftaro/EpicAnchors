@@ -19,7 +19,7 @@ public class InventoryListeners implements Listener {
 
     @EventHandler()
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory() == null || event.getRawSlot() >= event.getView().getTopInventory().getSize()) return;
+        if (event.getRawSlot() >= event.getView().getTopInventory().getSize()) return;
 
         Player player = (Player) event.getWhoClicked();
         if (!instance.getMenuHandler().isPlayerInMenu(player)) return;
