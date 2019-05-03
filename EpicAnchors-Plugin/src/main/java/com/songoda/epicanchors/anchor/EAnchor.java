@@ -2,6 +2,7 @@ package com.songoda.epicanchors.anchor;
 
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.api.anchor.Anchor;
+import com.songoda.epicanchors.gui.GUIOverview;
 import com.songoda.epicanchors.utils.Methods;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
@@ -26,72 +27,7 @@ public class EAnchor implements Anchor {
     }
 
     public void overview(Player player) {
-        EpicAnchorsPlugin instance = EpicAnchorsPlugin.getInstance();
-
-        String timeRemaining = Methods.makeReadable((long) (ticksLeft / 20) * 1000) + " remaining.";
-
-        Inventory inventory = Bukkit.createInventory(null, 27, Methods.formatText(instance.getLocale().getMessage("interface.anchor.title")));
-
-        int nu = 0;
-        while (nu != 27) {
-            inventory.setItem(nu, Methods.getGlass());
-            nu++;
-        }
-        inventory.setItem(0, Methods.getBackgroundGlass(true));
-        inventory.setItem(1, Methods.getBackgroundGlass(true));
-        inventory.setItem(2, Methods.getBackgroundGlass(false));
-        inventory.setItem(6, Methods.getBackgroundGlass(false));
-        inventory.setItem(7, Methods.getBackgroundGlass(true));
-        inventory.setItem(8, Methods.getBackgroundGlass(true));
-        inventory.setItem(9, Methods.getBackgroundGlass(true));
-        inventory.setItem(10, Methods.getBackgroundGlass(false));
-        inventory.setItem(16, Methods.getBackgroundGlass(false));
-        inventory.setItem(17, Methods.getBackgroundGlass(true));
-        inventory.setItem(18, Methods.getBackgroundGlass(true));
-        inventory.setItem(19, Methods.getBackgroundGlass(true));
-        inventory.setItem(20, Methods.getBackgroundGlass(false));
-        inventory.setItem(24, Methods.getBackgroundGlass(false));
-        inventory.setItem(25, Methods.getBackgroundGlass(true));
-        inventory.setItem(26, Methods.getBackgroundGlass(true));
-
-        ItemStack itemXP = new ItemStack(Material.valueOf(instance.getConfig().getString("Interfaces.XP Icon")), 1);
-        ItemMeta itemmetaXP = itemXP.getItemMeta();
-        itemmetaXP.setDisplayName(instance.getLocale().getMessage("interface.button.addtimewithxp"));
-        ArrayList<String> loreXP = new ArrayList<>();
-        loreXP.add(instance.getLocale().getMessage("interface.button.addtimewithxplore", Integer.toString(instance.getConfig().getInt("Main.XP Cost"))));
-        itemmetaXP.setLore(loreXP);
-        itemXP.setItemMeta(itemmetaXP);
-
-        ItemStack itemECO = new ItemStack(Material.valueOf(instance.getConfig().getString("Interfaces.Economy Icon")), 1);
-        ItemMeta itemmetaECO = itemECO.getItemMeta();
-        itemmetaECO.setDisplayName(instance.getLocale().getMessage("interface.button.addtimewitheconomy"));
-        ArrayList<String> loreECO = new ArrayList<>();
-        loreECO.add(instance.getLocale().getMessage("interface.button.addtimewitheconomylore", Methods.formatEconomy(instance.getConfig().getInt("Main.Economy Cost"))));
-        itemmetaECO.setLore(loreECO);
-        itemECO.setItemMeta(itemmetaECO);
-
-        ItemStack item = instance.makeAnchorItem(ticksLeft);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(Methods.formatText(instance.getLocale().getMessage("interface.anchor.smalltitle")));
-        List<String> lore = new ArrayList<>();
-
-        lore.add(Methods.formatText("&7" + timeRemaining));
-
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        inventory.setItem(13, item);
-
-
-        if (instance.getConfig().getBoolean("Main.Add Time With Economy")) {
-            inventory.setItem(11, itemECO);
-        }
-
-        if (instance.getConfig().getBoolean("Main.Add Time With XP")) {
-            inventory.setItem(15, itemXP);
-        }
-
-        player.openInventory(inventory);
-        EpicAnchorsPlugin.getInstance().getMenuHandler().addPlayer(player, location);
+        new GUIOverview(EpicAnchorsPlugin.getInstance(), this, player);
     }
 
     public void addTime(String type, Player player) {
