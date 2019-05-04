@@ -95,8 +95,6 @@ public class AnchorHandler {
             if (anchor.getLocation().getBlock().getType() != Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material")))
                 continue;
 
-            instance.getMenuHandler().updateMenu();
-
             Chunk chunk = location.getChunk();
             chunk.load();
 
@@ -129,7 +127,6 @@ public class AnchorHandler {
                 location.getWorld().playSound(location, instance.isServerVersionAtLeast(ServerVersion.V1_13)
                         ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXLODE"), 10, 10);
                 location.getBlock().setType(Material.AIR);
-                instance.getMenuHandler().removeAnchor(location);
                 chunk.unload();
             }
 

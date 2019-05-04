@@ -4,6 +4,7 @@ import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.utils.ServerVersion;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -48,8 +49,8 @@ public class InteractListeners implements Listener {
         Player player = event.getPlayer();
         ItemStack item = player.getItemInHand();
 
-        if (item.getType() == Material.ENDER_EYE
-                && Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material")) == Material.END_PORTAL_FRAME) {
+        if (item.getType() == (instance.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.ENDER_EYE : Material.valueOf("EYE_OF_ENDER"))
+                && Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material")) == (instance.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.END_PORTAL_FRAME : Material.valueOf("ENDER_PORTAL_FRAME"))) {
             event.setCancelled(true);
             return;
         }

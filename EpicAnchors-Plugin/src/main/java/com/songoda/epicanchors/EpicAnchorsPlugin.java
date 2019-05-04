@@ -11,9 +11,7 @@ import com.songoda.epicanchors.api.utils.ProtectionPluginHook;
 import com.songoda.epicanchors.command.CommandManager;
 import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
-import com.songoda.epicanchors.listeners.InventoryListeners;
 import com.songoda.epicanchors.handlers.AnchorHandler;
-import com.songoda.epicanchors.handlers.MenuHandler;
 import com.songoda.epicanchors.hooks.*;
 import com.songoda.epicanchors.utils.ConfigWrapper;
 import com.songoda.epicanchors.utils.Methods;
@@ -25,7 +23,6 @@ import com.songoda.update.SongodaUpdate;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -54,7 +51,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
     private SettingsManager settingsManager;
     private EAnchorManager anchorManager;
-    private MenuHandler menuHandler;
 
     private CommandManager commandManager;
 
@@ -92,7 +88,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         dataFile.createNewFile("Loading Data File", "EpicAnchors Data File");
 
         this.references = new References();
-        this.menuHandler = new MenuHandler(this);
         this.anchorManager = new EAnchorManager();
         this.commandManager = new CommandManager(this);
 
@@ -108,7 +103,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         // Event registration
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
-        pluginManager.registerEvents(new InventoryListeners(this), this);
 
         // Register default hooks
         if (pluginManager.isPluginEnabled("ASkyBlock")) this.register(HookASkyBlock::new);
@@ -263,10 +257,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
     public SettingsManager getSettingsManager() {
         return settingsManager;
-    }
-
-    public MenuHandler getMenuHandler() {
-        return menuHandler;
     }
 
     public Locale getLocale() {
