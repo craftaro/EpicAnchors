@@ -1,8 +1,6 @@
 package com.songoda.epicanchors.api;
 
 
-import org.bukkit.ChatColor;
-
 /**
  * The access point of the EpicAnchorsAPI, a class acting as a bridge between API
  * and plugin implementation. It is from here where developers should access the

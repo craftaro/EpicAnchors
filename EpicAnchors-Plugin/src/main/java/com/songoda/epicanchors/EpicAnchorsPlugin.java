@@ -9,15 +9,24 @@ import com.songoda.epicanchors.api.anchor.AnchorManager;
 import com.songoda.epicanchors.api.utils.ClaimableProtectionPluginHook;
 import com.songoda.epicanchors.api.utils.ProtectionPluginHook;
 import com.songoda.epicanchors.command.CommandManager;
+import com.songoda.epicanchors.handlers.AnchorHandler;
+import com.songoda.epicanchors.hooks.HookASkyBlock;
+import com.songoda.epicanchors.hooks.HookFactions;
+import com.songoda.epicanchors.hooks.HookGriefPrevention;
+import com.songoda.epicanchors.hooks.HookKingdoms;
+import com.songoda.epicanchors.hooks.HookPlotSquared;
+import com.songoda.epicanchors.hooks.HookRedProtect;
+import com.songoda.epicanchors.hooks.HookTowny;
+import com.songoda.epicanchors.hooks.HookUSkyBlock;
+import com.songoda.epicanchors.hooks.HookWorldGuard;
 import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
-import com.songoda.epicanchors.handlers.AnchorHandler;
-import com.songoda.epicanchors.hooks.*;
 import com.songoda.epicanchors.utils.ConfigWrapper;
 import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.utils.ServerVersion;
 import com.songoda.epicanchors.utils.SettingsManager;
 import com.songoda.epicanchors.utils.updateModules.LocaleModule;
+import com.songoda.epicanchors.utils.version.NMSUtil;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
 import org.apache.commons.lang.ArrayUtils;
@@ -25,6 +34,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -237,6 +248,13 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
             anchor.getLocation().getWorld().dropItemNaturally(anchor.getLocation(), item);
         }
         location.getBlock().setType(Material.AIR);
+
+        if (NMSUtil.getVersionNumber() > 8)
+            location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(.5, .5, .5), 5, 0, 0, 0, 5);
+
+        location.getWorld().playSound(location, this.isServerVersionAtLeast(ServerVersion.V1_13)
+                ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"), 10, 10);
+
         getAnchorManager().removeAnchor(location);
     }
 
@@ -247,6 +265,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
     public boolean isServerVersion(ServerVersion version) {
         return serverVersion == version;
     }
+
     public boolean isServerVersion(ServerVersion... versions) {
         return ArrayUtils.contains(versions, serverVersion);
     }

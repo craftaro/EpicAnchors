@@ -1,8 +1,12 @@
 package com.songoda.epicanchors.utils;
 
 import com.songoda.epicanchors.EpicAnchorsPlugin;
-import com.songoda.epicspawners.utils.Debugger;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,16 +24,16 @@ public class Methods {
     private static Map<String, Location> serializeCache = new HashMap<>();
 
     public static void takeItem(Player p, int amt) {
-            if (p.getGameMode() != GameMode.CREATIVE) {
-                int result = p.getInventory().getItemInHand().getAmount() - amt;
-                if (result > 0) {
-                    ItemStack is = p.getItemInHand();
-                    is.setAmount(is.getAmount() - amt);
-                    p.setItemInHand(is);
-                } else {
-                    p.setItemInHand(null);
-                }
+        if (p.getGameMode() != GameMode.CREATIVE) {
+            int result = p.getInventory().getItemInHand().getAmount() - amt;
+            if (result > 0) {
+                ItemStack is = p.getItemInHand();
+                is.setAmount(is.getAmount() - amt);
+                p.setItemInHand(is);
+            } else {
+                p.setItemInHand(null);
             }
+        }
     }
 
     public static String formatName(int ticks2, boolean full) {
@@ -67,10 +71,10 @@ public class Methods {
         ItemStack glass;
         if (rainbow) {
             glass = new ItemStack(EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE :  Material.valueOf("STAINED_GLASS_PANE"), 1, (short) randomNum);
+                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) randomNum);
         } else {
             glass = new ItemStack(EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE :  Material.valueOf("STAINED_GLASS_PANE"), 1, (short) type);
+                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) type);
         }
         ItemMeta glassmeta = glass.getItemMeta();
         glassmeta.setDisplayName("§l");

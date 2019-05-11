@@ -21,7 +21,7 @@ public interface ProtectionPluginHook {
      * 
      * @return the hooking plugin
      */
-    public JavaPlugin getPlugin();
+    JavaPlugin getPlugin();
 
     /**
      * Check whether the provided player may build at the specified location
@@ -31,7 +31,7 @@ public interface ProtectionPluginHook {
      * 
      * @return true if player is permitted to build, false otherwise
      */
-    public boolean canBuild(Player player, Location location);
+    boolean canBuild(Player player, Location location);
 
     /**
      * Check whether the provided player may build at the specified block
@@ -41,7 +41,7 @@ public interface ProtectionPluginHook {
      * 
      * @return true if player is permitted to build, false otherwise
      */
-    public default boolean canBuild(Player player, Block block) {
+    default boolean canBuild(Player player, Block block) {
         return block != null && canBuild(player, block.getLocation());
     }
 

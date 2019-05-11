@@ -1,7 +1,7 @@
 package com.songoda.epicanchors.command.commands;
 
-import com.songoda.epicanchors.command.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.command.AbstractCommand;
 import com.songoda.epicanchors.utils.Methods;
 import org.bukkit.command.CommandSender;
 

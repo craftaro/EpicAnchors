@@ -4,7 +4,13 @@ import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.utils.ServerVersion;
 import com.songoda.epicspawners.api.EpicSpawnersAPI;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -56,11 +62,11 @@ public class AnchorHandler {
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
-        epicSpawners =  instance.getServer().getPluginManager().getPlugin("EpicSpawners") != null;
+        epicSpawners = instance.getServer().getPluginManager().getPlugin("EpicSpawners") != null;
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doAnchorCheck, 0, 1); //ToDo: way to fast.
         if (instance.isServerVersionAtLeast(ServerVersion.V1_9))
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doParticle, 0, 2); //ToDo: way to fast.
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doParticle, 0, 2); //ToDo: way to fast.
     }
 
     private void doParticle() {
@@ -79,7 +85,6 @@ public class AnchorHandler {
                 location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1);
             else
                 location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1, new Particle.DustOptions(Color.WHITE, 1F));
-
 
 
         }
@@ -125,7 +130,7 @@ public class AnchorHandler {
                 if (instance.isServerVersionAtLeast(ServerVersion.V1_9))
                     location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(.5, .5, .5), 5, 0, 0, 0, 5);
                 location.getWorld().playSound(location, instance.isServerVersionAtLeast(ServerVersion.V1_13)
-                        ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXLODE"), 10, 10);
+                        ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"), 10, 10);
                 location.getBlock().setType(Material.AIR);
                 chunk.unload();
             }
