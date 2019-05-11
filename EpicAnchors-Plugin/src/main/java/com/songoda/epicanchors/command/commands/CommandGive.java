@@ -1,8 +1,7 @@
 package com.songoda.epicanchors.command.commands;
 
-import com.songoda.epicanchors.command.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
-import com.songoda.epicanchors.utils.Methods;
+import com.songoda.epicanchors.command.AbstractCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

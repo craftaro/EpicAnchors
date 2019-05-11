@@ -3,19 +3,15 @@ package com.songoda.epicanchors.anchor;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.gui.GUIOverview;
-import com.songoda.epicanchors.utils.Methods;
+import com.songoda.epicanchors.utils.version.NMSUtil;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//ToDo: I want there to be a GUI for this that has the timer going down in real time.
 public class EAnchor implements Anchor {
 
     private Location location;
@@ -61,8 +57,11 @@ public class EAnchor implements Anchor {
         }
 
         ticksLeft = ticksLeft + 20 * 60 * 30;
-        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
-        player.getWorld().spawnParticle(Particle.SPELL_WITCH, getLocation().add(.5,.5,.5), 100, .5, .5, .5);
+        Sound sound = NMSUtil.getVersionNumber() > 8 ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP");
+        player.playSound(player.getLocation(), sound, 0.6F, 15.0F);
+
+        if (NMSUtil.getVersionNumber() > 8)
+            player.getWorld().spawnParticle(Particle.SPELL_WITCH, getLocation().add(.5, .5, .5), 100, .5, .5, .5);
     }
 
     @Override

@@ -1,10 +1,11 @@
 package com.songoda.epicanchors.listeners;
 
+import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.utils.Methods;
-import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.utils.ServerVersion;
+import com.songoda.epicanchors.utils.version.NMSUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -63,16 +64,18 @@ public class InteractListeners implements Listener {
             if (player.getGameMode() != GameMode.CREATIVE)
                 Methods.takeItem(player, 1);
 
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
+            Sound sound = NMSUtil.getVersionNumber() > 8 ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP");
+            player.playSound(player.getLocation(), sound, 0.6F, 15.0F);
 
-            player.getWorld().spawnParticle(Particle.SPELL_WITCH, anchor.getLocation().add(.5,.5,.5), 100, .5, .5, .5);
+            if (NMSUtil.getVersionNumber() > 8)
+                player.getWorld().spawnParticle(Particle.SPELL_WITCH, anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
 
             event.setCancelled(true);
 
             return;
         }
 
-        ((EAnchor)anchor).overview(player);
+        ((EAnchor) anchor).overview(player);
 
     }
 

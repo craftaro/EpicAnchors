@@ -22,7 +22,7 @@ public interface ClaimableProtectionPluginHook extends ProtectionPluginHook {
      * @return true if the location is within the claim, false otherwise or if the
      * claim ID does not exist
      */
-    public boolean isInClaim(Location location, String id);
+    boolean isInClaim(Location location, String id);
 
     /**
      * Get the ID of the claim with the given name. Often times this is unnecessary
@@ -34,6 +34,6 @@ public interface ClaimableProtectionPluginHook extends ProtectionPluginHook {
      * 
      * @return the unique String ID. null if no claim exists
      */
-    public String getClaimID(String name);
+    String getClaimID(String name);
 
 }

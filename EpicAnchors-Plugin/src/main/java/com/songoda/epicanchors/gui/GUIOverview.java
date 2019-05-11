@@ -3,7 +3,7 @@ package com.songoda.epicanchors.gui;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.utils.Methods;
-import com.songoda.epicspawners.utils.gui.AbstractGUI;
+import com.songoda.epicanchors.utils.gui.AbstractGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class GUIOverview extends AbstractGUI {
     }
 
     @Override
-    protected void constructGUI() {
+    public void constructGUI() {
         String timeRemaining = Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining.";
 
         int nu = 0;

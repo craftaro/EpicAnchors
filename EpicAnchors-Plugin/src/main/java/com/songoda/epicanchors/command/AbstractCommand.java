@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 
 public abstract class AbstractCommand {
 
-    public enum ReturnType { SUCCESS, FAILURE, SYNTAX_ERROR }
+    public enum ReturnType {SUCCESS, FAILURE, SYNTAX_ERROR}
 
     private final AbstractCommand parent;
 

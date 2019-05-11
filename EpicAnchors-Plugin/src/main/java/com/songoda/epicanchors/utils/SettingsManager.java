@@ -1,6 +1,7 @@
 package com.songoda.epicanchors.utils;
 
 import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.utils.version.NMSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,8 +15,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
-import java.util.regex.Matcher;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -172,14 +176,14 @@ public class SettingsManager implements Listener {
     public enum Setting {
         o1("Main.Name-Tag", "&eAnchor &8(&7{REMAINING}&8)"),
         o2("Main.Anchor-Lore", "&7Place down to keep that chunk|&7loaded until the time runs out."),
-        o3("Main.Anchor Block Material", EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "END_PORTAL_FRAME" : "ENDER_PORTAL_FRAME"),
+        o3("Main.Anchor Block Material", NMSUtil.getVersionNumber() > 12 ? "END_PORTAL_FRAME" : "ENDER_PORTAL_FRAME"),
         o4("Main.Add Time With Economy", true),
         o5("Main.Economy Cost", 5000.0),
         o6("Main.Add Time With XP", true),
         o7("Main.XP Cost", 10),
         o8("Main.Allow Anchor Breaking", false),
-        o9("Interfaces.Economy Icon", "SUNFLOWER"),
-        o10("Interfaces.XP Icon", "EXPERIENCE_BOTTLE"),
+        o9("Interfaces.Economy Icon", NMSUtil.getVersionNumber() > 12 ? "SUNFLOWER" : "GOLD_INGOT"),
+        o10("Interfaces.XP Icon", NMSUtil.getVersionNumber() > 12 ? "EXPERIENCE_BOTTLE" : "EXP_BOTTLE"),
         o11("Interfaces.Glass Type 1", 7),
         o12("Interfaces.Glass Type 2", 11),
         o13("Interfaces.Glass Type 3", 3),
@@ -210,7 +214,9 @@ public class SettingsManager implements Listener {
             return EpicAnchorsPlugin.getInstance().getConfig().getString(setting);
         }
 
-        public char getChar() { return EpicAnchorsPlugin.getInstance().getConfig().getString(setting).charAt(0); }
+        public char getChar() {
+            return EpicAnchorsPlugin.getInstance().getConfig().getString(setting).charAt(0);
+        }
 
 
     }

@@ -6,7 +6,16 @@ import com.google.common.collect.Lists;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,7 +159,7 @@ public class Locale {
     /**
      * Save a default locale file from the project source directory, to the locale folder
      *
-     * @param in       file to save
+     * @param in file to save
      * @param fileName the name of the file to save
      * @return true if the operation was successful, false otherwise
      */
@@ -322,7 +331,7 @@ public class Locale {
     /**
      * Get a message set for a specific node
      *
-     * @param node         the node to get
+     * @param node the node to get
      * @param defaultValue the default value given that a value for the node was not found
      * @return the message for the specified node. Default if none found
      */

@@ -1,7 +1,7 @@
 package com.songoda.epicanchors.listeners;
 
-import com.songoda.epicanchors.anchor.EAnchor;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.anchor.EAnchor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -25,7 +25,8 @@ public class BlockListeners implements Listener {
         Block block = event.getBlock();
 
         if (!instance.canBuild(player, block.getLocation())
-                || event.getBlock().getType() != Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material"))) return;
+                || event.getBlock().getType() != Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material")))
+            return;
 
         ItemStack item = event.getItemInHand();
 
