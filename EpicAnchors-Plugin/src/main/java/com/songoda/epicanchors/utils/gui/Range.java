@@ -24,7 +24,7 @@ public class Range {
         this.bottom = bottom;
 
         if (onClickSound == null) {
-            if (EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_8)) {
+            if (EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_9)) {
                 this.onClickSound = Sound.UI_BUTTON_CLICK;
             } else {
                 this.onClickSound = Sound.valueOf("CLICK");

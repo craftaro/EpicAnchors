@@ -63,10 +63,10 @@ public class InteractListeners implements Listener {
             if (player.getGameMode() != GameMode.CREATIVE)
                 Methods.takeItem(player, 1);
 
-            Sound sound = EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_8) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP");
+            Sound sound = EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP");
             player.playSound(player.getLocation(), sound, 0.6F, 15.0F);
 
-            if (EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_8))
+            if (EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
                 player.getWorld().spawnParticle(Particle.SPELL_WITCH, anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
 
             event.setCancelled(true);
