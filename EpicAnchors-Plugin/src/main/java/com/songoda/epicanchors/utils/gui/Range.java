@@ -1,6 +1,7 @@
 package com.songoda.epicanchors.utils.gui;
 
-import com.songoda.epicanchors.utils.version.NMSUtil;
+import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.utils.ServerVersion;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
@@ -23,7 +24,7 @@ public class Range {
         this.bottom = bottom;
 
         if (onClickSound == null) {
-            if (NMSUtil.getVersionNumber() > 8) {
+            if (EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_8)) {
                 this.onClickSound = Sound.UI_BUTTON_CLICK;
             } else {
                 this.onClickSound = Sound.valueOf("CLICK");
