@@ -26,7 +26,6 @@ import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.utils.ServerVersion;
 import com.songoda.epicanchors.utils.SettingsManager;
 import com.songoda.epicanchors.utils.updateModules.LocaleModule;
-import com.songoda.epicanchors.utils.version.NMSUtil;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
 import org.apache.commons.lang.ArrayUtils;
@@ -102,7 +101,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         this.anchorManager = new EAnchorManager();
         this.commandManager = new CommandManager(this);
 
-        loadAnchorsFromFile();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, this::loadAnchorsFromFile, 5L);
 
         new AnchorHandler(this);
 
@@ -249,10 +248,10 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         }
         location.getBlock().setType(Material.AIR);
 
-        if (NMSUtil.getVersionNumber() > 8)
+        if (isServerVersionAtLeast(ServerVersion.V1_9))
             location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(.5, .5, .5), 5, 0, 0, 0, 5);
 
-        location.getWorld().playSound(location, this.isServerVersionAtLeast(ServerVersion.V1_13)
+        location.getWorld().playSound(location, this.isServerVersionAtLeast(ServerVersion.V1_9)
                 ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"), 10, 10);
 
         getAnchorManager().removeAnchor(location);
