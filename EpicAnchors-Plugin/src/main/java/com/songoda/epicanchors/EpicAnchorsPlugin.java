@@ -101,7 +101,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         this.anchorManager = new EAnchorManager();
         this.commandManager = new CommandManager(this);
 
-        loadAnchorsFromFile();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, this::loadAnchorsFromFile, 5L);
 
         new AnchorHandler(this);
 
