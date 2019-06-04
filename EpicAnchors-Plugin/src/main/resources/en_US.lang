@@ -10,8 +10,8 @@ interface.button.addtimewithxp = "&aAdd 30 Minutes with XP"
 interface.button.addtimewithxplore = "&7Cost: &a%cost% Levels"
 interface.button.addtimewitheconomy = "&aAdd 30 Minutes with ECO"
 interface.button.addtimewitheconomylore = "&7Cost: &a$%cost%"
-interface.anchor.title = "ChunkAnchor";
-interface.anchor.smalltitle = "&eChunkAnchor";
+interface.anchor.title = "ChunkAnchor"
+interface.anchor.smalltitle = "&eChunkAnchor"
 
 #Command Messages
 
@@ -20,4 +20,4 @@ command.give.success = "&7You have been given a ChunkAnchor."
 #Event Messages
 
 event.general.nopermission = "&cYou do not have permission to do that."
-event.upgrade.cannotafford = "&cYou cant afford that"
+event.upgrade.cannotafford = "&cYou cant afford that."
