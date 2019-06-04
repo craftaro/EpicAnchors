@@ -23,10 +23,10 @@ import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
 import com.songoda.epicanchors.utils.ConfigWrapper;
 import com.songoda.epicanchors.utils.Methods;
+import com.songoda.epicanchors.utils.Metrics;
 import com.songoda.epicanchors.utils.ServerVersion;
 import com.songoda.epicanchors.utils.SettingsManager;
 import com.songoda.epicanchors.utils.updateModules.LocaleModule;
-import com.songoda.epicspawners.utils.Metrics;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
 import org.apache.commons.lang.ArrayUtils;
@@ -127,7 +127,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         if (pluginManager.isPluginEnabled("WorldGuard")) this.register(HookWorldGuard::new);
 
         // Start Metrics
-        new Metrics(this);
+        new Metrics(this);e
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
         console.sendMessage(Methods.formatText("&a============================="));
