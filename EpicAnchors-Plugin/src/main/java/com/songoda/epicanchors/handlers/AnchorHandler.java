@@ -3,7 +3,6 @@ package com.songoda.epicanchors.handlers;
 import com.songoda.epicanchors.EpicAnchorsPlugin;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.utils.ServerVersion;
-import com.songoda.epicspawners.api.EpicSpawnersAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Color;
@@ -135,9 +134,9 @@ public class AnchorHandler {
                 chunk.unload();
             }
 
-            if (!epicSpawners || EpicSpawnersAPI.getSpawnerManager() == null) continue;
+            if (!epicSpawners || com.songoda.epicspawners.EpicSpawners.getInstance().getSpawnerManager() == null) continue;
 
-            EpicSpawnersAPI.getSpawnerManager().getSpawners().stream()
+            com.songoda.epicspawners.EpicSpawners.getInstance().getSpawnerManager().getSpawners().stream()
                     .filter(spawner -> spawner.getWorld().isChunkLoaded(spawner.getX() >> 4, spawner.getZ() >> 4)
                             && chunk == spawner.getLocation().getChunk()).forEach(spawner -> {
                 Block block = spawner.getLocation().getBlock();
