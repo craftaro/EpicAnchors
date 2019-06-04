@@ -127,7 +127,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         if (pluginManager.isPluginEnabled("WorldGuard")) this.register(HookWorldGuard::new);
 
         // Start Metrics
-        new Metrics(this);e
+        new Metrics(this);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
         console.sendMessage(Methods.formatText("&a============================="));
