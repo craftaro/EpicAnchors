@@ -3,10 +3,14 @@ package com.songoda.epicanchors;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.anchor.AnchorManager;
 import com.songoda.epicanchors.command.CommandManager;
+import com.songoda.epicanchors.hologram.Hologram;
+import com.songoda.epicanchors.hologram.HologramHolographicDisplays;
 import com.songoda.epicanchors.tasks.AnchorTask;
 import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
 import com.songoda.epicanchors.utils.*;
+import com.songoda.epicanchors.utils.settings.Setting;
+import com.songoda.epicanchors.utils.settings.SettingsManager;
 import com.songoda.epicanchors.utils.updateModules.LocaleModule;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
@@ -25,9 +29,9 @@ public class EpicAnchors extends JavaPlugin {
 
     public ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
 
-    private ConfigWrapper hooksFile = new ConfigWrapper(this, "", "hooks.yml");
-
     private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
+
+    private Hologram hologram;
 
     private static EpicAnchors INSTANCE;
 
@@ -53,11 +57,10 @@ public class EpicAnchors extends JavaPlugin {
         console.sendMessage(Methods.formatText("&7Action: &aEnabling&7..."));
 
         this.settingsManager = new SettingsManager(this);
-
-        setupConfig();
+        this.settingsManager.setupConfig();
 
         // Locales
-        String langMode = SettingsManager.Setting.LANGUGE_MODE.getString();
+        String langMode = Setting.LANGUGE_MODE.getString();
         Locale.init(this);
         Locale.saveDefaultLocale("en_US");
         this.locale = Locale.getLocale(langMode);
@@ -87,6 +90,14 @@ public class EpicAnchors extends JavaPlugin {
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
 
+        // Register Hologram Plugin
+        if (Setting.HOLOGRAMS.getBoolean()
+                && pluginManager.isPluginEnabled("HolographicDisplays"))
+            hologram = new HologramHolographicDisplays(this);
+
+        if (hologram != null)
+            hologram.loadHolograms();
+
         // Start Metrics
         new Metrics(this);
 
@@ -95,19 +106,14 @@ public class EpicAnchors extends JavaPlugin {
     }
 
     public void onDisable() {
-        saveToFile();
+        this.saveToFile();
+        if (hologram != null)
+            this.hologram.unloadHolograms();
         CommandSender console = Bukkit.getConsoleSender();
         console.sendMessage(Methods.formatText("&a============================="));
         console.sendMessage(Methods.formatText("&7EpicAnchors " + this.getDescription().getVersion() + " by &5Brianna <3!"));
         console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
         console.sendMessage(Methods.formatText("&a============================="));
-    }
-
-    private void setupConfig() {
-        settingsManager.updateSettings();
-
-        getConfig().options().copyDefaults(true);
-        saveConfig();
     }
 
     private void loadAnchorsFromFile() {
@@ -137,8 +143,7 @@ public class EpicAnchors extends JavaPlugin {
         this.locale.reloadMessages();
         this.references = new References();
         this.loadAnchorsFromFile();
-        this.reloadConfig();
-        this.setupConfig();
+        this.settingsManager.reloadConfig();
     }
 
     public int getTicksFromItem(ItemStack item) {
@@ -152,9 +157,9 @@ public class EpicAnchors extends JavaPlugin {
     public ItemStack makAnchorItem(int ticks) {
         ItemStack item = new ItemStack(Material.valueOf(EpicAnchors.getInstance().getConfig().getString("Main.Anchor Block Material")), 1);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(Methods.formatText(Methods.formatName(ticks, true)));
+        meta.setDisplayName(Methods.formatName(ticks, true));
         ArrayList<String> lore = new ArrayList<>();
-        String[] parts = getConfig().getString("Main.Anchor-Lore").split("\\|");
+        String[] parts = Setting.LORE.getString().split("\\|");
         for (String line : parts) {
             lore.add(Methods.formatText(line));
         }
@@ -185,6 +190,10 @@ public class EpicAnchors extends JavaPlugin {
 
     public Locale getLocale() {
         return locale;
+    }
+
+    public Hologram getHologram() {
+        return hologram;
     }
 
     public CommandManager getCommandManager() {

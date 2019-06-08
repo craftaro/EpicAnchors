@@ -1,6 +1,7 @@
 package com.songoda.epicanchors.utils;
 
 import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.utils.settings.Setting;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -23,27 +24,24 @@ public class Methods {
 
     private static Map<String, Location> serializeCache = new HashMap<>();
 
-    public static void takeItem(Player p, int amt) {
-        if (p.getGameMode() != GameMode.CREATIVE) {
-            int result = p.getInventory().getItemInHand().getAmount() - amt;
+    public static void takeItem(Player player, int amt) {
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            int result = player.getInventory().getItemInHand().getAmount() - amt;
             if (result > 0) {
-                ItemStack is = p.getItemInHand();
+                ItemStack is = player.getItemInHand();
                 is.setAmount(is.getAmount() - amt);
-                p.setItemInHand(is);
+                player.setItemInHand(is);
             } else {
-                p.setItemInHand(null);
+                player.setItemInHand(null);
             }
         }
     }
 
     public static String formatName(int ticks2, boolean full) {
-        int hours = ((ticks2 / 20) / 60) / 60;
-        int minutes = ((ticks2 / 20) / 60) - hours * 60;
 
-        String remaining = minutes == 0 ? String.format("%sh", hours) : String.format("%sh %sm", hours, minutes);
+        String remaining = Methods.makeReadable((ticks2 / 20L) * 1000L);
 
-
-        String name = EpicAnchors.getInstance().getConfig().getString("Main.Name-Tag").replace("{REMAINING}", remaining);
+        String name = Setting.NAMETAG.getString().replace("{REMAINING}", remaining);
 
         String info = "";
         if (full) {
@@ -158,16 +156,56 @@ public class Methods {
         return location;
     }
 
-    /**
-     * Makes the specified Unix Epoch time human readable as per the format settings in the Arconix config.
-     *
-     * @param time The time to convert.
-     * @return A human readable string representing to specified time.
-     */
     public static String makeReadable(Long time) {
         if (time == null)
             return "";
-        return String.format("%d hour(s), %d min(s), %d sec(s)", TimeUnit.MILLISECONDS.toHours(time), TimeUnit.MILLISECONDS.toMinutes(time) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)), TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
+
+        StringBuilder sb = new StringBuilder();
+
+        long days = TimeUnit.MILLISECONDS.toDays(time);
+        long hours = TimeUnit.MILLISECONDS.toHours(time) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(time));
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time));
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time));
+
+        if (days != 0L)
+            sb.append(" ").append(days).append("d");
+        if (hours != 0L)
+            sb.append(" ").append(hours).append("h");
+        if (minutes != 0L)
+            sb.append(" ").append(minutes).append("m");
+        if (seconds != 0L)
+            sb.append(" ").append(seconds).append("s");
+        return sb.toString().trim();
+    }
+
+
+    public static long parseTime(String input) {
+        long result = 0;
+        StringBuilder number = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (Character.isDigit(c)) {
+                number.append(c);
+            } else if (Character.isLetter(c) && (number.length() > 0)) {
+                result += convert(Integer.parseInt(number.toString()), c);
+                number = new StringBuilder();
+            }
+        }
+        return result;
+    }
+
+    private static long convert(long value, char unit) {
+        switch (unit) {
+            case 'd':
+                return value * 1000 * 60 * 60 * 24;
+            case 'h':
+                return value * 1000 * 60 * 60;
+            case 'm':
+                return value * 1000 * 60;
+            case 's':
+                return value * 1000;
+        }
+        return 0;
     }
 
     /**

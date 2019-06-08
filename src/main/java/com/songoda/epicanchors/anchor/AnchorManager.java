@@ -14,7 +14,7 @@ public class AnchorManager {
         return registeredAnchors.put(roundLocation(location), anchor);
     }
 
-    public void removAnchor(Location location) {
+    public void removeAnchor(Location location) {
         registeredAnchors.remove(roundLocation(location));
     }
 

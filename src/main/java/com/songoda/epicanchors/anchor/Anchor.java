@@ -76,11 +76,33 @@ public class Anchor {
         location.getWorld().playSound(location, plugin.isServerVersionAtLeast(ServerVersion.V1_9)
                 ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"), 10, 10);
 
-        plugin.getAnchorManager().removAnchor(location);
+        if (plugin.getHologram() != null)
+            plugin.getHologram().remove(this);
+        plugin.getAnchorManager().removeAnchor(location);
     }
 
     public Location getLocation() {
         return location.clone();
+    }
+
+
+    public int getX() {
+        return location.getBlockX();
+    }
+
+
+    public int getY() {
+        return location.getBlockY();
+    }
+
+
+    public int getZ() {
+        return location.getBlockZ();
+    }
+
+
+    public World getWorld() {
+        return location.getWorld();
     }
 
     public int getTicksLeft() {

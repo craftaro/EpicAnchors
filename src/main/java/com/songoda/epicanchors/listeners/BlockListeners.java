@@ -10,10 +10,10 @@ import org.bukkit.inventory.ItemStack;
 
 public class BlockListeners implements Listener {
 
-    private EpicAnchors instance;
+    private EpicAnchors plugin;
 
     public BlockListeners(EpicAnchors instance) {
-        this.instance = instance;
+        this.plugin = instance;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -23,15 +23,19 @@ public class BlockListeners implements Listener {
 
         if (!item.hasItemMeta()
                 || !item.getItemMeta().hasDisplayName()
-                || instance.getTicksFromItem(item) == 0) return;
+                || plugin.getTicksFromItem(item) == 0) return;
 
-        instance.getAnchorManager().addAnchor(event.getBlock().getLocation(), new Anchor(event.getBlock().getLocation(), instance.getTicksFromItem(item)));
+        Anchor anchor = new Anchor(event.getBlock().getLocation(), plugin.getTicksFromItem(item));
+        plugin.getAnchorManager().addAnchor(event.getBlock().getLocation(), anchor);
+
+        if (plugin.getHologram() != null)
+            plugin.getHologram().add(anchor);
 
     }
 
     @EventHandler
     public void onPortalCreation(EntityCreatePortalEvent e) {
         if (e.getBlocks().size() < 1) return;
-        if (instance.getAnchorManager().isAnchor(e.getBlocks().get(0).getLocation())) e.setCancelled(true);
+        if (plugin.getAnchorManager().isAnchor(e.getBlocks().get(0).getLocation())) e.setCancelled(true);
     }
 }

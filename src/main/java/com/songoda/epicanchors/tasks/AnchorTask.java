@@ -34,7 +34,7 @@ public class AnchorTask extends BukkitRunnable {
     public AnchorTask(EpicAnchors plug) {
         plugin = plug;
         epicSpawners = Bukkit.getPluginManager().getPlugin("EpicSpawners") != null;
-        
+
         try {
             String ver = Bukkit.getServer().getClass().getPackage().getName().substring(23);
             clazzMinecraftServer = Class.forName("net.minecraft.server." + ver + ".MinecraftServer");
@@ -68,14 +68,9 @@ public class AnchorTask extends BukkitRunnable {
         for (Anchor anchor : plugin.getAnchorManager().getAnchors().values()) {
             Location location1 = anchor.getLocation().add(.5, .5, .5);
             if (location1.getWorld() == null) continue;
-            float xx = (float) (0 + (Math.random() * .15));
+            float xx = (float) (0 + (Math.random() * .75));
             float yy = (float) (0 + (Math.random() * 1));
-            float zz = (float) (0 + (Math.random() * .15));
-            location1.getWorld().spawnParticle(Particle.SPELL, location1, 5, xx, yy, zz, 5);
-
-            xx = (float) (0 + (Math.random() * .75));
-            yy = (float) (0 + (Math.random() * 1));
-            zz = (float) (0 + (Math.random() * .75));
+            float zz = (float) (0 + (Math.random() * .75));
             if (!plugin.isServerVersionAtLeast(ServerVersion.V1_13))
                 location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1);
             else
@@ -90,6 +85,9 @@ public class AnchorTask extends BukkitRunnable {
         for (Anchor anchor : plugin.getAnchorManager().getAnchors().values()) {
 
             if (anchor.getLocation() == null) continue;
+
+            if (plugin.getHologram() != null)
+                plugin.getHologram().update(anchor);
 
             Location location = anchor.getLocation();
 
@@ -122,7 +120,7 @@ public class AnchorTask extends BukkitRunnable {
             anchor.setTicksLeft(ticksLeft - 3);
 
             if (ticksLeft <= 0) {
-                plugin.getAnchorManager().removAnchor(location);
+                plugin.getAnchorManager().removeAnchor(location);
                 if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
                     location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(.5, .5, .5), 5, 0, 0, 0, 5);
                 location.getWorld().playSound(location, plugin.isServerVersionAtLeast(ServerVersion.V1_13)
