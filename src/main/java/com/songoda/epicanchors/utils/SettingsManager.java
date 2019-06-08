@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.utils;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.EpicAnchors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,12 +27,12 @@ import java.util.regex.Pattern;
 public class SettingsManager implements Listener {
 
     private static final Pattern SETTINGS_PATTERN = Pattern.compile("(.{1,28}(?:\\s|$))|(.{0,28})", Pattern.DOTALL);
-    private final EpicAnchorsPlugin instance;
+    private final EpicAnchors instance;
     private String pluginName = "EpicAnchors";
     private Map<Player, String> cat = new HashMap<>();
     private Map<Player, String> current = new HashMap<>();
 
-    public SettingsManager(EpicAnchorsPlugin plugin) {
+    public SettingsManager(EpicAnchors plugin) {
         this.instance = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
@@ -86,7 +86,7 @@ public class SettingsManager implements Listener {
             config.set(value, event.getMessage());
         }
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(EpicAnchorsPlugin.getInstance(), () ->
+        Bukkit.getScheduler().scheduleSyncDelayedTask(EpicAnchors.getInstance(), () ->
                 this.finishEditing(player), 0L);
 
         event.setCancelled(true);
@@ -175,14 +175,14 @@ public class SettingsManager implements Listener {
     public enum Setting {
         o1("Main.Name-Tag", "&eAnchor &8(&7{REMAINING}&8)"),
         o2("Main.Anchor-Lore", "&7Place down to keep that chunk|&7loaded until the time runs out."),
-        o3("Main.Anchor Block Material", EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "END_PORTAL_FRAME" : "ENDER_PORTAL_FRAME"),
+        o3("Main.Anchor Block Material", EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "END_PORTAL_FRAME" : "ENDER_PORTAL_FRAME"),
         o4("Main.Add Time With Economy", true),
         o5("Main.Economy Cost", 5000.0),
         o6("Main.Add Time With XP", true),
         o7("Main.XP Cost", 10),
         o8("Main.Allow Anchor Breaking", false),
-        o9("Interfaces.Economy Icon", EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "SUNFLOWER" : "GOLD_INGOT"),
-        o10("Interfaces.XP Icon", EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "EXPERIENCE_BOTTLE" : "EXP_BOTTLE"),
+        o9("Interfaces.Economy Icon", EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "SUNFLOWER" : "GOLD_INGOT"),
+        o10("Interfaces.XP Icon", EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "EXPERIENCE_BOTTLE" : "EXP_BOTTLE"),
         o11("Interfaces.Glass Type 1", 7),
         o12("Interfaces.Glass Type 2", 11),
         o13("Interfaces.Glass Type 3", 3),
@@ -198,23 +198,23 @@ public class SettingsManager implements Listener {
         }
 
         public List<String> getStringList() {
-            return EpicAnchorsPlugin.getInstance().getConfig().getStringList(setting);
+            return EpicAnchors.getInstance().getConfig().getStringList(setting);
         }
 
         public boolean getBoolean() {
-            return EpicAnchorsPlugin.getInstance().getConfig().getBoolean(setting);
+            return EpicAnchors.getInstance().getConfig().getBoolean(setting);
         }
 
         public int getInt() {
-            return EpicAnchorsPlugin.getInstance().getConfig().getInt(setting);
+            return EpicAnchors.getInstance().getConfig().getInt(setting);
         }
 
         public String getString() {
-            return EpicAnchorsPlugin.getInstance().getConfig().getString(setting);
+            return EpicAnchors.getInstance().getConfig().getString(setting);
         }
 
         public char getChar() {
-            return EpicAnchorsPlugin.getInstance().getConfig().getString(setting).charAt(0);
+            return EpicAnchors.getInstance().getConfig().getString(setting).charAt(0);
         }
 
 

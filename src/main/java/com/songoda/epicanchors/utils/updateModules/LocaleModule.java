@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.utils.updateModules;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.update.Module;
 import com.songoda.update.Plugin;
 import org.json.simple.JSONArray;
@@ -22,7 +22,7 @@ public class LocaleModule implements Module {
 
                 if (file.get("type").equals("locale")) {
                     InputStream in = new URL((String) file.get("link")).openStream();
-                    EpicAnchorsPlugin.getInstance().getLocale().saveDefaultLocale(in, (String) file.get("name"));
+                    EpicAnchors.getInstance().getLocale().saveDefaultLocale(in, (String) file.get("name"));
                 }
             }
         } catch (IOException e) {

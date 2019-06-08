@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.anchor;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.gui.GUIOverview;
 import com.songoda.epicanchors.utils.ServerVersion;
@@ -23,11 +23,11 @@ public class EAnchor implements Anchor {
     }
 
     public void overview(Player player) {
-        new GUIOverview(EpicAnchorsPlugin.getInstance(), this, player);
+        new GUIOverview(EpicAnchors.getInstance(), this, player);
     }
 
     public void addTime(String type, Player player) {
-        EpicAnchorsPlugin instance = EpicAnchorsPlugin.getInstance();
+        EpicAnchors instance = EpicAnchors.getInstance();
 
         if (type.equals("ECO")) {
             if (instance.getServer().getPluginManager().getPlugin("Vault") != null) {
@@ -57,10 +57,10 @@ public class EAnchor implements Anchor {
         }
 
         ticksLeft = ticksLeft + 20 * 60 * 30;
-        Sound sound = EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP");
+        Sound sound = EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP");
         player.playSound(player.getLocation(), sound, 0.6F, 15.0F);
 
-        if (EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
+        if (EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
             player.getWorld().spawnParticle(Particle.SPELL_WITCH, getLocation().add(.5, .5, .5), 100, .5, .5, .5);
     }
 

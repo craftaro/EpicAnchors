@@ -1,67 +1,38 @@
 package com.songoda.epicanchors;
 
-import com.google.common.base.Preconditions;
-import com.songoda.epicanchors.anchor.EAnchor;
-import com.songoda.epicanchors.anchor.EAnchorManager;
-import com.songoda.epicanchors.api.EpicAnchors;
-import com.songoda.epicanchors.api.anchor.Anchor;
-import com.songoda.epicanchors.api.anchor.AnchorManager;
-import com.songoda.epicanchors.api.utils.ClaimableProtectionPluginHook;
-import com.songoda.epicanchors.api.utils.ProtectionPluginHook;
+import com.songoda.epicanchors.anchor.Anchor;
+import com.songoda.epicanchors.anchor.AnchorManager;
 import com.songoda.epicanchors.command.CommandManager;
 import com.songoda.epicanchors.handlers.AnchorHandler;
-import com.songoda.epicanchors.hooks.HookASkyBlock;
-import com.songoda.epicanchors.hooks.HookFactions;
-import com.songoda.epicanchors.hooks.HookGriefPrevention;
-import com.songoda.epicanchors.hooks.HookKingdoms;
-import com.songoda.epicanchors.hooks.HookPlotSquared;
-import com.songoda.epicanchors.hooks.HookRedProtect;
-import com.songoda.epicanchors.hooks.HookTowny;
-import com.songoda.epicanchors.hooks.HookUSkyBlock;
-import com.songoda.epicanchors.hooks.HookWorldGuard;
 import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
-import com.songoda.epicanchors.utils.ConfigWrapper;
-import com.songoda.epicanchors.utils.Methods;
-import com.songoda.epicanchors.utils.ServerVersion;
-import com.songoda.epicanchors.utils.SettingsManager;
+import com.songoda.epicanchors.utils.*;
 import com.songoda.epicanchors.utils.updateModules.LocaleModule;
-import com.songoda.epicspawners.utils.Metrics;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
 
-public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
+public class EpicAnchors extends JavaPlugin {
 
     public ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
-
-    private List<ProtectionPluginHook> protectionHooks = new ArrayList<>();
-    private ClaimableProtectionPluginHook factionsHook, townyHook, aSkyblockHook, uSkyblockHook;
 
     private ConfigWrapper hooksFile = new ConfigWrapper(this, "", "hooks.yml");
 
     private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
 
-    private static EpicAnchorsPlugin INSTANCE;
+    private static EpicAnchors INSTANCE;
 
     private SettingsManager settingsManager;
-    private EAnchorManager anchorManager;
+    private AnchorManager anchorManager;
 
     private CommandManager commandManager;
 
@@ -69,7 +40,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
 
     private Locale locale;
 
-    public static EpicAnchorsPlugin getInstance() {
+    public static EpicAnchors getInstance() {
         return INSTANCE;
     }
 
@@ -99,7 +70,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         dataFile.createNewFile("Loading Data File", "EpicAnchors Data File");
 
         this.references = new References();
-        this.anchorManager = new EAnchorManager();
+        this.anchorManager = new AnchorManager();
         this.commandManager = new CommandManager(this);
 
         loadAnchorsFromFile();
@@ -114,17 +85,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         // Event registration
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
-
-        // Register default hooks
-        if (pluginManager.isPluginEnabled("ASkyBlock")) this.register(HookASkyBlock::new);
-        if (pluginManager.isPluginEnabled("FactionsFramework")) this.register(HookFactions::new);
-        if (pluginManager.isPluginEnabled("GriefPrevention")) this.register(HookGriefPrevention::new);
-        if (pluginManager.isPluginEnabled("Kingdoms")) this.register(HookKingdoms::new);
-        if (pluginManager.isPluginEnabled("PlotSquared")) this.register(HookPlotSquared::new);
-        if (pluginManager.isPluginEnabled("RedProtect")) this.register(HookRedProtect::new);
-        if (pluginManager.isPluginEnabled("Towny")) this.register(HookTowny::new);
-        if (pluginManager.isPluginEnabled("USkyBlock")) this.register(HookUSkyBlock::new);
-        if (pluginManager.isPluginEnabled("WorldGuard")) this.register(HookWorldGuard::new);
 
         // Start Metrics
         new Metrics(this);
@@ -155,7 +115,7 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
                 Location location = Methods.unserializeLocation(locationStr);
                 int ticksLeft = dataFile.getConfig().getInt("Anchors." + locationStr + ".ticksLeft");
 
-                EAnchor anchor = new EAnchor(location, ticksLeft);
+                Anchor anchor = new Anchor(location, ticksLeft);
 
                 anchorManager.addAnchor(location, anchor);
             }
@@ -180,44 +140,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         this.setupConfig();
     }
 
-
-    private void register(Supplier<ProtectionPluginHook> hookSupplier) {
-        this.registerProtectionHook(hookSupplier.get());
-    }
-
-
-    @Override
-    public void registerProtectionHook(ProtectionPluginHook hook) {
-        Preconditions.checkNotNull(hook, "Cannot register null hook");
-        Preconditions.checkNotNull(hook.getPlugin(), "Protection plugin hook returns null plugin instance (#getPlugin())");
-
-        JavaPlugin hookPlugin = hook.getPlugin();
-        for (ProtectionPluginHook existingHook : protectionHooks) {
-            if (existingHook.getPlugin().equals(hookPlugin)) {
-                throw new IllegalArgumentException("Hook already registered");
-            }
-        }
-
-        this.hooksFile.getConfig().addDefault("hooks." + hookPlugin.getName(), true);
-        if (!hooksFile.getConfig().getBoolean("hooks." + hookPlugin.getName(), true)) return;
-        this.hooksFile.getConfig().options().copyDefaults(true);
-        this.hooksFile.saveConfig();
-
-        this.protectionHooks.add(hook);
-        this.getLogger().info("Registered protection hook for plugin: " + hook.getPlugin().getName());
-    }
-
-    public boolean canBuild(Player player, Location location) {
-        if (player.hasPermission(getDescription().getName() + ".bypass")) {
-            return true;
-        }
-
-        for (ProtectionPluginHook hook : protectionHooks)
-            if (!hook.canBuild(player, location)) return false;
-        return true;
-    }
-
-    @Override
     public int getTicksFromItem(ItemStack item) {
         if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) return 0;
         if (item.getItemMeta().getDisplayName().contains(":")) {
@@ -226,9 +148,8 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         return 0;
     }
 
-    @Override
     public ItemStack makeAnchorItem(int ticks) {
-        ItemStack item = new ItemStack(Material.valueOf(EpicAnchorsPlugin.getInstance().getConfig().getString("Main.Anchor Block Material")), 1);
+        ItemStack item = new ItemStack(Material.valueOf(EpicAnchors.getInstance().getConfig().getString("Main.Anchor Block Material")), 1);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Methods.formatText(Methods.formatName(ticks, true)));
         ArrayList<String> lore = new ArrayList<>();
@@ -289,7 +210,6 @@ public class EpicAnchorsPlugin extends JavaPlugin implements EpicAnchors {
         return commandManager;
     }
 
-    @Override
     public AnchorManager getAnchorManager() {
         return anchorManager;
     }
