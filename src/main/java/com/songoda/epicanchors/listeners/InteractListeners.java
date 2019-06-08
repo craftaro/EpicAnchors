@@ -1,8 +1,7 @@
 package com.songoda.epicanchors.listeners;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
-import com.songoda.epicanchors.anchor.EAnchor;
-import com.songoda.epicanchors.api.anchor.Anchor;
+import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.utils.ServerVersion;
 import org.bukkit.GameMode;
@@ -18,9 +17,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class InteractListeners implements Listener {
 
-    private EpicAnchorsPlugin instance;
+    private EpicAnchors instance;
 
-    public InteractListeners(EpicAnchorsPlugin instance) {
+    public InteractListeners(EpicAnchors instance) {
         this.instance = instance;
     }
 
@@ -29,22 +28,15 @@ public class InteractListeners implements Listener {
     public void onBlockInteract(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) return;
 
-        if (instance.getAnchorManager().getAnchor(event.getClickedBlock().getLocation()) == null) return;
-
-        if (!instance.canBuild(event.getPlayer(), event.getClickedBlock().getLocation())) {
-            event.setCancelled(true);
-            return;
-        }
-
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            instance.bust(event.getClickedBlock().getLocation());
-            event.setCancelled(true);
-            return;
-        }
-
-
         Anchor anchor = instance.getAnchorManager().getAnchor(event.getClickedBlock().getLocation());
 
+        if (anchor == null) return;
+
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            anchor.bust();
+            event.setCancelled(true);
+            return;
+        }
 
         Player player = event.getPlayer();
         ItemStack item = player.getItemInHand();
@@ -63,10 +55,10 @@ public class InteractListeners implements Listener {
             if (player.getGameMode() != GameMode.CREATIVE)
                 Methods.takeItem(player, 1);
 
-            Sound sound = EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP");
+            Sound sound = EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP");
             player.playSound(player.getLocation(), sound, 0.6F, 15.0F);
 
-            if (EpicAnchorsPlugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
+            if (EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
                 player.getWorld().spawnParticle(Particle.SPELL_WITCH, anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
 
             event.setCancelled(true);
@@ -74,7 +66,7 @@ public class InteractListeners implements Listener {
             return;
         }
 
-        ((EAnchor) anchor).overview(player);
+        ((Anchor) anchor).overview(player);
 
     }
 

@@ -1,7 +1,7 @@
 package com.songoda.epicanchors.gui;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
-import com.songoda.epicanchors.anchor.EAnchor;
+import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.utils.Methods;
 import com.songoda.epicanchors.utils.gui.AbstractGUI;
 import org.bukkit.Bukkit;
@@ -15,12 +15,12 @@ import java.util.List;
 
 public class GUIOverview extends AbstractGUI {
 
-    private final EpicAnchorsPlugin plugin;
-    private final EAnchor anchor;
+    private final EpicAnchors plugin;
+    private final Anchor anchor;
 
     private int task;
 
-    public GUIOverview(EpicAnchorsPlugin plugin, EAnchor anchor, Player player) {
+    public GUIOverview(EpicAnchors plugin, Anchor anchor, Player player) {
         super(player);
         this.plugin = plugin;
         this.anchor = anchor;
@@ -72,7 +72,7 @@ public class GUIOverview extends AbstractGUI {
         itemmetaECO.setLore(loreECO);
         itemECO.setItemMeta(itemmetaECO);
 
-        ItemStack item = plugin.makeAnchorItem(anchor.getTicksLeft());
+        ItemStack item = plugin.makAnchorItem(anchor.getTicksLeft());
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.smalltitle")));
         List<String> lore = new ArrayList<>();

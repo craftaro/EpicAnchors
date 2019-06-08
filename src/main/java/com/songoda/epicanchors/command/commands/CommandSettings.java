@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.command.commands;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.command.AbstractCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,7 +12,7 @@ public class CommandSettings extends AbstractCommand {
     }
 
     @Override
-    protected ReturnType runCommand(EpicAnchorsPlugin instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(EpicAnchors instance, CommandSender sender, String... args) {
         instance.getSettingsManager().openSettingsManager((Player) sender);
         return ReturnType.SUCCESS;
     }

@@ -173,7 +173,7 @@ public class SettingsManager implements Listener {
     }
 
     public enum Setting {
-        o1("Main.Name-Tag", "&eAnchor &8(&7{REMAINING}&8)"),
+        o1("Main.Name-Tag", "&Anchor &8(&7{REMAINING}&8)"),
         o2("Main.Anchor-Lore", "&7Place down to keep that chunk|&7loaded until the time runs out."),
         o3("Main.Anchor Block Material", EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "END_PORTAL_FRAME" : "ENDER_PORTAL_FRAME"),
         o4("Main.Add Time With Economy", true),

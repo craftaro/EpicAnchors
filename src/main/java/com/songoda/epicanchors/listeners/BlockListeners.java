@@ -1,10 +1,7 @@
 package com.songoda.epicanchors.listeners;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
-import com.songoda.epicanchors.anchor.EAnchor;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.anchor.Anchor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -13,20 +10,14 @@ import org.bukkit.inventory.ItemStack;
 
 public class BlockListeners implements Listener {
 
-    private EpicAnchorsPlugin instance;
+    private EpicAnchors instance;
 
-    public BlockListeners(EpicAnchorsPlugin instance) {
+    public BlockListeners(EpicAnchors instance) {
         this.instance = instance;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        Player player = event.getPlayer();
-        Block block = event.getBlock();
-
-        if (!instance.canBuild(player, block.getLocation())
-                || event.getBlock().getType() != Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material")))
-            return;
 
         ItemStack item = event.getItemInHand();
 
@@ -34,7 +25,7 @@ public class BlockListeners implements Listener {
                 || !item.getItemMeta().hasDisplayName()
                 || instance.getTicksFromItem(item) == 0) return;
 
-        instance.getAnchorManager().addAnchor(event.getBlock().getLocation(), new EAnchor(event.getBlock().getLocation(), instance.getTicksFromItem(item)));
+        instance.getAnchorManager().addAnchor(event.getBlock().getLocation(), new Anchor(event.getBlock().getLocation(), instance.getTicksFromItem(item)));
 
     }
 

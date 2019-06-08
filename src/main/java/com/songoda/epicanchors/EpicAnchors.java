@@ -3,7 +3,7 @@ package com.songoda.epicanchors;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.anchor.AnchorManager;
 import com.songoda.epicanchors.command.CommandManager;
-import com.songoda.epicanchors.handlers.AnchorHandler;
+import com.songoda.epicanchors.tasks.AnchorTask;
 import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
 import com.songoda.epicanchors.utils.*;
@@ -75,7 +75,8 @@ public class EpicAnchors extends JavaPlugin {
 
         loadAnchorsFromFile();
 
-        new AnchorHandler(this);
+        // Start tasks
+        new AnchorTask(this);
 
         // Command registration
         this.getCommand("EpicAnchors").setExecutor(new CommandManager(this));
@@ -148,7 +149,7 @@ public class EpicAnchors extends JavaPlugin {
         return 0;
     }
 
-    public ItemStack makeAnchorItem(int ticks) {
+    public ItemStack makAnchorItem(int ticks) {
         ItemStack item = new ItemStack(Material.valueOf(EpicAnchors.getInstance().getConfig().getString("Main.Anchor Block Material")), 1);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Methods.formatText(Methods.formatName(ticks, true)));
@@ -160,26 +161,6 @@ public class EpicAnchors extends JavaPlugin {
         meta.setLore(lore);
         item.setItemMeta(meta);
         return item;
-    }
-
-    public void bust(Location location) {
-        if (!getAnchorManager().isAnchor(location)) return;
-
-        Anchor anchor = getAnchorManager().getAnchor(location);
-
-        if (getConfig().getBoolean("Main.Allow Anchor Breaking")) {
-            ItemStack item = makeAnchorItem(anchor.getTicksLeft());
-            anchor.getLocation().getWorld().dropItemNaturally(anchor.getLocation(), item);
-        }
-        location.getBlock().setType(Material.AIR);
-
-        if (isServerVersionAtLeast(ServerVersion.V1_9))
-            location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(.5, .5, .5), 5, 0, 0, 0, 5);
-
-        location.getWorld().playSound(location, this.isServerVersionAtLeast(ServerVersion.V1_9)
-                ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"), 10, 10);
-
-        getAnchorManager().removeAnchor(location);
     }
 
     public ServerVersion getServerVersion() {

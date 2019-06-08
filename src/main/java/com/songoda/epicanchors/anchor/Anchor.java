@@ -1,23 +1,20 @@
 package com.songoda.epicanchors.anchor;
 
 import com.songoda.epicanchors.EpicAnchors;
-import com.songoda.epicanchors.api.anchor.Anchor;
 import com.songoda.epicanchors.gui.GUIOverview;
 import com.songoda.epicanchors.utils.ServerVersion;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class EAnchor implements Anchor {
+public class Anchor {
 
     private Location location;
     private int ticksLeft;
 
-    public EAnchor(Location location, int ticksLeft) {
+    public Anchor(Location location, int ticksLeft) {
         this.location = location;
         this.ticksLeft = ticksLeft;
     }
@@ -64,17 +61,32 @@ public class EAnchor implements Anchor {
             player.getWorld().spawnParticle(Particle.SPELL_WITCH, getLocation().add(.5, .5, .5), 100, .5, .5, .5);
     }
 
-    @Override
+    public void bust() {
+        EpicAnchors plugin = EpicAnchors.getInstance();
+
+        if (plugin.getConfig().getBoolean("Main.Allow Anchor Breaking")) {
+            ItemStack item = plugin.makAnchorItem(getTicksLeft());
+            getLocation().getWorld().dropItemNaturally(getLocation(), item);
+        }
+        location.getBlock().setType(Material.AIR);
+
+        if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
+            location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(.5, .5, .5), 5, 0, 0, 0, 5);
+
+        location.getWorld().playSound(location, plugin.isServerVersionAtLeast(ServerVersion.V1_9)
+                ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"), 10, 10);
+
+        plugin.getAnchorManager().removAnchor(location);
+    }
+
     public Location getLocation() {
         return location.clone();
     }
 
-    @Override
     public int getTicksLeft() {
         return ticksLeft;
     }
 
-    @Override
     public void setTicksLeft(int ticksLeft) {
         this.ticksLeft = ticksLeft;
     }

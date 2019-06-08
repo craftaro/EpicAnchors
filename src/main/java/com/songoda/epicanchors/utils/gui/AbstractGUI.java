@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.utils.gui;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -125,7 +125,7 @@ public abstract class AbstractGUI implements Listener {
                 registerOnCloses();
         }
         constructGUI();
-        initializeListeners(EpicAnchorsPlugin.getInstance());
+        initializeListeners(EpicAnchors.getInstance());
         player.openInventory(inventory);
     }
 

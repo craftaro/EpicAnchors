@@ -1,29 +1,25 @@
-package com.songoda.epicanchors.handlers;
+package com.songoda.epicanchors.tasks;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
-import com.songoda.epicanchors.api.anchor.Anchor;
+import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.utils.ServerVersion;
 import com.songoda.epicspawners.EpicSpawners;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnchorHandler {
+public class AnchorTask extends BukkitRunnable {
 
-    private EpicAnchorsPlugin instance;
+    private static EpicAnchors plugin;
+
     private Map<Location, Integer> delays = new HashMap<>();
 
     private Class<?> clazzEntity, clazzCraftEntity, clazzMinecraftServer;
@@ -34,22 +30,24 @@ public class AnchorHandler {
 
     private boolean epicSpawners;
 
-    public AnchorHandler(EpicAnchorsPlugin instance) {
-        this.instance = instance;
 
+    public AnchorTask(EpicAnchors plug) {
+        plugin = plug;
+        epicSpawners = Bukkit.getPluginManager().getPlugin("EpicSpawners") != null;
+        
         try {
             String ver = Bukkit.getServer().getClass().getPackage().getName().substring(23);
             clazzMinecraftServer = Class.forName("net.minecraft.server." + ver + ".MinecraftServer");
             clazzEntity = Class.forName("net.minecraft.server." + ver + ".Entity");
             clazzCraftEntity = Class.forName("org.bukkit.craftbukkit." + ver + ".entity.CraftEntity");
 
-            if (instance.isServerVersionAtLeast(ServerVersion.V1_13))
+            if (plugin.isServerVersionAtLeast(ServerVersion.V1_13))
                 methodTick = clazzEntity.getDeclaredMethod("tick");
-            else if (instance.isServerVersion(ServerVersion.V1_12))
+            else if (plugin.isServerVersion(ServerVersion.V1_12))
                 methodTick = clazzEntity.getDeclaredMethod("B_");
-            else if (instance.isServerVersion(ServerVersion.V1_11))
+            else if (plugin.isServerVersion(ServerVersion.V1_11))
                 methodTick = clazzEntity.getDeclaredMethod("A_");
-            else if (instance.isServerVersionAtLeast(ServerVersion.V1_9))
+            else if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
                 methodTick = clazzEntity.getDeclaredMethod("m");
             else
                 methodTick = clazzEntity.getDeclaredMethod("t_");
@@ -62,15 +60,12 @@ public class AnchorHandler {
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
-        epicSpawners = instance.getServer().getPluginManager().getPlugin("EpicSpawners") != null;
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doAnchorCheck, 0, 1); //ToDo: way to fast.
-        if (instance.isServerVersionAtLeast(ServerVersion.V1_9))
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, this::doParticle, 0, 2); //ToDo: way to fast.
+        this.runTaskTimer(plugin, 0, 3);
     }
 
     private void doParticle() {
-        for (Anchor anchor : instance.getAnchorManager().getAnchors().values()) {
+        for (Anchor anchor : plugin.getAnchorManager().getAnchors().values()) {
             Location location1 = anchor.getLocation().add(.5, .5, .5);
             if (location1.getWorld() == null) continue;
             float xx = (float) (0 + (Math.random() * .15));
@@ -81,23 +76,24 @@ public class AnchorHandler {
             xx = (float) (0 + (Math.random() * .75));
             yy = (float) (0 + (Math.random() * 1));
             zz = (float) (0 + (Math.random() * .75));
-            if (!instance.isServerVersionAtLeast(ServerVersion.V1_13))
+            if (!plugin.isServerVersionAtLeast(ServerVersion.V1_13))
                 location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1);
             else
                 location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1, new Particle.DustOptions(Color.WHITE, 1F));
-
-
         }
     }
 
-    private void doAnchorCheck() {
-        for (Anchor anchor : instance.getAnchorManager().getAnchors().values()) {
+    @Override
+    public void run() {
+        if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
+            doParticle();
+        for (Anchor anchor : plugin.getAnchorManager().getAnchors().values()) {
 
             if (anchor.getLocation() == null) continue;
 
             Location location = anchor.getLocation();
 
-            if (anchor.getLocation().getBlock().getType() != Material.valueOf(instance.getConfig().getString("Main.Anchor Block Material")))
+            if (anchor.getLocation().getBlock().getType() != Material.valueOf(plugin.getConfig().getString("Main.Anchor Block Material")))
                 continue;
 
             Chunk chunk = location.getChunk();
@@ -123,13 +119,13 @@ public class AnchorHandler {
             }
 
             int ticksLeft = anchor.getTicksLeft();
-            anchor.setTicksLeft(ticksLeft - 1);
+            anchor.setTicksLeft(ticksLeft - 3);
 
             if (ticksLeft <= 0) {
-                instance.getAnchorManager().removeAnchor(location);
-                if (instance.isServerVersionAtLeast(ServerVersion.V1_9))
+                plugin.getAnchorManager().removAnchor(location);
+                if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
                     location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(.5, .5, .5), 5, 0, 0, 0, 5);
-                location.getWorld().playSound(location, instance.isServerVersionAtLeast(ServerVersion.V1_13)
+                location.getWorld().playSound(location, plugin.isServerVersionAtLeast(ServerVersion.V1_13)
                         ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"), 10, 10);
                 location.getBlock().setType(Material.AIR);
                 chunk.unload();

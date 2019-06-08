@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.command;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.EpicAnchors;
 import org.bukkit.command.CommandSender;
 
 public abstract class AbstractCommand {
@@ -31,7 +31,7 @@ public abstract class AbstractCommand {
         return noConsole;
     }
 
-    protected abstract ReturnType runCommand(EpicAnchorsPlugin instance, CommandSender sender, String... args);
+    protected abstract ReturnType runCommand(EpicAnchors instance, CommandSender sender, String... args);
 
     public abstract String getPermissionNode();
 

@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.command;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.command.commands.CommandEpicAnchors;
 import com.songoda.epicanchors.command.commands.CommandGive;
 import com.songoda.epicanchors.command.commands.CommandReload;
@@ -17,11 +17,11 @@ import java.util.List;
 
 public class CommandManager implements CommandExecutor {
 
-    private EpicAnchorsPlugin instance;
+    private EpicAnchors instance;
 
     private List<AbstractCommand> commands = new ArrayList<>();
 
-    public CommandManager(EpicAnchorsPlugin instance) {
+    public CommandManager(EpicAnchors instance) {
         this.instance = instance;
 
         AbstractCommand commandEpicAnchors = addCommand(new CommandEpicAnchors());

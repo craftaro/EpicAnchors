@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.command.commands;
 
-import com.songoda.epicanchors.EpicAnchorsPlugin;
+import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.command.AbstractCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -14,7 +14,7 @@ public class CommandGive extends AbstractCommand {
     }
 
     @Override
-    protected ReturnType runCommand(EpicAnchorsPlugin instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(EpicAnchors instance, CommandSender sender, String... args) {
         if (args.length != 3) return ReturnType.SYNTAX_ERROR;
 
         if (Bukkit.getPlayer(args[1]) == null && !args[1].trim().toLowerCase().equals("all")) {
@@ -22,7 +22,7 @@ public class CommandGive extends AbstractCommand {
             return ReturnType.SYNTAX_ERROR;
         }
 
-        ItemStack itemStack = instance.makeAnchorItem(Integer.parseInt(args[2]) * 20 * 60 * 60);
+        ItemStack itemStack = instance.makAnchorItem(Integer.parseInt(args[2]) * 20 * 60 * 60);
 
         if (!args[1].trim().toLowerCase().equals("all")) {
             Player player = Bukkit.getOfflinePlayer(args[1]).getPlayer();
