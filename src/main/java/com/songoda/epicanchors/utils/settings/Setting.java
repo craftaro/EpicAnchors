@@ -9,21 +9,31 @@ import java.util.stream.Collectors;
 
 public enum Setting {
 
-    NAMETAG("Main.Name Tag", "&6Anchor &8(&7{REMAINING}&8)"),
+    NAMETAG("Main.Name Tag", "&6Anchor &8(&7{REMAINING}&8)",
+            "The anchor name tag used on the item and in the hologram."),
 
-    LORE("Main.Anchor Lore", "&7Place down to keep that chunk|&7loaded until the time runs out."),
+    LORE("Main.Anchor Lore", "&7Place down to keep that chunk|&7loaded until the time runs out.",
+            "The lore on the anchor item."),
 
-    MATERIAL("Main.Anchor Block Material", EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "END_PORTAL_FRAME" : "ENDER_PORTAL_FRAME"),
+    MATERIAL("Main.Anchor Block Material", EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "END_PORTAL_FRAME" : "ENDER_PORTAL_FRAME",
+            "The material an anchor is represented with?"),
 
-    ADD_TIME_WITH_ECONOMY("Main.Add Time With Economy", true),
+    ADD_TIME_WITH_ECONOMY("Main.Add Time With Economy", true,
+            "Should players be able to add time to their anchors",
+            "by using economy?"),
 
-    ECONOMY_COST("Main.Economy Cost", 5000.0),
+    ECONOMY_COST("Main.Economy Cost", 5000.0,
+            "The cost in economy to add 30 minutes to an anchor."),
 
-    ADD_TIME_WITH_XP("Main.Add Time With XP", true),
+    ADD_TIME_WITH_XP("Main.Add Time With XP", true,
+            "Should players be able to add time to their anchors",
+            "by using experience?"),
 
-    XP_COST("Main.XP Cost", 10),
+    XP_COST("Main.XP Cost", 10,
+            "The cost in experience to add 30 minutes to an anchor."),
 
-    ALLOW_ANCHOR_BREAKING("Main.Allow Anchor Breaking", false),
+    ALLOW_ANCHOR_BREAKING("Main.Allow Anchor Breaking", false,
+            "Should players be able to break anchors?"),
 
     HOLOGRAMS("Main.Holograms", true,
             "Toggle holograms showing above anchors."),
