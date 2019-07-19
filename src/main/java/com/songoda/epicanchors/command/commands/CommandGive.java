@@ -18,7 +18,7 @@ public class CommandGive extends AbstractCommand {
         if (args.length != 3) return ReturnType.SYNTAX_ERROR;
 
         if (Bukkit.getPlayer(args[1]) == null && !args[1].trim().toLowerCase().equals("all")) {
-            sender.sendMessage(instance.getReferences().getPrefix() + "Not a player...");
+            instance.getLocale().newMessage("&cThat is not a player...").sendMessage(sender);
             return ReturnType.SYNTAX_ERROR;
         }
 
@@ -27,11 +27,11 @@ public class CommandGive extends AbstractCommand {
         if (!args[1].trim().toLowerCase().equals("all")) {
             Player player = Bukkit.getOfflinePlayer(args[1]).getPlayer();
             player.getInventory().addItem(itemStack);
-            player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.give.success"));
+            instance.getLocale().getMessage("command.give.success").sendPrefixedMessage(player);
         } else {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.getInventory().addItem(itemStack);
-                player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.give.success"));
+                instance.getLocale().getMessage("command.give.success").sendPrefixedMessage(player);
             }
         }
         return ReturnType.SUCCESS;

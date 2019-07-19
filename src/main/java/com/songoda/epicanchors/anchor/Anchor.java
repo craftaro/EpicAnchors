@@ -34,7 +34,7 @@ public class Anchor {
                 if (econ.has(player, cost)) {
                     econ.withdrawPlayer(player, cost);
                 } else {
-                    player.sendMessage(instance.getLocale().getMessage("event.upgrade.cannotafford"));
+                    instance.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
                     return;
                 }
             } else {
@@ -48,7 +48,7 @@ public class Anchor {
                     player.setLevel(player.getLevel() - cost);
                 }
             } else {
-                player.sendMessage(instance.getLocale().getMessage("event.upgrade.cannotafford"));
+                instance.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
                 return;
             }
         }

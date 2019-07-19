@@ -26,7 +26,7 @@ public class GUIOverview extends AbstractGUI {
         this.anchor = anchor;
 
 
-        init(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.title")), 27);
+        init(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.title").getMessage()), 27);
         runTask();
     }
 
@@ -58,23 +58,27 @@ public class GUIOverview extends AbstractGUI {
 
         ItemStack itemXP = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.XP Icon")), 1);
         ItemMeta itemmetaXP = itemXP.getItemMeta();
-        itemmetaXP.setDisplayName(plugin.getLocale().getMessage("interface.button.addtimewithxp"));
+        itemmetaXP.setDisplayName(plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage());
         ArrayList<String> loreXP = new ArrayList<>();
-        loreXP.add(plugin.getLocale().getMessage("interface.button.addtimewithxplore", Integer.toString(plugin.getConfig().getInt("Main.XP Cost"))));
+        loreXP.add(plugin.getLocale().getMessage("interface.button.addtimewithxplore")
+                .processPlaceholder("cost", Integer.toString(plugin.getConfig().getInt("Main.XP Cost")))
+        .getMessage());
         itemmetaXP.setLore(loreXP);
         itemXP.setItemMeta(itemmetaXP);
 
         ItemStack itemECO = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Economy Icon")), 1);
         ItemMeta itemmetaECO = itemECO.getItemMeta();
-        itemmetaECO.setDisplayName(plugin.getLocale().getMessage("interface.button.addtimewitheconomy"));
+        itemmetaECO.setDisplayName(plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage());
         ArrayList<String> loreECO = new ArrayList<>();
-        loreECO.add(plugin.getLocale().getMessage("interface.button.addtimewitheconomylore", Methods.formatEconomy(plugin.getConfig().getInt("Main.Economy Cost"))));
+        loreECO.add(plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
+                .processPlaceholder("cost", Methods.formatEconomy(plugin.getConfig().getInt("Main.Economy Cost")))
+                .getMessage());
         itemmetaECO.setLore(loreECO);
         itemECO.setItemMeta(itemmetaECO);
 
         ItemStack item = plugin.makAnchorItem(anchor.getTicksLeft());
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.smalltitle")));
+        meta.setDisplayName(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage()));
         List<String> lore = new ArrayList<>();
 
         lore.add(Methods.formatText("&7" + timeRemaining));

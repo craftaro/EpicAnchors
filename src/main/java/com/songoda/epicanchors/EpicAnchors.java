@@ -9,6 +9,7 @@ import com.songoda.epicanchors.tasks.AnchorTask;
 import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
 import com.songoda.epicanchors.utils.*;
+import com.songoda.epicanchors.utils.locale.Locale;
 import com.songoda.epicanchors.utils.settings.Setting;
 import com.songoda.epicanchors.utils.settings.SettingsManager;
 import com.songoda.epicanchors.utils.updateModules.LocaleModule;
@@ -40,7 +41,6 @@ public class EpicAnchors extends JavaPlugin {
 
     private CommandManager commandManager;
 
-    private References references;
 
     private Locale locale;
 
@@ -60,10 +60,8 @@ public class EpicAnchors extends JavaPlugin {
         this.settingsManager.setupConfig();
 
         // Locales
-        String langMode = Setting.LANGUGE_MODE.getString();
-        Locale.init(this);
-        Locale.saveDefaultLocale("en_US");
-        this.locale = Locale.getLocale(langMode);
+        new Locale(this, "en_US");
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
 
         //Running Songoda Updater
         Plugin plugin = new Plugin(this, 31);
@@ -72,7 +70,6 @@ public class EpicAnchors extends JavaPlugin {
 
         dataFile.createNewFile("Loading Data File", "EpicAnchors Data File");
 
-        this.references = new References();
         this.anchorManager = new AnchorManager();
         this.commandManager = new CommandManager(this);
 
@@ -140,8 +137,8 @@ public class EpicAnchors extends JavaPlugin {
 
 
     public void reload() {
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
         this.locale.reloadMessages();
-        this.references = new References();
         this.loadAnchorsFromFile();
         this.settingsManager.reloadConfig();
     }
@@ -202,9 +199,5 @@ public class EpicAnchors extends JavaPlugin {
 
     public AnchorManager getAnchorManager() {
         return anchorManager;
-    }
-
-    public References getReferences() {
-        return references;
     }
 }
