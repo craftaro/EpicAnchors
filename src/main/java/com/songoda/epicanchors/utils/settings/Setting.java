@@ -38,6 +38,15 @@ public enum Setting {
     HOLOGRAMS("Main.Holograms", true,
             "Toggle holograms showing above anchors."),
 
+    VAULT_ECONOMY("Economy.Use Vault Economy", true,
+            "Should Vault be used?"),
+
+    RESERVE_ECONOMY("Economy.Use Reserve Economy", true,
+            "Should Reserve be used?"),
+
+    PLAYER_POINTS_ECONOMY("Economy.Use Player Points Economy", false,
+            "Should PlayerPoints be used?"),
+
     ECO_ICON("Interfaces.Economy Icon", EpicAnchors.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "SUNFLOWER" : "DOUBLE_PLANT",
             "Item to be displayed as the icon for economy upgrades."),
 

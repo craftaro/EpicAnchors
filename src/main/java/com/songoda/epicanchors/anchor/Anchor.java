@@ -27,18 +27,13 @@ public class Anchor {
         EpicAnchors instance = EpicAnchors.getInstance();
 
         if (type.equals("ECO")) {
-            if (instance.getServer().getPluginManager().getPlugin("Vault") != null) {
-                RegisteredServiceProvider<Economy> rsp = instance.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-                net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
-                double cost = instance.getConfig().getDouble("Main.Economy Cost");
-                if (econ.has(player, cost)) {
-                    econ.withdrawPlayer(player, cost);
-                } else {
-                    instance.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
-                    return;
-                }
+            if (instance.getEconomy() == null)
+                return;
+            double cost = instance.getConfig().getDouble("Main.Economy Cost");
+            if (instance.getEconomy().hasBalance(player, cost)) {
+                instance.getEconomy().withdrawBalance(player, cost);
             } else {
-                player.sendMessage("Vault is not installed.");
+                instance.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
                 return;
             }
         } else if (type.equals("XP")) {

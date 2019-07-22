@@ -3,6 +3,10 @@ package com.songoda.epicanchors;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.anchor.AnchorManager;
 import com.songoda.epicanchors.command.CommandManager;
+import com.songoda.epicanchors.economy.Economy;
+import com.songoda.epicanchors.economy.PlayerPointsEconomy;
+import com.songoda.epicanchors.economy.ReserveEconomy;
+import com.songoda.epicanchors.economy.VaultEconomy;
 import com.songoda.epicanchors.hologram.Hologram;
 import com.songoda.epicanchors.hologram.HologramHolographicDisplays;
 import com.songoda.epicanchors.tasks.AnchorTask;
@@ -36,6 +40,8 @@ public class EpicAnchors extends JavaPlugin {
 
     private static EpicAnchors INSTANCE;
 
+    private Economy economy;
+
     private SettingsManager settingsManager;
     private AnchorManager anchorManager;
 
@@ -68,6 +74,16 @@ public class EpicAnchors extends JavaPlugin {
         plugin.addModule(new LocaleModule());
         SongodaUpdate.load(plugin);
 
+        PluginManager pluginManager = Bukkit.getPluginManager();
+
+        // Setup Economy
+        if (Setting.VAULT_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Vault"))
+            this.economy = new VaultEconomy();
+        else if (Setting.RESERVE_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Reserve"))
+            this.economy = new ReserveEconomy();
+        else if (Setting.PLAYER_POINTS_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("PlayerPoints"))
+            this.economy = new PlayerPointsEconomy();
+
         dataFile.createNewFile("Loading Data File", "EpicAnchors Data File");
 
         this.anchorManager = new AnchorManager();
@@ -80,8 +96,6 @@ public class EpicAnchors extends JavaPlugin {
 
         // Command registration
         this.getCommand("EpicAnchors").setExecutor(new CommandManager(this));
-
-        PluginManager pluginManager = Bukkit.getPluginManager();
 
         // Event registration
         pluginManager.registerEvents(new BlockListeners(this), this);
@@ -199,5 +213,9 @@ public class EpicAnchors extends JavaPlugin {
 
     public AnchorManager getAnchorManager() {
         return anchorManager;
+    }
+
+    public Economy getEconomy() {
+        return economy;
     }
 }
