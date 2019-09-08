@@ -1,8 +1,8 @@
 package com.songoda.epicanchors.tasks;
 
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.anchor.Anchor;
-import com.songoda.epicanchors.utils.ServerVersion;
 import com.songoda.epicspawners.EpicSpawners;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +31,6 @@ public class AnchorTask extends BukkitRunnable {
 
     private boolean epicSpawners;
 
-
     public AnchorTask(EpicAnchors plug) {
         plugin = plug;
         epicSpawners = Bukkit.getPluginManager().getPlugin("EpicSpawners") != null;
@@ -41,13 +41,13 @@ public class AnchorTask extends BukkitRunnable {
             clazzEntity = Class.forName("net.minecraft.server." + ver + ".Entity");
             clazzCraftEntity = Class.forName("org.bukkit.craftbukkit." + ver + ".entity.CraftEntity");
 
-            if (plugin.isServerVersionAtLeast(ServerVersion.V1_13))
+            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
                 methodTick = clazzEntity.getDeclaredMethod("tick");
-            else if (plugin.isServerVersion(ServerVersion.V1_12))
+            else if (ServerVersion.isServerVersion(ServerVersion.V1_12))
                 methodTick = clazzEntity.getDeclaredMethod("B_");
-            else if (plugin.isServerVersion(ServerVersion.V1_11))
+            else if (ServerVersion.isServerVersion(ServerVersion.V1_11))
                 methodTick = clazzEntity.getDeclaredMethod("A_");
-            else if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
+            else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
                 methodTick = clazzEntity.getDeclaredMethod("m");
             else
                 methodTick = clazzEntity.getDeclaredMethod("t_");
@@ -71,7 +71,7 @@ public class AnchorTask extends BukkitRunnable {
             float xx = (float) (0 + (Math.random() * .75));
             float yy = (float) (0 + (Math.random() * 1));
             float zz = (float) (0 + (Math.random() * .75));
-            if (!plugin.isServerVersionAtLeast(ServerVersion.V1_13))
+            if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
                 location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1);
             else
                 location1.getWorld().spawnParticle(Particle.REDSTONE, location1, 5, xx, yy, zz, 1, new Particle.DustOptions(Color.WHITE, 1F));
@@ -80,14 +80,13 @@ public class AnchorTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
             doParticle();
-        for (Anchor anchor : plugin.getAnchorManager().getAnchors().values()) {
+        for (Anchor anchor : new ArrayList<>(plugin.getAnchorManager().getAnchors().values())) {
 
             if (anchor.getLocation() == null) continue;
 
-            if (plugin.getHologram() != null)
-                plugin.getHologram().update(anchor);
+            plugin.updateHologram(anchor);
 
             Location location = anchor.getLocation();
 
@@ -120,13 +119,9 @@ public class AnchorTask extends BukkitRunnable {
             anchor.setTicksLeft(ticksLeft - 3);
 
             if (ticksLeft <= 0) {
-                plugin.getAnchorManager().removeAnchor(location);
-                if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
-                    location.getWorld().spawnParticle(Particle.LAVA, location.clone().add(.5, .5, .5), 5, 0, 0, 0, 5);
-                location.getWorld().playSound(location, plugin.isServerVersionAtLeast(ServerVersion.V1_13)
-                        ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"), 10, 10);
-                location.getBlock().setType(Material.AIR);
+                anchor.bust();
                 chunk.unload();
+                return;
             }
 
             if (!epicSpawners || EpicSpawners.getInstance().getSpawnerManager() == null) continue;

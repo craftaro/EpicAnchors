@@ -1,21 +1,30 @@
-package com.songoda.epicanchors.command.commands;
+package com.songoda.epicanchors.commands;
 
+import com.songoda.core.commands.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchors;
-import com.songoda.epicanchors.command.AbstractCommand;
-import com.songoda.epicanchors.utils.Methods;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class CommandReload extends AbstractCommand {
 
-    public CommandReload(AbstractCommand parent) {
-        super("reload", parent, false);
+    final EpicAnchors instance;
+
+    public CommandReload(EpicAnchors instance) {
+        super(false, "reload");
+        this.instance = instance;
     }
 
     @Override
-    protected ReturnType runCommand(EpicAnchors instance, CommandSender sender, String... args) {
-        instance.reload();
+    protected ReturnType runCommand(CommandSender sender, String... args) {
+        instance.reloadConfig();
         instance.getLocale().getMessage("&7Configuration and Language files reloaded.").sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(CommandSender sender, String... args) {
+        return null;
     }
 
     @Override
@@ -32,5 +41,5 @@ public class CommandReload extends AbstractCommand {
     public String getDescription() {
         return "Reload the Configuration and Language files.";
     }
-}
 
+}

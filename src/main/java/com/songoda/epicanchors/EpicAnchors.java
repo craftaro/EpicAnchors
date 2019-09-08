@@ -1,160 +1,159 @@
 package com.songoda.epicanchors;
 
+import com.songoda.core.SongodaCore;
+import com.songoda.core.SongodaPlugin;
+import com.songoda.core.commands.CommandManager;
+import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.configuration.Config;
+import com.songoda.core.gui.GuiManager;
+import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.hooks.HologramManager;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.anchor.AnchorManager;
-import com.songoda.epicanchors.command.CommandManager;
-import com.songoda.epicanchors.economy.Economy;
-import com.songoda.epicanchors.economy.PlayerPointsEconomy;
-import com.songoda.epicanchors.economy.ReserveEconomy;
-import com.songoda.epicanchors.economy.VaultEconomy;
-import com.songoda.epicanchors.hologram.Hologram;
-import com.songoda.epicanchors.hologram.HologramHolographicDisplays;
-import com.songoda.epicanchors.tasks.AnchorTask;
+import com.songoda.epicanchors.commands.CommandEpicAnchors;
+import com.songoda.epicanchors.commands.CommandGive;
+import com.songoda.epicanchors.commands.CommandReload;
+import com.songoda.epicanchors.commands.CommandSettings;
 import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
-import com.songoda.epicanchors.utils.*;
-import com.songoda.epicanchors.utils.locale.Locale;
-import com.songoda.epicanchors.utils.settings.Setting;
-import com.songoda.epicanchors.utils.settings.SettingsManager;
-import com.songoda.epicanchors.utils.updateModules.LocaleModule;
-import com.songoda.update.Plugin;
-import com.songoda.update.SongodaUpdate;
-import org.apache.commons.lang.ArrayUtils;
+import com.songoda.epicanchors.settings.Settings;
+import com.songoda.epicanchors.tasks.AnchorTask;
+import com.songoda.epicanchors.utils.Methods;
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.*;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class EpicAnchors extends JavaPlugin {
-
-    public ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
-
-    private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
-
-    private Hologram hologram;
+public class EpicAnchors extends SongodaPlugin {
 
     private static EpicAnchors INSTANCE;
 
-    private Economy economy;
+    private Config dataFile = new Config(this, "", "data.yml");
 
-    private SettingsManager settingsManager;
+    private GuiManager guiManager = new GuiManager(this);
     private AnchorManager anchorManager;
-
     private CommandManager commandManager;
-
-
-    private Locale locale;
 
     public static EpicAnchors getInstance() {
         return INSTANCE;
     }
 
     @Override
-    public void onEnable() {
+    public void onPluginLoad() {
         INSTANCE = this;
-        CommandSender console = Bukkit.getConsoleSender();
-        console.sendMessage(Methods.formatText("&a============================="));
-        console.sendMessage(Methods.formatText("&7EpicAnchors " + this.getDescription().getVersion() + " by &5Brianna <3&7!"));
-        console.sendMessage(Methods.formatText("&7Action: &aEnabling&7..."));
+    }
 
-        this.settingsManager = new SettingsManager(this);
-        this.settingsManager.setupConfig();
+    @Override
+    public void onPluginDisable() {
+        saveToFile();
+        HologramManager.removeAllHolograms();
+    }
 
-        // Locales
-        new Locale(this, "en_US");
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
+    @Override
+    public void onPluginEnable() {
+        // Run Songoda Updater
+        SongodaCore.registerPlugin(this, 31, LegacyMaterials.END_PORTAL_FRAME);
 
-        //Running Songoda Updater
-        Plugin plugin = new Plugin(this, 31);
-        plugin.addModule(new LocaleModule());
-        SongodaUpdate.load(plugin);
+        // Load Economy
+        EconomyManager.load();
 
-        PluginManager pluginManager = Bukkit.getPluginManager();
+        // Setup Config
+        Settings.setupConfig();
+        this.setLocale(Settings.LANGUGE_MODE.getString(), false);
 
-        // Setup Economy
-        if (Setting.VAULT_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Vault"))
-            this.economy = new VaultEconomy();
-        else if (Setting.RESERVE_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Reserve"))
-            this.economy = new ReserveEconomy();
-        else if (Setting.PLAYER_POINTS_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("PlayerPoints"))
-            this.economy = new PlayerPointsEconomy();
+        // Set economy preference
+        EconomyManager.getManager().setPreferredHook(Settings.ECONOMY_PLUGIN.getString());
 
-        dataFile.createNewFile("Loading Data File", "EpicAnchors Data File");
-
-        this.anchorManager = new AnchorManager();
+        // Register commands
         this.commandManager = new CommandManager(this);
+        this.commandManager.addCommand(new CommandEpicAnchors(this))
+                .addSubCommands(
+                        new CommandGive(this),
+                        new CommandReload(this),
+                        new CommandSettings(this)
+                );
 
-        loadAnchorsFromFile();
+        anchorManager = new AnchorManager();
+        Bukkit.getScheduler().runTaskLater(this, () -> loadAnchorsFromFile(), 5L);
 
         // Start tasks
         new AnchorTask(this);
 
-        // Command registration
-        this.getCommand("EpicAnchors").setExecutor(new CommandManager(this));
-
-        // Event registration
+        // Register Listeners
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        guiManager.init();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
 
         // Register Hologram Plugin
-        if (Setting.HOLOGRAMS.getBoolean()
-                && pluginManager.isPluginEnabled("HolographicDisplays"))
-            hologram = new HologramHolographicDisplays(this);
+        HologramManager.load(this);
 
-        if (hologram != null)
-            hologram.loadHolograms();
-
-        // Start Metrics
-        new Metrics(this);
+        if (Settings.HOLOGRAMS.getBoolean())
+            loadHolograms();
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
-        console.sendMessage(Methods.formatText("&a============================="));
     }
 
-    public void onDisable() {
-        this.saveToFile();
-        if (hologram != null)
-            this.hologram.unloadHolograms();
-        CommandSender console = Bukkit.getConsoleSender();
-        console.sendMessage(Methods.formatText("&a============================="));
-        console.sendMessage(Methods.formatText("&7EpicAnchors " + this.getDescription().getVersion() + " by &5Brianna <3!"));
-        console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
-        console.sendMessage(Methods.formatText("&a============================="));
+    @Override
+    public void onConfigReload() {
+        this.setLocale(Settings.LANGUGE_MODE.getString(), true);
+        this.loadAnchorsFromFile();
+    }
+
+    @Override
+    public List<Config> getExtraConfig() {
+        return null;
+    }
+
+    void loadHolograms() {
+        Collection<Anchor> anchors = getAnchorManager().getAnchors().values();
+        if (anchors.size() == 0) return;
+
+        for (Anchor anchor : anchors) {
+            if (anchor.getWorld() == null) continue;
+            updateHologram(anchor);
+        }
+    }
+
+    public void clearHologram(Anchor anchor) {
+        HologramManager.removeHologram(anchor.getLocation());
+    }
+
+    public void updateHologram(Anchor anchor) {
+        // are holograms enabled?
+        if (!Settings.HOLOGRAMS.getBoolean() || !HologramManager.getManager().isEnabled()) return;
+        // verify that this is a anchor
+        if (anchor.getLocation().getBlock().getType() != Settings.MATERIAL.getMaterial().getMaterial()) return;
+        // grab the name
+        String name = Methods.formatName(anchor.getTicksLeft(), false).trim();
+        // create the hologram
+        HologramManager.updateHologram(anchor.getLocation(), name);
     }
 
     private void loadAnchorsFromFile() {
-        if (dataFile.getConfig().contains("Anchors")) {
-            for (String locationStr : dataFile.getConfig().getConfigurationSection("Anchors").getKeys(false)) {
-                Location location = Methods.unserializeLocation(locationStr);
-                int ticksLeft = dataFile.getConfig().getInt("Anchors." + locationStr + ".ticksLeft");
-
-                Anchor anchor = new Anchor(location, ticksLeft);
-
-                anchorManager.addAnchor(location, anchor);
-            }
+        dataFile.load();
+        if (!dataFile.contains("Anchors")) return;
+        for (String locationStr : dataFile.getConfigurationSection("Anchors").getKeys(false)) {
+            Location location = Methods.unserializeLocation(locationStr);
+            int ticksLeft = dataFile.getInt("Anchors." + locationStr + ".ticksLeft");
+            anchorManager.addAnchor(location, new Anchor(location, ticksLeft));
         }
     }
 
     private void saveToFile() {
-        dataFile.getConfig().set("Anchors", null);
+        dataFile = new Config(this, "", "data.yml");
         for (Anchor anchor : anchorManager.getAnchors().values()) {
             String locationStr = Methods.serializeLocation(anchor.getLocation());
-            dataFile.getConfig().set("Anchors." + locationStr + ".ticksLeft", anchor.getTicksLeft());
+            dataFile.set("Anchors." + locationStr + ".ticksLeft", anchor.getTicksLeft());
         }
-        dataFile.saveConfig();
-    }
-
-
-    public void reload() {
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
-        this.locale.reloadMessages();
-        this.loadAnchorsFromFile();
-        this.settingsManager.reloadConfig();
+        dataFile.save();
     }
 
     public int getTicksFromItem(ItemStack item) {
@@ -165,12 +164,12 @@ public class EpicAnchors extends JavaPlugin {
         return 0;
     }
 
-    public ItemStack makAnchorItem(int ticks) {
+    public ItemStack makeAnchorItem(int ticks) {
         ItemStack item = new ItemStack(Material.valueOf(EpicAnchors.getInstance().getConfig().getString("Main.Anchor Block Material")), 1);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Methods.formatName(ticks, true));
         ArrayList<String> lore = new ArrayList<>();
-        String[] parts = Setting.LORE.getString().split("\\|");
+        String[] parts = Settings.LORE.getString().split("\\|");
         for (String line : parts) {
             lore.add(Methods.formatText(line));
         }
@@ -179,43 +178,15 @@ public class EpicAnchors extends JavaPlugin {
         return item;
     }
 
-    public ServerVersion getServerVersion() {
-        return serverVersion;
-    }
-
-    public boolean isServerVersion(ServerVersion version) {
-        return serverVersion == version;
-    }
-
-    public boolean isServerVersion(ServerVersion... versions) {
-        return ArrayUtils.contains(versions, serverVersion);
-    }
-
-    public boolean isServerVersionAtLeast(ServerVersion version) {
-        return serverVersion.ordinal() >= version.ordinal();
-    }
-
-    public SettingsManager getSettingsManager() {
-        return settingsManager;
-    }
-
-    public Locale getLocale() {
-        return locale;
-    }
-
-    public Hologram getHologram() {
-        return hologram;
-    }
-
     public CommandManager getCommandManager() {
         return commandManager;
     }
 
-    public AnchorManager getAnchorManager() {
-        return anchorManager;
+    public GuiManager getGuiManager() {
+        return guiManager;
     }
 
-    public Economy getEconomy() {
-        return economy;
+    public AnchorManager getAnchorManager() {
+        return anchorManager;
     }
 }

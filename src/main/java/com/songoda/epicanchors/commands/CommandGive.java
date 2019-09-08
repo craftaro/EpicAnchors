@@ -1,31 +1,36 @@
-package com.songoda.epicanchors.command.commands;
+package com.songoda.epicanchors.commands;
 
+import com.songoda.core.commands.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchors;
-import com.songoda.epicanchors.command.AbstractCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class CommandGive extends AbstractCommand {
 
-    public CommandGive(AbstractCommand abstractCommand) {
-        super("give", abstractCommand, false);
+    final EpicAnchors instance;
+
+    public CommandGive(EpicAnchors instance) {
+        super(false, "give");
+        this.instance = instance;
     }
 
     @Override
-    protected ReturnType runCommand(EpicAnchors instance, CommandSender sender, String... args) {
-        if (args.length != 3) return ReturnType.SYNTAX_ERROR;
+    protected ReturnType runCommand(CommandSender sender, String... args) {
+        if (args.length != 2) return ReturnType.SYNTAX_ERROR;
 
-        if (Bukkit.getPlayer(args[1]) == null && !args[1].trim().toLowerCase().equals("all")) {
+        if (Bukkit.getPlayer(args[0]) == null && !args[0].trim().toLowerCase().equals("all")) {
             instance.getLocale().newMessage("&cThat is not a player...").sendMessage(sender);
             return ReturnType.SYNTAX_ERROR;
         }
 
-        ItemStack itemStack = instance.makAnchorItem(Integer.parseInt(args[2]) * 20 * 60 * 60);
+        ItemStack itemStack = instance.makeAnchorItem(Integer.parseInt(args[1]) * 20 * 60 * 60);
 
         if (!args[1].trim().toLowerCase().equals("all")) {
-            Player player = Bukkit.getOfflinePlayer(args[1]).getPlayer();
+            Player player = Bukkit.getOfflinePlayer(args[0]).getPlayer();
             player.getInventory().addItem(itemStack);
             instance.getLocale().getMessage("command.give.success").sendPrefixedMessage(player);
         } else {
@@ -35,6 +40,11 @@ public class CommandGive extends AbstractCommand {
             }
         }
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(CommandSender commandSender, String... strings) {
+        return null;
     }
 
     @Override

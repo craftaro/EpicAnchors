@@ -1,9 +1,12 @@
 package com.songoda.epicanchors.gui;
 
+import com.songoda.core.gui.Gui;
+import com.songoda.core.gui.GuiUtils;
+import com.songoda.core.hooks.EconomyManager;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.anchor.Anchor;
+import com.songoda.epicanchors.settings.Settings;
 import com.songoda.epicanchors.utils.Methods;
-import com.songoda.epicanchors.utils.gui.AbstractGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,48 +16,41 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GUIOverview extends AbstractGUI {
+public class GUIOverview extends Gui {
 
     private final EpicAnchors plugin;
     private final Anchor anchor;
+    private final Player player;
 
     private int task;
 
     public GUIOverview(EpicAnchors plugin, Anchor anchor, Player player) {
-        super(player);
         this.plugin = plugin;
         this.anchor = anchor;
+        this.player = player;
 
+        this.setRows(3);
+        this.setTitle(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.title").getMessage()));
 
-        init(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.title").getMessage()), 27);
         runTask();
+        constructGUI();
+        this.setOnClose(action -> Bukkit.getScheduler().cancelTask(task));
     }
 
-    @Override
-    public void constructGUI() {
+    private void constructGUI() {
         String timeRemaining = Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining.";
 
-        int nu = 0;
-        while (nu != 27) {
-            inventory.setItem(nu, Methods.getGlass());
-            nu++;
-        }
-        inventory.setItem(0, Methods.getBackgroundGlass(true));
-        inventory.setItem(1, Methods.getBackgroundGlass(true));
-        inventory.setItem(2, Methods.getBackgroundGlass(false));
-        inventory.setItem(6, Methods.getBackgroundGlass(false));
-        inventory.setItem(7, Methods.getBackgroundGlass(true));
-        inventory.setItem(8, Methods.getBackgroundGlass(true));
-        inventory.setItem(9, Methods.getBackgroundGlass(true));
-        inventory.setItem(10, Methods.getBackgroundGlass(false));
-        inventory.setItem(16, Methods.getBackgroundGlass(false));
-        inventory.setItem(17, Methods.getBackgroundGlass(true));
-        inventory.setItem(18, Methods.getBackgroundGlass(true));
-        inventory.setItem(19, Methods.getBackgroundGlass(true));
-        inventory.setItem(20, Methods.getBackgroundGlass(false));
-        inventory.setItem(24, Methods.getBackgroundGlass(false));
-        inventory.setItem(25, Methods.getBackgroundGlass(true));
-        inventory.setItem(26, Methods.getBackgroundGlass(true));
+        ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
+        ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial());
+        ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
+
+        setDefaultItem(glass1);
+
+        GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
+        GuiUtils.mirrorFill(this, 0, 1, true, true, glass2);
+        GuiUtils.mirrorFill(this, 0, 2, true, true, glass3);
+        GuiUtils.mirrorFill(this, 1, 0, false, true, glass2);
+        GuiUtils.mirrorFill(this, 1, 1, false, true, glass3);
 
         ItemStack itemXP = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.XP Icon")), 1);
         ItemMeta itemmetaXP = itemXP.getItemMeta();
@@ -62,7 +58,7 @@ public class GUIOverview extends AbstractGUI {
         ArrayList<String> loreXP = new ArrayList<>();
         loreXP.add(plugin.getLocale().getMessage("interface.button.addtimewithxplore")
                 .processPlaceholder("cost", Integer.toString(plugin.getConfig().getInt("Main.XP Cost")))
-        .getMessage());
+                .getMessage());
         itemmetaXP.setLore(loreXP);
         itemXP.setItemMeta(itemmetaXP);
 
@@ -76,7 +72,7 @@ public class GUIOverview extends AbstractGUI {
         itemmetaECO.setLore(loreECO);
         itemECO.setItemMeta(itemmetaECO);
 
-        ItemStack item = plugin.makAnchorItem(anchor.getTicksLeft());
+        ItemStack item = plugin.makeAnchorItem(anchor.getTicksLeft());
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage()));
         List<String> lore = new ArrayList<>();
@@ -85,37 +81,16 @@ public class GUIOverview extends AbstractGUI {
 
         meta.setLore(lore);
         item.setItemMeta(meta);
-        inventory.setItem(13, item);
+        setItem(13, item);
 
+        if (EconomyManager.isEnabled() && plugin.getConfig().getBoolean("Main.Add Time With Economy"))
+            setButton(11, itemECO, (event) -> anchor.addTime("ECO", player));
 
-        if (plugin.getConfig().getBoolean("Main.Add Time With Economy")) {
-            inventory.setItem(11, itemECO);
-        }
-
-        if (plugin.getConfig().getBoolean("Main.Add Time With XP")) {
-            inventory.setItem(15, itemXP);
-        }
+        if (plugin.getConfig().getBoolean("Main.Add Time With XP"))
+            setButton(15, itemXP, (event) -> anchor.addTime("XP", player));
     }
 
     private void runTask() {
         task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::constructGUI, 5L, 5L);
-    }
-
-    @Override
-    protected void registerClickables() {
-        registerClickable(11, ((player, inventory, cursor, slot, type) -> {
-            if (plugin.getConfig().getBoolean("Main.Add Time With Economy"))
-                anchor.addTime("ECO", player);
-        }));
-
-        registerClickable(15, ((player, inventory, cursor, slot, type) -> {
-            if (plugin.getConfig().getBoolean("Main.Add Time With XP"))
-                anchor.addTime("XP", player);
-        }));
-    }
-
-    @Override
-    protected void registerOnCloses() {
-        registerOnClose(((player1, inventory1) -> Bukkit.getScheduler().cancelTask(task)));
     }
 }

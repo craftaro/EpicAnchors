@@ -1,30 +1,40 @@
-package com.songoda.epicanchors.command.commands;
+package com.songoda.epicanchors.commands;
 
+import com.songoda.core.commands.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchors;
-import com.songoda.epicanchors.command.AbstractCommand;
-import com.songoda.epicanchors.utils.Methods;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class CommandEpicAnchors extends AbstractCommand {
 
-    public CommandEpicAnchors() {
-        super("EpicAnchors", null, false);
+    final EpicAnchors instance;
+
+    public CommandEpicAnchors(EpicAnchors instance) {
+        super(false, "EpicAnchors");
+        this.instance = instance;
     }
 
     @Override
-    protected ReturnType runCommand(EpicAnchors instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(CommandSender sender, String... args) {
         sender.sendMessage("");
         instance.getLocale().newMessage("&7Version " + instance.getDescription().getVersion()
                 + " Created with <3 by &5&l&oSongoda").sendPrefixedMessage(sender);
 
-        for (AbstractCommand command : instance.getCommandManager().getCommands()) {
+        for (AbstractCommand command : instance.getCommandManager().getAllCommands()) {
             if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
-                sender.sendMessage(Methods.formatText("&8 - &a" + command.getSyntax() + "&7 - " + command.getDescription()));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8 - &a" + command.getSyntax() + "&7 - " + command.getDescription()));
             }
         }
         sender.sendMessage("");
 
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(CommandSender commandSender, String... strings) {
+        return null;
     }
 
     @Override
