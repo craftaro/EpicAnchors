@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.gui;
 
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.hooks.EconomyManager;
@@ -52,7 +52,7 @@ public class GUIOverview extends Gui {
                 ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining."));
 
         if (EconomyManager.isEnabled() && plugin.getConfig().getBoolean("Main.Add Time With Economy")) {
-            setButton(11, GuiUtils.createButtonItem(plugin.getConfig().getMaterial("Interfaces.Economy Icon", LegacyMaterials.SUNFLOWER),
+            setButton(11, GuiUtils.createButtonItem(plugin.getConfig().getMaterial("Interfaces.Economy Icon", CompatibleMaterial.SUNFLOWER),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
                     .processPlaceholder("cost", Methods.formatEconomy(plugin.getConfig().getInt("Main.Economy Cost")))
@@ -61,7 +61,7 @@ public class GUIOverview extends Gui {
         }
 
         if (plugin.getConfig().getBoolean("Main.Add Time With XP")) {
-            setButton(15, GuiUtils.createButtonItem(plugin.getConfig().getMaterial("Interfaces.XP Icon", LegacyMaterials.EXPERIENCE_BOTTLE),
+            setButton(15, GuiUtils.createButtonItem(plugin.getConfig().getMaterial("Interfaces.XP Icon", CompatibleMaterial.EXPERIENCE_BOTTLE),
                     plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewithxplore")
                         .processPlaceholder("cost", String.valueOf(plugin.getConfig().getInt("Main.XP Cost"))).getMessage()),

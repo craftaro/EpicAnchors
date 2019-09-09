@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.tasks;
 
-import com.songoda.core.compatibility.ParticleHandler;
+import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.anchor.Anchor;
@@ -69,7 +69,7 @@ public class AnchorTask extends BukkitRunnable {
         for (Anchor anchor : plugin.getAnchorManager().getAnchors().values()) {
             Location location1 = anchor.getLocation().add(.5, .5, .5);
             if (location1.getWorld() == null) continue;
-            ParticleHandler.redstoneParticles(location1, 255, 255, 255, 1.2F, 5, .75F);
+            CompatibleParticleHandler.redstoneParticles(location1, 255, 255, 255, 1.2F, 5, .75F);
         }
     }
 

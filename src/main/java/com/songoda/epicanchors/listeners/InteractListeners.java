@@ -1,8 +1,8 @@
 package com.songoda.epicanchors.listeners;
 
-import com.songoda.core.compatibility.CompatibleSounds;
-import com.songoda.core.compatibility.LegacyMaterials;
-import com.songoda.core.compatibility.ParticleHandler;
+import com.songoda.core.compatibility.CompatibleSound;
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.epicanchors.EpicAnchors;
@@ -54,9 +54,9 @@ public class InteractListeners implements Listener {
             if (player.getGameMode() != GameMode.CREATIVE)
                 ItemUtils.takeActiveItem(player);
 
-            player.playSound(player.getLocation(), CompatibleSounds.ENTITY_PLAYER_LEVELUP.getSound(), 0.6F, 15.0F);
+            player.playSound(player.getLocation(), CompatibleSound.ENTITY_PLAYER_LEVELUP.getSound(), 0.6F, 15.0F);
 
-            ParticleHandler.spawnParticles(ParticleHandler.ParticleType.SPELL_WITCH, anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
+            CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.SPELL_WITCH, anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
 
             return;
         }

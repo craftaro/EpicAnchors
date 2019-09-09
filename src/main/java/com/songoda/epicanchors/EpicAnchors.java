@@ -3,7 +3,7 @@ package com.songoda.epicanchors;
 import com.songoda.core.SongodaCore;
 import com.songoda.core.SongodaPlugin;
 import com.songoda.core.commands.CommandManager;
-import com.songoda.core.compatibility.LegacyMaterials;
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
@@ -34,7 +34,7 @@ public class EpicAnchors extends SongodaPlugin {
 
     private static EpicAnchors INSTANCE;
 
-    private Config dataFile = new Config(this, "data.yml");
+    private final Config dataFile = new Config(this, "data.yml");
 
     private final GuiManager guiManager = new GuiManager(this);
     private AnchorManager anchorManager;
@@ -58,7 +58,7 @@ public class EpicAnchors extends SongodaPlugin {
     @Override
     public void onPluginEnable() {
         // Run Songoda Updater
-        SongodaCore.registerPlugin(this, 31, LegacyMaterials.END_PORTAL_FRAME);
+        SongodaCore.registerPlugin(this, 31, CompatibleMaterial.END_PORTAL_FRAME);
 
         // Load Economy
         EconomyManager.load();
@@ -164,7 +164,7 @@ public class EpicAnchors extends SongodaPlugin {
     }
 
     public ItemStack makeAnchorItem(int ticks) {
-        ItemStack item = getConfig().getMaterial("Main.Anchor Block Material", LegacyMaterials.END_PORTAL_FRAME).getItem();
+        ItemStack item = getConfig().getMaterial("Main.Anchor Block Material", CompatibleMaterial.END_PORTAL_FRAME).getItem();
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Methods.formatName(ticks, true));
         ArrayList<String> lore = new ArrayList<>();
