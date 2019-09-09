@@ -50,10 +50,6 @@
                                     <pattern>com.songoda.core</pattern>
                                     <shadedPattern>${project.groupId}.epicanchors.core</shadedPattern>
                                 </relocation>
-                                <relocation>
-                                    <pattern>com.songoda.lootables</pattern>
-                                    <shadedPattern>${project.groupId}.epicanchors.lootables</shadedPattern>
-                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>

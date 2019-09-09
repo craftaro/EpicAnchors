@@ -147,8 +147,7 @@ public class EpicAnchors extends SongodaPlugin {
     }
 
     private void saveToFile() {
-        dataFile = new Config(this, "data.yml");
-        //dataFile.clearConfig(true);
+        dataFile.clearConfig(true);
         for (Anchor anchor : anchorManager.getAnchors().values()) {
             String locationStr = Methods.serializeLocation(anchor.getLocation());
             dataFile.set("Anchors." + locationStr + ".ticksLeft", anchor.getTicksLeft());
