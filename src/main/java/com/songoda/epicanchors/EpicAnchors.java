@@ -22,7 +22,6 @@ import com.songoda.epicanchors.utils.Methods;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
@@ -35,9 +34,9 @@ public class EpicAnchors extends SongodaPlugin {
 
     private static EpicAnchors INSTANCE;
 
-    private Config dataFile = new Config(this, "", "data.yml");
+    private Config dataFile = new Config(this, "data.yml");
 
-    private GuiManager guiManager = new GuiManager(this);
+    private final GuiManager guiManager = new GuiManager(this);
     private AnchorManager anchorManager;
     private CommandManager commandManager;
 
@@ -77,7 +76,7 @@ public class EpicAnchors extends SongodaPlugin {
                 .addSubCommands(
                         new CommandGive(this),
                         new CommandReload(this),
-                        new CommandSettings(this)
+                        new CommandSettings(this, guiManager)
                 );
 
         anchorManager = new AnchorManager();
@@ -87,8 +86,8 @@ public class EpicAnchors extends SongodaPlugin {
         new AnchorTask(this);
 
         // Register Listeners
-        PluginManager pluginManager = Bukkit.getPluginManager();
         guiManager.init();
+        PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
 
@@ -98,7 +97,7 @@ public class EpicAnchors extends SongodaPlugin {
         if (Settings.HOLOGRAMS.getBoolean())
             loadHolograms();
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::saveToFile, 6000, 6000);
     }
 
     @Override
@@ -148,7 +147,8 @@ public class EpicAnchors extends SongodaPlugin {
     }
 
     private void saveToFile() {
-        dataFile = new Config(this, "", "data.yml");
+        dataFile = new Config(this, "data.yml");
+        //dataFile.clearConfig(true);
         for (Anchor anchor : anchorManager.getAnchors().values()) {
             String locationStr = Methods.serializeLocation(anchor.getLocation());
             dataFile.set("Anchors." + locationStr + ".ticksLeft", anchor.getTicksLeft());
@@ -165,7 +165,7 @@ public class EpicAnchors extends SongodaPlugin {
     }
 
     public ItemStack makeAnchorItem(int ticks) {
-        ItemStack item = new ItemStack(Material.valueOf(EpicAnchors.getInstance().getConfig().getString("Main.Anchor Block Material")), 1);
+        ItemStack item = getConfig().getMaterial("Main.Anchor Block Material", LegacyMaterials.END_PORTAL_FRAME).getItem();
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Methods.formatName(ticks, true));
         ArrayList<String> lore = new ArrayList<>();

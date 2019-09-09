@@ -19,7 +19,7 @@ public class Settings {
     public static final ConfigSetting LORE = new ConfigSetting(config, "Main.Anchor Lore", "&7Place down to keep that chunk|&7loaded until the time runs out.",
             "The lore on the anchor item.");
 
-    public static final ConfigSetting MATERIAL = new ConfigSetting(config, "Main.Anchor Block Material", ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13) ? "END_PORTAL_FRAME" : "ENDER_PORTAL_FRAME",
+    public static final ConfigSetting MATERIAL = new ConfigSetting(config, "Main.Anchor Block Material", "END_PORTAL_FRAME",
             "The material an anchor is represented with?");
 
     public static final ConfigSetting ADD_TIME_WITH_ECONOMY = new ConfigSetting(config, "Main.Add Time With Economy", true,
@@ -46,10 +46,10 @@ public class Settings {
             "Which economy plugin should be used?",
             "Supported plugins you have installed: \"" + EconomyManager.getManager().getRegisteredPlugins().stream().collect(Collectors.joining("\", \"")) + "\".");
 
-    public static final ConfigSetting ECO_ICON = new ConfigSetting(config, "Interfaces.Economy Icon", ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13) ? "SUNFLOWER" : "DOUBLE_PLANT",
+    public static final ConfigSetting ECO_ICON = new ConfigSetting(config, "Interfaces.Economy Icon", "SUNFLOWER",
             "Item to be displayed as the icon for economy upgrades.");
 
-    public static final ConfigSetting XP_ICON = new ConfigSetting(config, "Interfaces.XP Icon", ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13) ? "EXPERIENCE_BOTTLE" : "EXP_BOTTLE",
+    public static final ConfigSetting XP_ICON = new ConfigSetting(config, "Interfaces.XP Icon", "EXPERIENCE_BOTTLE",
             "Item to be displayed as the icon for XP upgrades.");
 
     public static final ConfigSetting GLASS_TYPE_1 = new ConfigSetting(config, "Interfaces.Glass Type 1", "GRAY_STAINED_GLASS_PANE");

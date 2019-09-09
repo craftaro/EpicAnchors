@@ -3,8 +3,6 @@ package com.songoda.epicanchors.utils;
 import com.songoda.epicanchors.settings.Settings;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -16,19 +14,6 @@ import java.util.concurrent.TimeUnit;
 public class Methods {
 
     private static Map<String, Location> serializeCache = new HashMap<>();
-
-    public static void takeItem(Player player, int amt) {
-        if (player.getGameMode() != GameMode.CREATIVE) {
-            int result = player.getInventory().getItemInHand().getAmount() - amt;
-            if (result > 0) {
-                ItemStack is = player.getItemInHand();
-                is.setAmount(is.getAmount() - amt);
-                player.setItemInHand(is);
-            } else {
-                player.setItemInHand(null);
-            }
-        }
-    }
 
     public static String formatName(int ticks2, boolean full) {
 

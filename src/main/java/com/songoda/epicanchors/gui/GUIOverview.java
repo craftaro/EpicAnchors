@@ -1,5 +1,6 @@
 package com.songoda.epicanchors.gui;
 
+import com.songoda.core.compatibility.LegacyMaterials;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.hooks.EconomyManager;
@@ -8,13 +9,9 @@ import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.settings.Settings;
 import com.songoda.epicanchors.utils.Methods;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GUIOverview extends Gui {
 
@@ -38,8 +35,6 @@ public class GUIOverview extends Gui {
     }
 
     private void constructGUI() {
-        String timeRemaining = Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining.";
-
         ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
         ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial());
         ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
@@ -52,45 +47,32 @@ public class GUIOverview extends Gui {
         GuiUtils.mirrorFill(this, 1, 0, false, true, glass2);
         GuiUtils.mirrorFill(this, 1, 1, false, true, glass3);
 
-        ItemStack itemXP = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.XP Icon")), 1);
-        ItemMeta itemmetaXP = itemXP.getItemMeta();
-        itemmetaXP.setDisplayName(plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage());
-        ArrayList<String> loreXP = new ArrayList<>();
-        loreXP.add(plugin.getLocale().getMessage("interface.button.addtimewithxplore")
-                .processPlaceholder("cost", Integer.toString(plugin.getConfig().getInt("Main.XP Cost")))
-                .getMessage());
-        itemmetaXP.setLore(loreXP);
-        itemXP.setItemMeta(itemmetaXP);
+        setItem(13, GuiUtils.createButtonItem(plugin.makeAnchorItem(anchor.getTicksLeft()),
+                plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage(),
+                ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining."));
 
-        ItemStack itemECO = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Economy Icon")), 1);
-        ItemMeta itemmetaECO = itemECO.getItemMeta();
-        itemmetaECO.setDisplayName(plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage());
-        ArrayList<String> loreECO = new ArrayList<>();
-        loreECO.add(plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
-                .processPlaceholder("cost", Methods.formatEconomy(plugin.getConfig().getInt("Main.Economy Cost")))
-                .getMessage());
-        itemmetaECO.setLore(loreECO);
-        itemECO.setItemMeta(itemmetaECO);
+        if (EconomyManager.isEnabled() && plugin.getConfig().getBoolean("Main.Add Time With Economy")) {
+            setButton(11, GuiUtils.createButtonItem(plugin.getConfig().getMaterial("Interfaces.Economy Icon", LegacyMaterials.SUNFLOWER),
+                    plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage(),
+                    plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
+                    .processPlaceholder("cost", Methods.formatEconomy(plugin.getConfig().getInt("Main.Economy Cost")))
+                    .getMessage()),
+                    (event) -> anchor.addTime("ECO", player));
+        }
 
-        ItemStack item = plugin.makeAnchorItem(anchor.getTicksLeft());
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage()));
-        List<String> lore = new ArrayList<>();
-
-        lore.add(Methods.formatText("&7" + timeRemaining));
-
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        setItem(13, item);
-
-        if (EconomyManager.isEnabled() && plugin.getConfig().getBoolean("Main.Add Time With Economy"))
-            setButton(11, itemECO, (event) -> anchor.addTime("ECO", player));
-
-        if (plugin.getConfig().getBoolean("Main.Add Time With XP"))
-            setButton(15, itemXP, (event) -> anchor.addTime("XP", player));
+        if (plugin.getConfig().getBoolean("Main.Add Time With XP")) {
+            setButton(15, GuiUtils.createButtonItem(plugin.getConfig().getMaterial("Interfaces.XP Icon", LegacyMaterials.EXPERIENCE_BOTTLE),
+                    plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage(),
+                    plugin.getLocale().getMessage("interface.button.addtimewithxplore")
+                        .processPlaceholder("cost", String.valueOf(plugin.getConfig().getInt("Main.XP Cost"))).getMessage()),
+                    (event) -> anchor.addTime("XP", player));
+        }
     }
 
     private void runTask() {
-        task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::constructGUI, 5L, 5L);
+        task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            updateItem(11, plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage(),
+                    ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining.");
+        }, 5L, 5L);
     }
 }

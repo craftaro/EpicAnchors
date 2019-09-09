@@ -22,17 +22,17 @@ public class CommandGive extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (args.length != 2) return ReturnType.SYNTAX_ERROR;
 
-        if (Bukkit.getPlayer(args[0]) == null && !args[0].trim().toLowerCase().equals("all")) {
+        Player target = Bukkit.getPlayer(args[0]);
+        if (target == null && !args[0].trim().toLowerCase().equals("all")) {
             instance.getLocale().newMessage("&cThat is not a player...").sendMessage(sender);
             return ReturnType.SYNTAX_ERROR;
         }
 
         ItemStack itemStack = instance.makeAnchorItem(Integer.parseInt(args[1]) * 20 * 60 * 60);
 
-        if (!args[1].trim().toLowerCase().equals("all")) {
-            Player player = Bukkit.getOfflinePlayer(args[0]).getPlayer();
-            player.getInventory().addItem(itemStack);
-            instance.getLocale().getMessage("command.give.success").sendPrefixedMessage(player);
+        if (target != null) {
+            target.getInventory().addItem(itemStack);
+            instance.getLocale().getMessage("command.give.success").sendPrefixedMessage(target);
         } else {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.getInventory().addItem(itemStack);
