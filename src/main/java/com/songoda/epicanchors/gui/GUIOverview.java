@@ -55,8 +55,7 @@ public class GUIOverview extends Gui {
             setButton(11, GuiUtils.createButtonItem(plugin.getConfig().getMaterial("Interfaces.Economy Icon", CompatibleMaterial.SUNFLOWER),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
-                    .processPlaceholder("cost", Methods.formatEconomy(plugin.getConfig().getInt("Main.Economy Cost")))
-                    .getMessage()),
+                        .processPlaceholder("cost", String.valueOf(plugin.getConfig().getInt("Main.Economy Cost"))).getMessage()),
                     (event) -> anchor.addTime("ECO", player));
         }
 
@@ -67,11 +66,14 @@ public class GUIOverview extends Gui {
                         .processPlaceholder("cost", String.valueOf(plugin.getConfig().getInt("Main.XP Cost"))).getMessage()),
                     (event) -> anchor.addTime("XP", player));
         }
+        
+        
+        
     }
 
     private void runTask() {
         task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            updateItem(11, plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage(),
+            updateItem(13, plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage(),
                     ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining.");
         }, 5L, 5L);
     }
