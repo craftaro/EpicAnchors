@@ -51,24 +51,22 @@ public class GUIOverview extends Gui {
                 plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage(),
                 ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining."));
 
-        if (EconomyManager.isEnabled() && plugin.getConfig().getBoolean("Main.Add Time With Economy")) {
-            setButton(11, GuiUtils.createButtonItem(plugin.getConfig().getMaterial("Interfaces.Economy Icon", CompatibleMaterial.SUNFLOWER),
+        if (EconomyManager.isEnabled() && Settings.ADD_TIME_WITH_ECONOMY.getBoolean()) {
+            setButton(11, GuiUtils.createButtonItem(Settings.ECO_ICON.getMaterial(CompatibleMaterial.SUNFLOWER),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
-                        .processPlaceholder("cost", String.valueOf(plugin.getConfig().getInt("Main.Economy Cost"))).getMessage()),
-                    (event) -> anchor.addTime("ECO", player));
+                        .processPlaceholder("cost", Methods.formatEconomy(Settings.ECONOMY_COST.getDouble())).getMessage()), // EconomyManager.formatEconomy adds its own prefix/suffix
+                    event -> anchor.addTime("ECO", event.player));
         }
 
-        if (plugin.getConfig().getBoolean("Main.Add Time With XP")) {
-            setButton(15, GuiUtils.createButtonItem(plugin.getConfig().getMaterial("Interfaces.XP Icon", CompatibleMaterial.EXPERIENCE_BOTTLE),
+        if (Settings.ADD_TIME_WITH_XP.getBoolean()) {
+            setButton(15, GuiUtils.createButtonItem(Settings.XP_ICON.getMaterial(CompatibleMaterial.EXPERIENCE_BOTTLE),
                     plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewithxplore")
-                        .processPlaceholder("cost", String.valueOf(plugin.getConfig().getInt("Main.XP Cost"))).getMessage()),
-                    (event) -> anchor.addTime("XP", player));
+                        .processPlaceholder("cost", String.valueOf(Settings.XP_COST.getInt())).getMessage()),
+                    event -> anchor.addTime("XP", event.player));
         }
-        
-        
-        
+
     }
 
     private void runTask() {
