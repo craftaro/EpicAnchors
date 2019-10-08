@@ -5,6 +5,7 @@ import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.settings.Settings;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.world.PortalCreateEvent;
@@ -18,7 +19,7 @@ public class BlockListeners implements Listener {
         this.plugin = instance;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
 
         ItemStack item = event.getItemInHand();
