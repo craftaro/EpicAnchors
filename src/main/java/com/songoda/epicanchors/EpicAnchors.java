@@ -1,0 +1,191 @@
+package com.songoda.epicanchors;
+
+import com.songoda.core.SongodaCore;
+import com.songoda.core.SongodaPlugin;
+import com.songoda.core.commands.CommandManager;
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.configuration.Config;
+import com.songoda.core.gui.GuiManager;
+import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.hooks.HologramManager;
+import com.songoda.epicanchors.anchor.Anchor;
+import com.songoda.epicanchors.anchor.AnchorManager;
+import com.songoda.epicanchors.commands.CommandEpicAnchors;
+import com.songoda.epicanchors.commands.CommandGive;
+import com.songoda.epicanchors.commands.CommandReload;
+import com.songoda.epicanchors.commands.CommandSettings;
+import com.songoda.epicanchors.listeners.BlockListeners;
+import com.songoda.epicanchors.listeners.InteractListeners;
+import com.songoda.epicanchors.settings.Settings;
+import com.songoda.epicanchors.tasks.AnchorTask;
+import com.songoda.epicanchors.utils.Methods;
+import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.PluginManager;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+public class EpicAnchors extends SongodaPlugin {
+
+    private static EpicAnchors INSTANCE;
+
+    private final Config dataFile = new Config(this, "data.yml");
+
+    private final GuiManager guiManager = new GuiManager(this);
+    private AnchorManager anchorManager;
+    private CommandManager commandManager;
+
+    public static EpicAnchors getInstance() {
+        return INSTANCE;
+    }
+
+    @Override
+    public void onPluginLoad() {
+        INSTANCE = this;
+    }
+
+    @Override
+    public void onPluginDisable() {
+        saveToFile();
+        HologramManager.removeAllHolograms();
+    }
+
+    @Override
+    public void onPluginEnable() {
+        // Run Songoda Updater
+        SongodaCore.registerPlugin(this, 31, CompatibleMaterial.END_PORTAL_FRAME);
+
+        // Load Economy
+        EconomyManager.load();
+
+        // Setup Config
+        Settings.setupConfig();
+        this.setLocale(Settings.LANGUGE_MODE.getString(), false);
+
+        // Set economy preference
+        EconomyManager.getManager().setPreferredHook(Settings.ECONOMY_PLUGIN.getString());
+
+        // Register commands
+        this.commandManager = new CommandManager(this);
+        this.commandManager.addCommand(new CommandEpicAnchors(this))
+                .addSubCommands(
+                        new CommandGive(this),
+                        new CommandReload(this),
+                        new CommandSettings(this, guiManager)
+                );
+
+        anchorManager = new AnchorManager();
+        Bukkit.getScheduler().runTaskLater(this, () -> loadAnchorsFromFile(), 5L);
+
+        // Start tasks
+        new AnchorTask(this);
+
+        // Register Listeners
+        guiManager.init();
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new BlockListeners(this), this);
+        pluginManager.registerEvents(new InteractListeners(this), this);
+
+        // Register Hologram Plugin
+        HologramManager.load(this);
+
+        if (Settings.HOLOGRAMS.getBoolean())
+            loadHolograms();
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::saveToFile, 6000, 6000);
+    }
+
+    @Override
+    public void onConfigReload() {
+        this.setLocale(Settings.LANGUGE_MODE.getString(), true);
+        this.loadAnchorsFromFile();
+    }
+
+    @Override
+    public List<Config> getExtraConfig() {
+        return null;
+    }
+
+    void loadHolograms() {
+        Collection<Anchor> anchors = getAnchorManager().getAnchors().values();
+        if (anchors.size() == 0) return;
+
+        for (Anchor anchor : anchors) {
+            if (anchor.getWorld() == null) continue;
+            updateHologram(anchor);
+        }
+    }
+
+    public void clearHologram(Anchor anchor) {
+        HologramManager.removeHologram(anchor.getLocation());
+    }
+
+    public void updateHologram(Anchor anchor) {
+        // are holograms enabled?
+        if (!Settings.HOLOGRAMS.getBoolean() || !HologramManager.getManager().isEnabled()) return;
+        // verify that this is a anchor
+        if (anchor.getLocation().getBlock().getType() != Settings.MATERIAL.getMaterial().getMaterial()) return;
+        // grab the name
+        String name = Methods.formatName(anchor.getTicksLeft(), false).trim();
+        // create the hologram
+        HologramManager.updateHologram(anchor.getLocation(), name);
+    }
+
+    private void loadAnchorsFromFile() {
+        dataFile.load();
+        if (!dataFile.contains("Anchors")) return;
+        for (String locationStr : dataFile.getConfigurationSection("Anchors").getKeys(false)) {
+            Location location = Methods.unserializeLocation(locationStr);
+            int ticksLeft = dataFile.getInt("Anchors." + locationStr + ".ticksLeft");
+            anchorManager.addAnchor(location, new Anchor(location, ticksLeft));
+        }
+    }
+
+    private void saveToFile() {
+        dataFile.clearConfig(true);
+        for (Anchor anchor : anchorManager.getAnchors().values()) {
+            String locationStr = Methods.serializeLocation(anchor.getLocation());
+            dataFile.set("Anchors." + locationStr + ".ticksLeft", anchor.getTicksLeft());
+        }
+        dataFile.save();
+    }
+
+    public int getTicksFromItem(ItemStack item) {
+        if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) return 0;
+        if (item.getItemMeta().getDisplayName().contains(":")) {
+            return NumberUtils.toInt(item.getItemMeta().getDisplayName().replace("\u00A7", "").split(":")[0], 0);
+        }
+        return 0;
+    }
+
+    public ItemStack makeAnchorItem(int ticks) {
+        ItemStack item = getCoreConfig().getMaterial("Main.Anchor Block Material", CompatibleMaterial.END_PORTAL_FRAME).getItem();
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(Methods.formatName(ticks, true));
+        ArrayList<String> lore = new ArrayList<>();
+        String[] parts = Settings.LORE.getString().split("\\|");
+        for (String line : parts) {
+            lore.add(Methods.formatText(line));
+        }
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public GuiManager getGuiManager() {
+        return guiManager;
+    }
+
+    public AnchorManager getAnchorManager() {
+        return anchorManager;
+    }
+}

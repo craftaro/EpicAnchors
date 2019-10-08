@@ -1,0 +1,13 @@
+name: EpicAnchors
+description: EpicAnchors
+version: maven-version-number
+softdepend: [EpicSpawners, Towny, RedProtect, Kingdoms, PlotsSquared, GriefPrevention, USkyBlock, ASkyBlock, WorldGuard, Factions, Vault, HolographicDisplays, Holograms, CMI]
+main: com.songoda.epicanchors.EpicAnchors
+author: songoda
+api-version: 1.13
+commands:
+  EpicAnchors:
+    description: I have no idea.
+    default: true
+    aliases: [ea]
+    usage: /<command> [reload]

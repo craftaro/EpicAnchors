@@ -4,31 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <version>maven-version-number</version>
     <build>
-        <defaultGoal>clean package</defaultGoal>
+        <defaultGoal>clean install</defaultGoal>
+        <finalName>EpicAnchors-${project.version}</finalName>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>EpicAnchors-API/src/main/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <version>3.6.1</version>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -48,12 +30,20 @@
                         <configuration>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <minimizeJar>true</minimizeJar>
                             <artifactSet>
                                 <includes>
-                                    <include>com.songoda:songodaupdater</include>
+                                    <include>com.songoda:SongodaCore</include>
                                 </includes>
                             </artifactSet>
                             <filters>
+                                <!-- This filter is primarily for anvil gui right now -->
+                                <!--<filter>
+                                    <artifact>com.songoda:SongodaCore-NMS*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>-->
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
@@ -63,90 +53,40 @@
                                     </excludes>
                                 </filter>
                             </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.songoda.core</pattern>
+                                    <shadedPattern>${project.groupId}.epicanchors.core</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>EpicAnchors-Plugin/src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <sourceDirectory>EpicAnchors-Plugin/src/main/java</sourceDirectory>
     </build>
     <repositories>
         <repository>
             <id>private</id>
             <url>http://repo.songoda.com/artifactory/private/</url>
         </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.14</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.14.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.songoda</groupId>
-            <artifactId>songodaupdater</artifactId>
-            <version>1</version>
-        </dependency>
-        <dependency>
-            <groupId>org</groupId>
-            <artifactId>kingdoms</artifactId>
-            <version>13.0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>net.milkbowl</groupId>
-            <artifactId>vault</artifactId>
-            <version>1.7.1</version>
-        </dependency>
-        <dependency>
-            <groupId>me.ryanhamshire</groupId>
-            <artifactId>GriefPrevention</artifactId>
-            <version>16.6</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldedit</artifactId>
-            <version>7.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard</artifactId>
-            <version>7.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com</groupId>
-            <artifactId>plotsquared</artifactId>
-            <version>BREAKING</version>
-        </dependency>
-        <dependency>
-            <groupId>com.palmergames.bukkit</groupId>
-            <artifactId>towny</artifactId>
-            <version>0.93.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.wasteofplastic</groupId>
-            <artifactId>askyblock</artifactId>
-            <version>3.0.6.8</version>
-        </dependency>
-        <dependency>
-            <groupId>us.talabrek</groupId>
-            <artifactId>ultimateskyblock</artifactId>
-            <version>2.7.2</version>
-        </dependency>
-        <dependency>
-            <groupId>me.markeh</groupId>
-            <artifactId>factionsframework</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>br.net.fabiozumbi12</groupId>
-            <artifactId>RedProtect</artifactId>
-            <version>7.3.0</version>
+            <artifactId>SongodaCore</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.songoda</groupId>
