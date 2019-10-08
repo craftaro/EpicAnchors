@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class Settings {
 
-    static final Config config = EpicAnchors.getInstance().getConfig().getCoreConfig();
+    static final Config config = EpicAnchors.getInstance().getCoreConfig();
 
     public static final ConfigSetting NAMETAG = new ConfigSetting(config, "Main.Name Tag", "&6Anchor &8(&7{REMAINING}&8)",
             "The anchor name tag used on the item and in the hologram.");

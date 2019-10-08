@@ -40,7 +40,7 @@ public class InteractListeners implements Listener {
         Player player = event.getPlayer();
         ItemStack item = player.getItemInHand();
 
-        if (instance.getConfig().getMaterial("Main.Anchor Block Material", CompatibleMaterial.AIR).matches(item)) {
+        if (instance.getCoreConfig().getMaterial("Main.Anchor Block Material", CompatibleMaterial.AIR).matches(item)) {
             if (instance.getTicksFromItem(item) == 0) return;
 
             anchor.setTicksLeft(anchor.getTicksLeft() + instance.getTicksFromItem(item));
