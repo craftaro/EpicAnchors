@@ -16,6 +16,8 @@ interface.anchor.smalltitle = "&eChunkAnchor"
 #Command Messages
 
 command.give.success = "&7You have been given a ChunkAnchor."
+command.show.start = "&7Anchor visualizer &2enabled."
+command.show.stop = "&7Anchor visualizer &cdisabled."
 
 #Event Messages
 

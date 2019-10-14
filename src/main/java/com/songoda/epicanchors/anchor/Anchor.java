@@ -12,8 +12,13 @@ public class Anchor {
     private Location location;
     private int ticksLeft;
 
+    private final int chunkX;
+    private final int chunkZ;
+
     public Anchor(Location location, int ticksLeft) {
         this.location = location;
+        this.chunkX = location.getBlockX() >> 4;
+        this.chunkZ = location.getBlockZ() >> 4;
         this.ticksLeft = ticksLeft;
     }
 
@@ -72,20 +77,13 @@ public class Anchor {
         return location.clone();
     }
 
-    public int getX() {
-        return location.getBlockX();
+    public int getChunkX() {
+        return chunkX;
     }
 
-
-    public int getY() {
-        return location.getBlockY();
+    public int getChunkZ() {
+        return chunkZ;
     }
-
-
-    public int getZ() {
-        return location.getBlockZ();
-    }
-
 
     public World getWorld() {
         return location.getWorld();

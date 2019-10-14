@@ -10,14 +10,12 @@ import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.anchor.AnchorManager;
-import com.songoda.epicanchors.commands.CommandEpicAnchors;
-import com.songoda.epicanchors.commands.CommandGive;
-import com.songoda.epicanchors.commands.CommandReload;
-import com.songoda.epicanchors.commands.CommandSettings;
+import com.songoda.epicanchors.commands.*;
 import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
 import com.songoda.epicanchors.settings.Settings;
 import com.songoda.epicanchors.tasks.AnchorTask;
+import com.songoda.epicanchors.tasks.VisualizeTask;
 import com.songoda.epicanchors.utils.Methods;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -76,7 +74,8 @@ public class EpicAnchors extends SongodaPlugin {
                 .addSubCommands(
                         new CommandGive(this),
                         new CommandReload(this),
-                        new CommandSettings(this, guiManager)
+                        new CommandSettings(this, guiManager),
+                        new CommandShow(this)
                 );
 
         anchorManager = new AnchorManager();
@@ -84,6 +83,7 @@ public class EpicAnchors extends SongodaPlugin {
 
         // Start tasks
         new AnchorTask(this);
+        new VisualizeTask(this);
 
         // Register Listeners
         guiManager.init();
