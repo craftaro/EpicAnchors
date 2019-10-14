@@ -22,6 +22,11 @@ public class AnchorManager {
         return registeredAnchors.get(roundLocation(location));
     }
 
+    public Anchor getAnchor(String world, int chunkX, int chunkZ) {
+        return this.registeredAnchors.values().stream()
+                .filter(anchor -> anchor.getWorld().getName().equals(world) && anchor.getChunkX() == chunkX && anchor.getChunkZ() == chunkZ).findFirst().orElse(null);
+    }
+
     public boolean isAnchor(Location location) {
         return registeredAnchors.containsKey(location);
     }
