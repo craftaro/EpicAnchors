@@ -61,6 +61,7 @@ public class Anchor {
             ItemStack item = plugin.makeAnchorItem(getTicksLeft());
             getLocation().getWorld().dropItemNaturally(getLocation(), item);
         }
+        plugin.clearHologram(this);
         location.getBlock().setType(Material.AIR);
 
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
@@ -70,7 +71,6 @@ public class Anchor {
                 ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"), 10, 10);
 
         plugin.getAnchorManager().removeAnchor(location);
-        plugin.clearHologram(this);
     }
 
     public Location getLocation() {
