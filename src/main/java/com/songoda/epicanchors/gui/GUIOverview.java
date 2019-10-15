@@ -52,7 +52,7 @@ public class GUIOverview extends Gui {
                 ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining."));
 
         if (EconomyManager.isEnabled() && Settings.ADD_TIME_WITH_ECONOMY.getBoolean()) {
-            setButton(11, GuiUtils.createButtonItem(Settings.ECO_ICON.getMaterial(CompatibleMaterial.SUNFLOWER),
+            setButton(15, GuiUtils.createButtonItem(Settings.ECO_ICON.getMaterial(CompatibleMaterial.SUNFLOWER),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
                         .processPlaceholder("cost", Methods.formatEconomy(Settings.ECONOMY_COST.getDouble())).getMessage()), // EconomyManager.formatEconomy adds its own prefix/suffix
@@ -60,7 +60,7 @@ public class GUIOverview extends Gui {
         }
 
         if (Settings.ADD_TIME_WITH_XP.getBoolean()) {
-            setButton(15, GuiUtils.createButtonItem(Settings.XP_ICON.getMaterial(CompatibleMaterial.EXPERIENCE_BOTTLE),
+            setButton(11, GuiUtils.createButtonItem(Settings.XP_ICON.getMaterial(CompatibleMaterial.EXPERIENCE_BOTTLE),
                     plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewithxplore")
                         .processPlaceholder("cost", String.valueOf(Settings.XP_COST.getInt())).getMessage()),
