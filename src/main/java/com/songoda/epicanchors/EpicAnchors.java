@@ -20,6 +20,7 @@ import com.songoda.epicanchors.utils.Methods;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
@@ -122,7 +123,7 @@ public class EpicAnchors extends SongodaPlugin {
     }
 
     public void clearHologram(Anchor anchor) {
-        HologramManager.removeHologram(anchor.getLocation());
+        HologramManager.removeHologram(correctHeight(anchor.getLocation()));
     }
 
     public void updateHologram(Anchor anchor) {
@@ -132,8 +133,15 @@ public class EpicAnchors extends SongodaPlugin {
         if (anchor.getLocation().getBlock().getType() != Settings.MATERIAL.getMaterial().getMaterial()) return;
         // grab the name
         String name = Methods.formatName(anchor.getTicksLeft(), false).trim();
+        Location location = correctHeight(anchor.getLocation());
         // create the hologram
-        HologramManager.updateHologram(anchor.getLocation(), name);
+        HologramManager.updateHologram(location, name);
+    }
+
+    private Location correctHeight(Location location) {
+        if (location.getBlock().getType() != CompatibleMaterial.END_PORTAL_FRAME.getMaterial())
+            location.add(0, .05, 0);
+        return location;
     }
 
     private void loadAnchorsFromFile() {

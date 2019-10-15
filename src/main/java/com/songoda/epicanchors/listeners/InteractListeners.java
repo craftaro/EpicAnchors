@@ -7,11 +7,14 @@ import com.songoda.core.utils.ItemUtils;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.gui.GUIOverview;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,7 +26,7 @@ public class InteractListeners implements Listener {
         this.instance = instance;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockInteract(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) return;
 
@@ -32,12 +35,18 @@ public class InteractListeners implements Listener {
         if (anchor == null) return;
         event.setCancelled(true);
 
+        Player player = event.getPlayer();
+
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            BlockBreakEvent blockBreakEvent = new BlockBreakEvent(event.getClickedBlock(), player);
+            Bukkit.getPluginManager().callEvent(blockBreakEvent);
+            if (blockBreakEvent.isCancelled())
+                return;
+
             anchor.bust();
             return;
         }
 
-        Player player = event.getPlayer();
         ItemStack item = player.getItemInHand();
 
         if (instance.getCoreConfig().getMaterial("Main.Anchor Block Material", CompatibleMaterial.AIR).matches(item)) {
