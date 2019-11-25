@@ -24,11 +24,20 @@ public class CommandGive extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (args.length != 2) return ReturnType.SYNTAX_ERROR;
 
+
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null && !args[0].trim().toLowerCase().equals("all")) {
-            instance.getLocale().newMessage("&cThat is not a player...").sendMessage(sender);
+            instance.getLocale().newMessage("&cThat is not a player...").sendPrefixedMessage(sender);
             return ReturnType.SYNTAX_ERROR;
         }
+
+        try {
+            Integer.parseInt(args[1]);
+        } catch (Exception e) {
+            instance.getLocale().newMessage("&cYou can only use whole numbers...").sendPrefixedMessage(sender);
+            return ReturnType.FAILURE;
+        }
+
 
         ItemStack itemStack = instance.makeAnchorItem(Integer.parseInt(args[1]) * 20 * 60 * 60);
 
