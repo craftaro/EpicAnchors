@@ -3,7 +3,6 @@ package com.songoda.epicanchors.listeners;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.settings.Settings;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -26,7 +25,7 @@ public class BlockListeners implements Listener {
 
         if (!item.hasItemMeta()
                 || !item.getItemMeta().hasDisplayName()
-                || Material.valueOf(Settings.MATERIAL.getString()) != event.getBlock().getType()
+                || Settings.MATERIAL.getMaterial().getMaterial() != event.getBlock().getType()
                 || plugin.getTicksFromItem(item) == 0) return;
 
         Anchor anchor = new Anchor(event.getBlock().getLocation(), plugin.getTicksFromItem(item));
