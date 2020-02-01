@@ -171,7 +171,7 @@ public class EpicAnchors extends SongodaPlugin {
     }
 
     public ItemStack makeAnchorItem(int ticks) {
-        ItemStack item = getCoreConfig().getMaterial("Main.Anchor Block Material", CompatibleMaterial.END_PORTAL_FRAME).getItem();
+        ItemStack item = Settings.MATERIAL.getMaterial().getItem();
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Methods.formatName(ticks, true));
         ArrayList<String> lore = new ArrayList<>();
