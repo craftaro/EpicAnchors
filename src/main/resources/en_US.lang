@@ -14,6 +14,7 @@ interface:
     addtimewithxplore: '&7Cost: &a%cost% Levels'
     addtimewitheconomy: '&aAdd 30 Minutes with ECO'
     addtimewitheconomylore: '&7Cost: &a$%cost%'
+    infinite: '&cCannot upgrade an infinite anchor!'
   anchor:
     title: ChunkAnchor
     smalltitle: '&eChunkAnchor'

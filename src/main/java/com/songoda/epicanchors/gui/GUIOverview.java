@@ -49,22 +49,22 @@ public class GUIOverview extends Gui {
 
         setItem(13, GuiUtils.createButtonItem(plugin.makeAnchorItem(anchor.getTicksLeft()),
                 plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage(),
-                ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining."));
+                (anchor.isInfinite()) ? ChatColor.GRAY + "Infinite" : ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining."));
 
         if (EconomyManager.isEnabled() && Settings.ADD_TIME_WITH_ECONOMY.getBoolean()) {
             setButton(15, GuiUtils.createButtonItem(Settings.ECO_ICON.getMaterial(CompatibleMaterial.SUNFLOWER),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
-                        .processPlaceholder("cost", Methods.formatEconomy(Settings.ECONOMY_COST.getDouble())).getMessage()), // EconomyManager.formatEconomy adds its own prefix/suffix
-                    event -> anchor.addTime("ECO", event.player));
+                            .processPlaceholder("cost", Methods.formatEconomy(Settings.ECONOMY_COST.getDouble())).getMessage()), // EconomyManager.formatEconomy adds its own prefix/suffix
+                    event -> checkInfiniteAndAlert(anchor, event.player, true));
         }
 
         if (Settings.ADD_TIME_WITH_XP.getBoolean()) {
             setButton(11, GuiUtils.createButtonItem(Settings.XP_ICON.getMaterial(CompatibleMaterial.EXPERIENCE_BOTTLE),
                     plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewithxplore")
-                        .processPlaceholder("cost", String.valueOf(Settings.XP_COST.getInt())).getMessage()),
-                    event -> anchor.addTime("XP", event.player));
+                            .processPlaceholder("cost", String.valueOf(Settings.XP_COST.getInt())).getMessage()),
+                    event -> checkInfiniteAndAlert(anchor, event.player, false));
         }
 
     }
@@ -72,7 +72,19 @@ public class GUIOverview extends Gui {
     private void runTask() {
         task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             updateItem(13, plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage(),
-                    ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining.");
+                    (anchor.isInfinite()) ? ChatColor.GRAY + "Infinite" : ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining.");
         }, 5L, 5L);
+    }
+
+    private void checkInfiniteAndAlert(Anchor anchor, Player p, boolean eco) {
+        if (anchor.isInfinite()) {
+            plugin.getLocale().getMessage("interface.button.infinite").sendPrefixedMessage(p);
+        } else {
+            if (eco) {
+                anchor.addTime("ECO", p);
+            } else {
+                anchor.addTime("XP", p);
+            }
+        }
     }
 }

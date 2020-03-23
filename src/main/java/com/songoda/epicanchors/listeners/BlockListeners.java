@@ -29,8 +29,12 @@ public class BlockListeners implements Listener {
                 || plugin.getTicksFromItem(item) == 0) return;
 
         Anchor anchor = new Anchor(event.getBlock().getLocation(), plugin.getTicksFromItem(item));
-        plugin.getAnchorManager().addAnchor(event.getBlock().getLocation(), anchor);
 
+        if (plugin.getTicksFromItem(item) == -99) {
+            anchor.setInfinite(true);
+        }
+
+        plugin.getAnchorManager().addAnchor(event.getBlock().getLocation(), anchor);
         plugin.updateHologram(anchor);
 
     }

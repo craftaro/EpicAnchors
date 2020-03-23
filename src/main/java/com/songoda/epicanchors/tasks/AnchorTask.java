@@ -110,9 +110,12 @@ public class AnchorTask extends BukkitRunnable {
             }
 
             int ticksLeft = anchor.getTicksLeft();
-            anchor.setTicksLeft(ticksLeft - 3);
 
-            if (ticksLeft <= 0) {
+            if (!anchor.isInfinite()) {
+                anchor.setTicksLeft(ticksLeft - 3);
+            }
+
+            if (ticksLeft <= 0 && !anchor.isInfinite()) {
                 anchor.bust();
                 chunk.unload();
                 return;

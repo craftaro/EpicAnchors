@@ -11,6 +11,7 @@ public class Anchor {
 
     private Location location;
     private int ticksLeft;
+    private boolean isInfinite;
 
     private final int chunkX;
     private final int chunkZ;
@@ -20,6 +21,7 @@ public class Anchor {
         this.chunkX = location.getBlockX() >> 4;
         this.chunkZ = location.getBlockZ() >> 4;
         this.ticksLeft = ticksLeft;
+        this.isInfinite = (ticksLeft == -99);
     }
 
     public void addTime(String type, Player player) {
@@ -95,5 +97,13 @@ public class Anchor {
 
     public void setTicksLeft(int ticksLeft) {
         this.ticksLeft = ticksLeft;
+    }
+
+    public boolean isInfinite() {
+        return isInfinite;
+    }
+
+    public void setInfinite(boolean infinite) {
+        isInfinite = infinite;
     }
 }

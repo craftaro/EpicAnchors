@@ -19,7 +19,7 @@ public class Methods {
 
         String remaining = Methods.makeReadable((ticks2 / 20L) * 1000L);
 
-        String name = Settings.NAMETAG.getString().replace("{REMAINING}", remaining);
+        String name = Settings.NAMETAG.getString().replace("{REMAINING}", (ticks2 <= 0) ? "Infinite" : remaining);
 
         String info = "";
         if (full) {
@@ -154,6 +154,19 @@ public class Methods {
                 return value * 1000;
         }
         return 0;
+    }
+
+    public static boolean isInt(String number) {
+        if (number != null && !number.equals("")) {
+            try {
+                Integer.parseInt(number);
+                return true;
+            } catch (NumberFormatException var2) {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
