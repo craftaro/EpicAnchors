@@ -2,6 +2,7 @@ package com.songoda.epicanchors.commands;
 
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,15 +32,18 @@ public class CommandGive extends AbstractCommand {
             return ReturnType.SYNTAX_ERROR;
         }
 
-        try {
-            Integer.parseInt(args[1]);
-        } catch (Exception e) {
+
+
+        ItemStack itemStack;
+
+        if (Methods.isInt(args[1])) {
+            itemStack = (Integer.parseInt(args[1]) <= 0) ? instance.makeAnchorItem(-99) : instance.makeAnchorItem(Integer.parseInt(args[1]) * 20 * 60 * 60);
+        } else if (args[1].toLowerCase().equals("infinite")) {
+            itemStack = instance.makeAnchorItem(-99);
+        } else {
             instance.getLocale().newMessage("&cYou can only use whole numbers...").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
-
-
-        ItemStack itemStack = instance.makeAnchorItem(Integer.parseInt(args[1]) * 20 * 60 * 60);
 
         if (target != null) {
             target.getInventory().addItem(itemStack);
@@ -50,6 +54,7 @@ public class CommandGive extends AbstractCommand {
                 instance.getLocale().getMessage("command.give.success").sendPrefixedMessage(player);
             }
         }
+
         return ReturnType.SUCCESS;
     }
 
@@ -75,7 +80,7 @@ public class CommandGive extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/ea give <player/all> <amount in hours>";
+        return "/ea give <player/all> <amount in hours / infinite>";
     }
 
     @Override

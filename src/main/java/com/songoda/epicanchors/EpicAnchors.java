@@ -4,15 +4,18 @@ import com.songoda.core.SongodaCore;
 import com.songoda.core.SongodaPlugin;
 import com.songoda.core.commands.CommandManager;
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
+import com.songoda.core.utils.TextUtils;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.anchor.AnchorManager;
 import com.songoda.epicanchors.commands.*;
 import com.songoda.epicanchors.listeners.BlockListeners;
 import com.songoda.epicanchors.listeners.InteractListeners;
+import com.songoda.epicanchors.listeners.PortalListeners;
 import com.songoda.epicanchors.settings.Settings;
 import com.songoda.epicanchors.tasks.AnchorTask;
 import com.songoda.epicanchors.tasks.VisualizeTask;
@@ -79,7 +82,7 @@ public class EpicAnchors extends SongodaPlugin {
                 );
 
         anchorManager = new AnchorManager();
-        Bukkit.getScheduler().runTaskLater(this, () -> loadAnchorsFromFile(), 5L);
+        Bukkit.getScheduler().runTaskLater(this, this::loadAnchorsFromFile, 5L);
 
         // Start tasks
         new AnchorTask(this);
@@ -90,6 +93,8 @@ public class EpicAnchors extends SongodaPlugin {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
+            pluginManager.registerEvents(new PortalListeners(this), this);
 
         // Register Hologram Plugin
         HologramManager.load(this);
@@ -171,13 +176,13 @@ public class EpicAnchors extends SongodaPlugin {
     }
 
     public ItemStack makeAnchorItem(int ticks) {
-        ItemStack item = getCoreConfig().getMaterial("Main.Anchor Block Material", CompatibleMaterial.END_PORTAL_FRAME).getItem();
+        ItemStack item = Settings.MATERIAL.getMaterial().getItem();
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Methods.formatName(ticks, true));
         ArrayList<String> lore = new ArrayList<>();
         String[] parts = Settings.LORE.getString().split("\\|");
         for (String line : parts) {
-            lore.add(Methods.formatText(line));
+            lore.add(TextUtils.formatText(line));
         }
         meta.setLore(lore);
         item.setItemMeta(meta);

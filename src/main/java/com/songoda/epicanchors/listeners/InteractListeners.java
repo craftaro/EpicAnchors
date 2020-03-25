@@ -1,5 +1,6 @@
 package com.songoda.epicanchors.listeners;
 
+import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.core.compatibility.CompatibleSound;
@@ -55,7 +56,7 @@ public class InteractListeners implements Listener {
             anchor.setTicksLeft(anchor.getTicksLeft() + instance.getTicksFromItem(item));
 
             if (player.getGameMode() != GameMode.CREATIVE)
-                ItemUtils.takeActiveItem(player);
+                ItemUtils.takeActiveItem(player, CompatibleHand.getHand(event));
 
             player.playSound(player.getLocation(), CompatibleSound.ENTITY_PLAYER_LEVELUP.getSound(), 0.6F, 15.0F);
 

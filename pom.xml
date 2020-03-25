@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>EpicAnchors</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>maven-version-number</version>
+    <version>1.4.7</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>EpicAnchors-${project.version}</finalName>
@@ -14,6 +14,28 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${project.build.directory}/classes/plugin.yml</file>
+                    <replacements>
+                        <replacement>
+                            <token>maven-version-number</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                    </replacements>
                 </configuration>
             </plugin>
             <plugin>
@@ -71,6 +93,10 @@
             <url>http://repo.songoda.com/artifactory/private/</url>
         </repository>
         <repository>
+            <id>public</id>
+            <url>https://repo.songoda.com/artifactory/public/</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -78,8 +104,8 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
+            <artifactId>spigot</artifactId>
+            <version>1.15</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
