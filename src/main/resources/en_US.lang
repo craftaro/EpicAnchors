@@ -3,8 +3,8 @@
 general:
   nametag:
     prefix: '&8[&6EpicAnchors&8]'
-    next: '&9Next'
-    back: '&9Back'
+  word:
+    infinite: 'Infinite'
 
 # Interface Messages
 

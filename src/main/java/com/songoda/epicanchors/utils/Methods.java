@@ -2,6 +2,7 @@ package com.songoda.epicanchors.utils;
 
 import com.songoda.core.utils.TextUtils;
 import com.songoda.core.utils.TimeUtils;
+import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.settings.Settings;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -21,7 +22,8 @@ public class Methods {
 
         String remaining = TimeUtils.makeReadable((ticks2 / 20L) * 1000L);
 
-        String name = Settings.NAMETAG.getString().replace("{REMAINING}", (ticks2 <= 0) ? "Infinite" : remaining);
+        String name = Settings.NAMETAG.getString().replace("{REMAINING}", (ticks2 <= 0)
+                ? EpicAnchors.getInstance().getLocale().getMessage("infinite").getMessage() : remaining);
 
         String info = "";
         if (full) {
