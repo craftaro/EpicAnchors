@@ -4,6 +4,8 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.utils.TextUtils;
+import com.songoda.core.utils.TimeUtils;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.settings.Settings;
@@ -27,7 +29,7 @@ public class GUIOverview extends Gui {
         this.player = player;
 
         this.setRows(3);
-        this.setTitle(Methods.formatText(plugin.getLocale().getMessage("interface.anchor.title").getMessage()));
+        this.setTitle(TextUtils.formatText(plugin.getLocale().getMessage("interface.anchor.title").getMessage()));
 
         runTask();
         constructGUI();
@@ -49,13 +51,13 @@ public class GUIOverview extends Gui {
 
         setItem(13, GuiUtils.createButtonItem(plugin.makeAnchorItem(anchor.getTicksLeft()),
                 plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage(),
-                (anchor.isInfinite()) ? ChatColor.GRAY + "Infinite" : ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining."));
+                (anchor.isInfinite()) ? ChatColor.GRAY + "Infinite" : ChatColor.GRAY + TimeUtils.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining."));
 
         if (EconomyManager.isEnabled() && Settings.ADD_TIME_WITH_ECONOMY.getBoolean()) {
             setButton(15, GuiUtils.createButtonItem(Settings.ECO_ICON.getMaterial(CompatibleMaterial.SUNFLOWER),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage(),
                     plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
-                            .processPlaceholder("cost", Methods.formatEconomy(Settings.ECONOMY_COST.getDouble())).getMessage()), // EconomyManager.formatEconomy adds its own prefix/suffix
+                            .processPlaceholder("cost", EconomyManager.formatEconomy(Settings.ECONOMY_COST.getDouble())).getMessage()), // EconomyManager.formatEconomy adds its own prefix/suffix
                     event -> checkInfiniteAndAlert(anchor, event.player, true));
         }
 
@@ -72,7 +74,7 @@ public class GUIOverview extends Gui {
     private void runTask() {
         task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             updateItem(13, plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage(),
-                    (anchor.isInfinite()) ? ChatColor.GRAY + "Infinite" : ChatColor.GRAY + Methods.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining.");
+                    (anchor.isInfinite()) ? ChatColor.GRAY + "Infinite" : ChatColor.GRAY + TimeUtils.makeReadable((long) (anchor.getTicksLeft() / 20) * 1000) + " remaining.");
         }, 5L, 5L);
     }
 

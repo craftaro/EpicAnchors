@@ -8,6 +8,7 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
+import com.songoda.core.utils.TextUtils;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.anchor.AnchorManager;
 import com.songoda.epicanchors.commands.*;
@@ -79,7 +80,7 @@ public class EpicAnchors extends SongodaPlugin {
                 );
 
         anchorManager = new AnchorManager();
-        Bukkit.getScheduler().runTaskLater(this, () -> loadAnchorsFromFile(), 5L);
+        Bukkit.getScheduler().runTaskLater(this, this::loadAnchorsFromFile, 5L);
 
         // Start tasks
         new AnchorTask(this);
@@ -177,7 +178,7 @@ public class EpicAnchors extends SongodaPlugin {
         ArrayList<String> lore = new ArrayList<>();
         String[] parts = Settings.LORE.getString().split("\\|");
         for (String line : parts) {
-            lore.add(Methods.formatText(line));
+            lore.add(TextUtils.formatText(line));
         }
         meta.setLore(lore);
         item.setItemMeta(meta);

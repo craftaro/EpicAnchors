@@ -1,5 +1,7 @@
 package com.songoda.epicanchors.utils;
 
+import com.songoda.core.utils.TextUtils;
+import com.songoda.core.utils.TimeUtils;
 import com.songoda.epicanchors.settings.Settings;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -17,50 +19,16 @@ public class Methods {
 
     public static String formatName(int ticks2, boolean full) {
 
-        String remaining = Methods.makeReadable((ticks2 / 20L) * 1000L);
+        String remaining = TimeUtils.makeReadable((ticks2 / 20L) * 1000L);
 
         String name = Settings.NAMETAG.getString().replace("{REMAINING}", (ticks2 <= 0) ? "Infinite" : remaining);
 
         String info = "";
         if (full) {
-            info += convertToInvisibleString(ticks2 + ":");
+            info += TextUtils.convertToInvisibleString(ticks2 + ":");
         }
 
-        return info + formatText(name);
-    }
-
-    public static String formatText(String text) {
-        if (text == null || text.equals(""))
-            return "";
-        return formatText(text, false);
-    }
-
-    public static String formatText(String text, boolean cap) {
-        if (text == null || text.equals(""))
-            return "";
-        if (cap)
-            text = text.substring(0, 1).toUpperCase() + text.substring(1);
-        return ChatColor.translateAlternateColorCodes('&', text);
-    }
-
-    public static String convertToInvisibleString(String s) {
-        if (s == null || s.equals(""))
-            return "";
-        StringBuilder hidden = new StringBuilder();
-        for (char c : s.toCharArray()) hidden.append(ChatColor.COLOR_CHAR + "").append(c);
-        return hidden.toString();
-    }
-
-    /**
-     * Serializes the location of the block specified.
-     *
-     * @param b The block whose location is to be saved.
-     * @return The serialized data.
-     */
-    public static String serializeLocation(Block b) {
-        if (b == null)
-            return "";
-        return serializeLocation(b.getLocation());
+        return info + TextUtils.formatText(name);
     }
 
     /**
@@ -104,58 +72,6 @@ public class Methods {
         return location;
     }
 
-    public static String makeReadable(Long time) {
-        if (time == null)
-            return "";
-
-        StringBuilder sb = new StringBuilder();
-
-        long days = TimeUnit.MILLISECONDS.toDays(time);
-        long hours = TimeUnit.MILLISECONDS.toHours(time) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(time));
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time));
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time));
-
-        if (days != 0L)
-            sb.append(" ").append(days).append("d");
-        if (hours != 0L)
-            sb.append(" ").append(hours).append("h");
-        if (minutes != 0L)
-            sb.append(" ").append(minutes).append("m");
-        if (seconds != 0L)
-            sb.append(" ").append(seconds).append("s");
-        return sb.toString().trim();
-    }
-
-
-    public static long parseTime(String input) {
-        long result = 0;
-        StringBuilder number = new StringBuilder();
-        for (int i = 0; i < input.length(); i++) {
-            char c = input.charAt(i);
-            if (Character.isDigit(c)) {
-                number.append(c);
-            } else if (Character.isLetter(c) && (number.length() > 0)) {
-                result += convert(Integer.parseInt(number.toString()), c);
-                number = new StringBuilder();
-            }
-        }
-        return result;
-    }
-
-    private static long convert(long value, char unit) {
-        switch (unit) {
-            case 'd':
-                return value * 1000 * 60 * 60 * 24;
-            case 'h':
-                return value * 1000 * 60 * 60;
-            case 'm':
-                return value * 1000 * 60;
-            case 's':
-                return value * 1000;
-        }
-        return 0;
-    }
-
     public static boolean isInt(String number) {
         if (number != null && !number.equals("")) {
             try {
@@ -168,16 +84,4 @@ public class Methods {
             return false;
         }
     }
-
-    /**
-     * Formats the specified double into the Economy format specified in the Arconix config.
-     *
-     * @param amt The double to format.
-     * @return The economy formatted double.
-     */
-    public static String formatEconomy(double amt) {
-        return formatter.format(amt);
-    }
-    static DecimalFormat formatter = new DecimalFormat("#,###.00");
-
 }
