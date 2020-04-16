@@ -19,7 +19,7 @@ public class Settings {
     public static final ConfigSetting LORE = new ConfigSetting(config, "Main.Anchor Lore", "&7Place down to keep that chunk|&7loaded until the time runs out.",
             "The lore on the anchor item.");
 
-    public static final ConfigSetting MATERIAL = new ConfigSetting(config, "Main.Anchor Block Material", "END_PORTAL_FRAME",
+    public static final ConfigSetting MATERIAL = new ConfigSetting(config, "Main.Anchor Block Material", CompatibleMaterial.END_PORTAL_FRAME.getMaterial().name(),
             "The material an anchor is represented with?");
 
     public static final ConfigSetting ADD_TIME_WITH_ECONOMY = new ConfigSetting(config, "Main.Add Time With Economy", true,

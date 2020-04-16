@@ -8,6 +8,7 @@ import com.songoda.core.utils.ItemUtils;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.gui.GUIOverview;
+import com.songoda.epicanchors.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class InteractListeners implements Listener {
 
         ItemStack item = player.getItemInHand();
 
-        if (instance.getCoreConfig().getMaterial("Main.Anchor Block Material", CompatibleMaterial.AIR).matches(item)) {
+        if (Settings.MATERIAL.getMaterial().matches(item)) {
             if (instance.getTicksFromItem(item) == 0) return;
 
             anchor.setTicksLeft(anchor.getTicksLeft() + instance.getTicksFromItem(item));
