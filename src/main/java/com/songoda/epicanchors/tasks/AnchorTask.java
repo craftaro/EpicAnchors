@@ -1,9 +1,11 @@
 package com.songoda.epicanchors.tasks;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.anchor.Anchor;
+import com.songoda.epicanchors.settings.Settings;
 import com.songoda.epicspawners.EpicSpawners;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -83,8 +85,7 @@ public class AnchorTask extends BukkitRunnable {
             plugin.updateHologram(anchor);
 
             Location location = anchor.getLocation();
-
-            if (anchor.getLocation().getBlock().getType() != Material.valueOf(plugin.getConfig().getString("Main.Anchor Block Material")))
+            if (CompatibleMaterial.getMaterial(location.getBlock()) != Settings.MATERIAL.getMaterial())
                 continue;
 
             Chunk chunk = location.getChunk();
