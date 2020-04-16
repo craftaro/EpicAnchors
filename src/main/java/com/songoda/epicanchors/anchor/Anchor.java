@@ -3,6 +3,7 @@ package com.songoda.epicanchors.anchor;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.settings.Settings;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -59,7 +60,7 @@ public class Anchor {
     public void bust() {
         EpicAnchors plugin = EpicAnchors.getInstance();
 
-        if (plugin.getConfig().getBoolean("Main.Allow Anchor Breaking")) {
+        if (Settings.ALLOW_ANCHOR_BREAKING.getBoolean() && getTicksLeft() > 0) {
             ItemStack item = plugin.makeAnchorItem(getTicksLeft());
             getLocation().getWorld().dropItemNaturally(getLocation(), item);
         }
