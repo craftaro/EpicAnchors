@@ -6,7 +6,6 @@ import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.settings.Settings;
-import com.songoda.epicspawners.EpicSpawners;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -122,9 +121,9 @@ public class AnchorTask extends BukkitRunnable {
                 return;
             }
 
-            if (!epicSpawners || EpicSpawners.getInstance().getSpawnerManager() == null) continue;
+            if (!epicSpawners || com.songoda.epicspawners.EpicSpawners.getInstance().getSpawnerManager() == null) continue;
 
-            EpicSpawners.getInstance().getSpawnerManager().getSpawners().stream()
+            com.songoda.epicspawners.EpicSpawners.getInstance().getSpawnerManager().getSpawners().stream()
                     .filter(spawner -> spawner.getWorld().isChunkLoaded(spawner.getX() >> 4, spawner.getZ() >> 4)
                             && chunk == spawner.getLocation().getChunk()).forEach(spawner -> {
                 Block block = spawner.getLocation().getBlock();
