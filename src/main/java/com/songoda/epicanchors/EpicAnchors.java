@@ -181,7 +181,7 @@ public class EpicAnchors extends SongodaPlugin {
         // Legacy code. Tries to get the ticks remaining from hidden text.
         if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) return 0;
         if (item.getItemMeta().getDisplayName().contains(":")) {
-            return Integer.parseInt(item.getItemMeta().getDisplayName().replace("\u00A7", "").split(":")[0], 0);
+            return Integer.parseInt(item.getItemMeta().getDisplayName().replace("\u00A7", "").split(":")[0]);
         }
         return 0;
     }
