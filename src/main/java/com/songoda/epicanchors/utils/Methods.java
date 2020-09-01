@@ -18,19 +18,15 @@ public class Methods {
 
     private static Map<String, Location> serializeCache = new HashMap<>();
 
-    public static String formatName(int ticks2, boolean full) {
+    public static String formatName(int ticks) {
 
-        String remaining = TimeUtils.makeReadable((ticks2 / 20L) * 1000L);
+        String remaining = TimeUtils.makeReadable((ticks / 20L) * 1000L);
 
-        String name = Settings.NAMETAG.getString().replace("{REMAINING}", (ticks2 <= 0)
+        String name = Settings.NAMETAG.getString().replace("{REMAINING}", (ticks <= 0)
                 ? EpicAnchors.getInstance().getLocale().getMessage("infinite").getMessage() : remaining);
 
-        String info = "";
-        if (full) {
-            info += TextUtils.convertToInvisibleString(ticks2 + ":");
-        }
 
-        return info + TextUtils.formatText(name);
+        return TextUtils.formatText(name);
     }
 
     /**

@@ -9,6 +9,8 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
+import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.nbt.NBTItem;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.epicanchors.anchor.Anchor;
 import com.songoda.epicanchors.anchor.AnchorManager;
@@ -55,6 +57,9 @@ public class EpicAnchors extends SongodaPlugin {
         saveToFile();
         HologramManager.removeAllHolograms();
     }
+
+    @Override
+    public void onDataLoad() {}
 
     @Override
     public void onPluginEnable() {
@@ -136,7 +141,7 @@ public class EpicAnchors extends SongodaPlugin {
         // verify that this is a anchor
         if (anchor.getLocation().getBlock().getType() != Settings.MATERIAL.getMaterial().getMaterial()) return;
         // grab the name
-        String name = Methods.formatName(anchor.getTicksLeft(), false).trim();
+        String name = Methods.formatName(anchor.getTicksLeft()).trim();
         Location location = correctHeight(anchor.getLocation());
         // create the hologram
         HologramManager.updateHologram(location, name);
@@ -168,9 +173,15 @@ public class EpicAnchors extends SongodaPlugin {
     }
 
     public int getTicksFromItem(ItemStack item) {
+        NBTItem nbtItem = NmsManager.getNbt().of(item);
+        if (nbtItem.has("ticks")) {
+            return nbtItem.getNBTObject("ticks").asInt();
+        }
+
+        // Legacy code. Tries to get the ticks remaining from hidden text.
         if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) return 0;
         if (item.getItemMeta().getDisplayName().contains(":")) {
-            return NumberUtils.toInt(item.getItemMeta().getDisplayName().replace("\u00A7", "").split(":")[0], 0);
+            return Integer.parseInt(item.getItemMeta().getDisplayName().replace("\u00A7", "").split(":")[0]);
         }
         return 0;
     }
@@ -178,7 +189,7 @@ public class EpicAnchors extends SongodaPlugin {
     public ItemStack makeAnchorItem(int ticks) {
         ItemStack item = Settings.MATERIAL.getMaterial().getItem();
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(Methods.formatName(ticks, true));
+        meta.setDisplayName(Methods.formatName(ticks));
         ArrayList<String> lore = new ArrayList<>();
         String[] parts = Settings.LORE.getString().split("\\|");
         for (String line : parts) {
@@ -186,7 +197,10 @@ public class EpicAnchors extends SongodaPlugin {
         }
         meta.setLore(lore);
         item.setItemMeta(meta);
-        return item;
+
+        NBTItem nbtItem = NmsManager.getNbt().of(item);
+        nbtItem.set("ticks", ticks);
+        return nbtItem.finish();
     }
 
     public CommandManager getCommandManager() {
