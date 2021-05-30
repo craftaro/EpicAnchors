@@ -12,6 +12,7 @@
 [![Patreon](https://img.shields.io/badge/-Support_on_Patreon-F96854.svg?logo=patreon&style=flat&logoColor=white)](https://www.patreon.com/join/songoda)
 <br>
 [![Latest version](https://img.shields.io/github/v/tag/SpraxDev/EpicAnchors?include_prereleases&label=Latest&logo=github&labelColor=black)](https://songoda.com/marketplace/product/31)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=songoda_EpicAnchors&metric=alert_status)](https://sonarcloud.io/dashboard?id=songoda_EpicAnchors)
 [![GitHub last commit](https://img.shields.io/github/last-commit/SpraxDev/EpicAnchors?label=Last+commit)](https://github.com/SpraxDev/EpicAnchors/commits)
 <br>
 [![bStats Servers](https://img.shields.io/bstats/servers/4816?label=Servers)](https://bstats.org/plugin/bukkit/EpicAnchors/4816)
