@@ -71,7 +71,11 @@ public class GiveCommand extends AbstractCommand {
                 players.add(player.getName());
             }
 
-            players.add("@a");
+            players.add("all");
+
+            if ("@a".startsWith(args[0].toLowerCase())) {
+                players.add("@a");
+            }
 
             return Utils.getMatches(args[0], players, true);
         } else if (args.length == 2) {
@@ -102,7 +106,7 @@ public class GiveCommand extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/ea give <player/@a> <amount in hours / infinite>";
+        return "/ea give <player/all> <amount in hours / infinite>";
     }
 
     @Override
