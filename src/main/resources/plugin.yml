@@ -1,0 +1,29 @@
+name: ${project.name}
+description: ${project.description}
+version: ${project.version}
+api-version: 1.13
+
+main: com.songoda.epicanchors.EpicAnchors
+softdepend:
+  - Holograms
+  - HolographicDisplays
+  - Vault
+
+author: Songoda
+authors: [ SpraxDev ]
+website: ${project.url}
+
+commands:
+  EpicAnchors:
+    aliases:
+      - ea
+
+permissions:
+  EpicAnchors.cmd.show:
+    default: true
+
+  EpicAnchors.admin:
+    children:
+      EpicAnchors.cmd.reload: true
+      EpicAnchors.cmd.settings: true
+      EpicAnchors.cmd.give: true

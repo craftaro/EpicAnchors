@@ -1,5 +1,4 @@
-/modules/*/target/
-/modules/nms/*/target/
+/target/
 
 # JetBrains IDEs
 /.idea/
