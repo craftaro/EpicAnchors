@@ -43,7 +43,6 @@ import java.util.concurrent.TimeUnit;
 public class AnchorManager {
     private static final String ERR_WORLD_NOT_READY = "EpicAnchors has not finished initializing that world yet";
     private static final String NBT_TICKS_KEY = "EpicAnchors_Ticks".toLowerCase();
-    private static SongodaPlugin staticPluginInstance;  // For internal use only TODO: Find a better way for doing this
 
     private final SongodaPlugin plugin;
     private final DataManager dataManager;
@@ -57,8 +56,6 @@ public class AnchorManager {
     public AnchorManager(SongodaPlugin plugin, DataManager dataManager) {
         this.plugin = Objects.requireNonNull(plugin);
         this.dataManager = Objects.requireNonNull(dataManager);
-
-        staticPluginInstance = plugin;
     }
 
     protected void saveAll() {
@@ -470,12 +467,5 @@ public class AnchorManager {
 
     private static void removeHologram(Anchor anchor) {
         HologramManager.removeHologram(anchor.getLocation());
-    }
-
-    /**
-     * <b>For internal use only</b>
-     */
-    public static SongodaPlugin getPlugin() {
-        return staticPluginInstance;
     }
 }

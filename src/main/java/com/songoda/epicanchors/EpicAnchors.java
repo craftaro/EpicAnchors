@@ -21,7 +21,6 @@ import com.songoda.epicanchors.files.migration.AnchorMigration;
 import com.songoda.epicanchors.files.migration._1_InitialMigration;
 import com.songoda.epicanchors.listener.AnchorListener;
 import com.songoda.epicanchors.listener.BlockListener;
-import com.songoda.epicanchors.listener.DebugListener;
 import com.songoda.epicanchors.listener.WorldListener;
 import com.songoda.epicanchors.tasks.AnchorTask;
 import com.songoda.epicanchors.tasks.VisualizeTask;
@@ -30,7 +29,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -94,11 +92,6 @@ public final class EpicAnchors extends SongodaPlugin {
                         new SettingsCommand(this, this.guiManager),
                         new ShowCommand(this)
                 );
-
-        // TODO: remove debug
-        if (!new File(getDataFolder(), "no-debug.txt").exists()) {
-            Bukkit.getPluginManager().registerEvents(new DebugListener(this), this);
-        }
     }
 
     @Override

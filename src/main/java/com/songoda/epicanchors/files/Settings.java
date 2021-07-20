@@ -5,14 +5,14 @@ import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.configuration.ConfigSetting;
 import com.songoda.core.hooks.EconomyManager;
-import com.songoda.epicanchors.AnchorManager;
+import com.songoda.epicanchors.EpicAnchors;
 
 public class Settings {
     private Settings() {
         throw new IllegalStateException("Utility class");
     }
 
-    public static final Config config = AnchorManager.getPlugin().getCoreConfig();
+    public static final Config config = EpicAnchors.getPlugin(EpicAnchors.class).getCoreConfig();
 
     public static final ConfigSetting NAME_TAG = new ConfigSetting(config, "Main.Name Tag",
             "&6Anchor &8(&7{REMAINING}&8)",
