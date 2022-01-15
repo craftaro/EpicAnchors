@@ -425,11 +425,17 @@ public class AnchorManager {
         // are holograms enabled?
         if (!Settings.HOLOGRAMS.getBoolean() || !HologramManager.getManager().isEnabled()) return;
 
-        Map<Location, List<String>> hologramData = new HashMap<>(anchors.size());
+        Map<String, List<String>> hologramData = new HashMap<>(anchors.size());
 
         for (Anchor anchor : anchors) {
-            hologramData.put(anchor.getLocation(),
-                    Collections.singletonList(formatAnchorText(anchor.getTicksLeft(), true)));
+            List<String> lines = Collections.singletonList(formatAnchorText(anchor.getTicksLeft(), true));
+
+            if (!HologramManager.isHologramLoaded("Anchor#" + anchor.getDbId())) {
+                HologramManager.createHologram("Anchor#" + anchor.getDbId(), anchor.getLocation(), lines);
+                continue;
+            }
+
+            hologramData.put("Anchor#" + anchor.getDbId(), lines);
         }
 
         // Create the holograms
@@ -466,6 +472,6 @@ public class AnchorManager {
     }
 
     private static void removeHologram(Anchor anchor) {
-        HologramManager.removeHologram(anchor.getLocation());
+        HologramManager.removeHologram("Anchor#" + anchor.getDbId());
     }
 }
