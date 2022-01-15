@@ -6,8 +6,7 @@
 
     <groupId>com.songoda</groupId>
     <artifactId>EpicAnchors</artifactId>
-    <version>2.0.0-ALPHA</version>
-    <!-- Run 'mvn versions:set -DgenerateBackupPoms=false -DnewVersion=X.Y.Z-DEV' to update version recursively -->
+    <version>2.2.0</version>
 
     <name>EpicAnchors</name>
     <description>Allow your players to keep chunks loaded for a limited amount of time for a cost.</description>
@@ -150,7 +149,7 @@
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>SongodaCore</artifactId>
-            <version>2.5.8</version>
+            <version>2.6.10</version>
             <scope>compile</scope>
         </dependency>
 
@@ -158,7 +157,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>21.0.1</version>
+            <version>23.0.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
