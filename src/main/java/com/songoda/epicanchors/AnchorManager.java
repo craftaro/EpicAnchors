@@ -5,8 +5,7 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.hooks.HologramManager;
-import com.songoda.core.nms.NmsManager;
-import com.songoda.core.nms.nbt.NBTItem;
+import com.songoda.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.core.utils.TimeUtils;
 import com.songoda.epicanchors.api.AnchorAccessCheck;
@@ -358,24 +357,27 @@ public class AnchorManager {
         meta.setLore(TextUtils.formatText(Settings.LORE.getString().split("\r?\n")));
         item.setItemMeta(meta);
 
-        NBTItem nbtItem = NmsManager.getNbt().of(item);
-        nbtItem.set(NBT_TICKS_KEY, ticks);
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.setInteger(NBT_TICKS_KEY, ticks);
 
-        return nbtItem.finish();
+        return nbtItem.getItem();
     }
 
     public static int getTicksFromItem(ItemStack item) {
-        NBTItem nbtItem = NmsManager.getNbt().of(item);
+        if (item == null || item.getType() == Material.AIR) {
+            return 0;
+        }
 
-        if (nbtItem.has(NBT_TICKS_KEY)) {
-            return nbtItem.getInt(NBT_TICKS_KEY);
+        NBTItem nbtItem = new NBTItem(item);
+
+        if (nbtItem.hasKey(NBT_TICKS_KEY)) {
+            return nbtItem.getInteger(NBT_TICKS_KEY);
         }
 
         // Legacy code (pre v2) to stay cross-version compatible
         if (Settings.MATERIAL.getMaterial().getMaterial() == item.getType()) {
-
-            if (nbtItem.has("ticks")) {
-                int result = nbtItem.getInt("ticks");
+            if (nbtItem.hasKey("ticks")) {
+                int result = nbtItem.getInteger("ticks");
 
                 return result == -99 ? -1 : result;
             }
