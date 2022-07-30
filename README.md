@@ -13,7 +13,6 @@
 <br>
 [![Latest version](https://img.shields.io/badge/dynamic/xml?style=flat&color=blue&logo=github&logoColor=white&label=Latest&url=https%3A%2F%2Fraw.githubusercontent.com%2Fsongoda%2FEpicAnchors%2Fmaster%2Fpom.xml&query=%2F*%5Blocal-name()%3D'project'%5D%2F*%5Blocal-name()%3D'version'%5D)](https://songoda.com/marketplace/product/31)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=songoda_EpicAnchors&metric=alert_status)](https://sonarcloud.io/dashboard?id=songoda_EpicAnchors)
-[![GitHub last commit](https://img.shields.io/github/last-commit/songoda/EpicAnchors?label=Last+commit)](https://github.com/songoda/EpicAnchors/commits)
 <br>
 [![bStats Servers](https://img.shields.io/bstats/servers/4816?label=Servers)](https://bstats.org/plugin/bukkit/EpicAnchors/4816)
 </div>
