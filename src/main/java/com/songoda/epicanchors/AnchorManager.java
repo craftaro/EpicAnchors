@@ -92,7 +92,7 @@ public class AnchorManager {
                 }
 
                 long end = System.nanoTime();
-                this.plugin.getLogger().info("Initialized anchors in world '" + world.getName() + "' " +
+                this.plugin.getLogger().info("Initialized " + this.anchors.get(world).size() + " anchors in world '" + world.getName() + "' " +
                         "(" + TimeUnit.NANOSECONDS.toMillis(end - start) + "ms)");
 
                 if (callback != null) {
