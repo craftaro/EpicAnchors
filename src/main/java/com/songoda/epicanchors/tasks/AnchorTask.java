@@ -73,7 +73,7 @@ public class AnchorTask extends BukkitRunnable {
                             try {
                                 NmsManager.getWorld().randomTickChunk(chunk, randomTicks);
                             } catch (NoSuchFieldException | IllegalAccessException ex) {
-                                this.plugin.getLogger().log(Level.FINER, ex,
+                                this.plugin.getLogger().log(Level.SEVERE, ex,
                                         () -> "Failed to do random ticks on this server implementation(/version) - " +
                                                 "Skipping further random ticks.");
 
@@ -85,7 +85,7 @@ public class AnchorTask extends BukkitRunnable {
                             try {
                                 NmsManager.getWorld().tickInactiveSpawners(chunk, TASK_INTERVAL);
                             } catch (NoSuchFieldException | IllegalAccessException ex) {
-                                this.plugin.getLogger().log(Level.FINER, ex,
+                                this.plugin.getLogger().log(Level.SEVERE, ex,
                                         () -> "Failed to do spawner ticks on this server implementation(/version) - " +
                                                 "Skipping further spawner ticks.");
 

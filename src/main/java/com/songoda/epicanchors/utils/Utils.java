@@ -55,6 +55,6 @@ public class Utils {
     public static void logException(@Nullable Plugin plugin, @NotNull Throwable th, @Nullable String type) {
         Logger logger = plugin != null ? plugin.getLogger() : Logger.getGlobal();
 
-        logger.log(Level.FINER, th, () -> "A " + (type == null ? "critical" : type) + " error occurred");
+        logger.log(Level.SEVERE, th, () -> "A " + (type == null ? "critical" : type) + " error occurred");
     }
 }
