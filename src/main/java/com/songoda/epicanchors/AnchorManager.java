@@ -370,13 +370,13 @@ public class AnchorManager {
 
         NBTItem nbtItem = new NBTItem(item);
 
-        if (nbtItem.hasKey(NBT_TICKS_KEY)) {
+        if (nbtItem.hasTag(NBT_TICKS_KEY)) {
             return nbtItem.getInteger(NBT_TICKS_KEY);
         }
 
         // Legacy code (pre v2) to stay cross-version compatible
         if (Settings.MATERIAL.getMaterial().getMaterial() == item.getType()) {
-            if (nbtItem.hasKey("ticks")) {
+            if (nbtItem.hasTag("ticks")) {
                 int result = nbtItem.getInteger("ticks");
 
                 return result == -99 ? -1 : result;
