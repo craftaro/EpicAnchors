@@ -1,6 +1,6 @@
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
-<img src="https://cdn2.songoda.com/products/epicanchors/QjwJ9jYUrWvaxe2fjg4n8CrsopkH0XUdj9zSasNK.png">
+<img src="https://cdn2.songoda.com/products/epicanchors/QjwJ9jYUrWvaxe2fjg4n8CrsopkH0XUdj9zSasNK.png" width="128px">
 
 # EpicAnchors
 **Allow your players to keep chunks loaded for a limited amount of time for a cost.**
