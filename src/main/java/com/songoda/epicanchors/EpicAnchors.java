@@ -115,7 +115,7 @@ public final class EpicAnchors extends SongodaPlugin {
             for (World w : Bukkit.getWorlds()) {
                 this.anchorManager.initAnchorsAsync(w, (ex) -> {
                     if (ex != null) {
-                        this.getLogger().log(Level.FINER, ex, () -> "Failed to initialize world '" + w.getName() + "'");
+                        this.getLogger().log(Level.SEVERE, ex, () -> "Failed to initialize world '" + w.getName() + "'");
                     }
 
                     tSync.release();

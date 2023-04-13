@@ -77,7 +77,7 @@ public class AnchorMigration extends DataMigrationManager {
                     } else {
                         abortMigration.set(true);
 
-                        plugin.getLogger().log(Level.WARNING, ex, () -> "Error migrating Anchor '" + locationStr + "' from '" +
+                        plugin.getLogger().log(Level.SEVERE, ex, () -> "Error migrating Anchor '" + locationStr + "' from '" +
                                 legacyData.getFile().getName() + "'");
                     }
 
