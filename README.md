@@ -1,6 +1,6 @@
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
-<img src="https://cdn2.songoda.com/products/epicanchors/xTjYNZqmo1pVKZ1Za8YiLojGB6uM4bm6Bb0M5Spu.gif">
+<img src="https://cdn2.songoda.com/products/epicanchors/QjwJ9jYUrWvaxe2fjg4n8CrsopkH0XUdj9zSasNK.png">
 
 # EpicAnchors
 **Allow your players to keep chunks loaded for a limited amount of time for a cost.**
@@ -14,9 +14,6 @@
 [![bStats Servers][bStats shield]][bStats page]
 </div>
 
-
-<!-- ## Introduction -->
-<!-- `// TODO: Write an introduction` -->
 
 ## Download (Marketplace)
 You can visit [our marketplace][Marketplace page] to download EpicAnchors as well as take a
