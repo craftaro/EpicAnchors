@@ -6,7 +6,7 @@
 
     <groupId>com.songoda</groupId>
     <artifactId>EpicAnchors</artifactId>
-    <version>2.2.6</version>
+    <version>2.2.7</version>
 
     <name>EpicAnchors</name>
     <description>Allow your players to keep chunks loaded for a limited amount of time for a cost.</description>
@@ -142,7 +142,7 @@
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>SongodaCore</artifactId>
-            <version>2.6.19</version>
+            <version>2.6.20</version>
             <scope>compile</scope>
         </dependency>
 
