@@ -31,7 +31,7 @@
 
     <scm>
         <url>https://github.com/songoda/EpicAnchors</url>
-        <connection>scm:git:git:github.com/songoda/EpicAnchors.git</connection>
+        <connection>scm:git:git://github.com/songoda/EpicAnchors.git</connection>
     </scm>
 
     <build>
