@@ -23,13 +23,13 @@
     </properties>
 
     <issueManagement>
-        <url>https://support.songoda.com/servicedesk/customer/portal/3</url>
-        <system>Jira Service Desk</system>
+        <url>https://discord.gg/craftaro</url>
+        <system>Discord server</system>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/songoda/EpicAnchors</url>
-        <connection>scm:git:git://github.com/songoda/EpicAnchors.git</connection>
+        <url>https://github.com/craftaro/EpicAnchors</url>
+        <connection>scm:git:git://github.com/craftaro/EpicAnchors.git</connection>
     </scm>
 
     <build>
@@ -69,11 +69,6 @@
                                     <pattern>com.songoda.core</pattern>
                                     <shadedPattern>com.songoda.epicanchors.core</shadedPattern>
                                 </relocation>
-
-                                <relocation>
-                                    <pattern>epicanchors.nms</pattern>
-                                    <shadedPattern>com.songoda.epicanchors.nms</shadedPattern>
-                                </relocation>
                             </relocations>
 
                             <filters>
@@ -92,13 +87,6 @@
                                     <excludes>
                                         <exclude>**</exclude>
                                     </excludes>
-                                </filter>
-
-                                <filter>
-                                    <artifact>com.songoda:epicanchors-v*</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
                                 </filter>
                             </filters>
                         </configuration>

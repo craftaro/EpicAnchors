@@ -9,7 +9,7 @@ softdepend:
   - HolographicDisplays
   - Vault
 
-author: Songoda
+author: Craftaro
 authors: [ SpraxDev ]
 website: ${project.url}
 
