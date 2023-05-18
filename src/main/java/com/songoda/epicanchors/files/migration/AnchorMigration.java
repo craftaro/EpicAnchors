@@ -67,7 +67,7 @@ public class AnchorMigration extends DataMigrationManager {
                 int z = Location.locToBlock(Double.parseDouble(locArgs[3]));
 
                 int finalTicksLeft = ticksLeft;
-                dataManager.exists(worldName, x, y, z, (ex, anchorExists) -> {
+                this.dataManager.exists(worldName, x, y, z, (ex, anchorExists) -> {
                     if (ex == null) {
                         if (anchorExists) {
                             cfgSection.set(locationStr, null);

@@ -22,7 +22,7 @@ public class BlockListener implements Listener {
     private void onBlockBurn(BlockBurnEvent e) {
         if (!this.manager.isReady(e.getBlock().getWorld())) return;
 
-        if (manager.isAnchor(e.getBlock())) {
+        if (this.manager.isAnchor(e.getBlock())) {
             e.setCancelled(true);
         }
     }
@@ -31,7 +31,7 @@ public class BlockListener implements Listener {
     private void onBlockPiston(BlockPistonExtendEvent e) {
         if (!this.manager.isReady(e.getBlock().getWorld())) return;
 
-        if (manager.isAnchor(e.getBlock())) {
+        if (this.manager.isAnchor(e.getBlock())) {
             e.setCancelled(true);
         }
     }
@@ -40,7 +40,7 @@ public class BlockListener implements Listener {
     private void onBlockPiston(BlockPistonRetractEvent e) {
         if (!this.manager.isReady(e.getBlock().getWorld())) return;
 
-        if (manager.isAnchor(e.getBlock())) {
+        if (this.manager.isAnchor(e.getBlock())) {
             e.setCancelled(true);
         }
     }
@@ -49,7 +49,7 @@ public class BlockListener implements Listener {
     private void onBlockPhysics(BlockPhysicsEvent e) {
         if (!this.manager.isReady(e.getBlock().getWorld())) return;
 
-        if (manager.isAnchor(e.getBlock())) {
+        if (this.manager.isAnchor(e.getBlock())) {
             e.setCancelled(true);
         }
     }
@@ -58,7 +58,7 @@ public class BlockListener implements Listener {
     private void onBlockPiston(LeavesDecayEvent e) {
         if (!this.manager.isReady(e.getBlock().getWorld())) return;
 
-        if (manager.isAnchor(e.getBlock())) {
+        if (this.manager.isAnchor(e.getBlock())) {
             e.setCancelled(true);
         }
     }
@@ -68,7 +68,7 @@ public class BlockListener implements Listener {
         if (!this.manager.isReady(e.getWorld())) return;
 
         for (Block b : e.getBlocks()) {
-            if (manager.isAnchor(b)) {
+            if (this.manager.isAnchor(b)) {
                 e.setCancelled(true);
                 break;
             }

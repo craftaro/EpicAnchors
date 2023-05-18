@@ -36,26 +36,26 @@ public class AnchorGui extends Gui {
         prepareGui(this.plugin, this, this.anchor);
 
         if (Settings.ADD_TIME_WITH_XP.getBoolean()) {
-            String itemName = plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage();
-            String itemLore = plugin.getLocale().getMessage("interface.button.addtimewithxplore")
+            String itemName = this.plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage();
+            String itemLore = this.plugin.getLocale().getMessage("interface.button.addtimewithxplore")
                     .processPlaceholder("cost", Settings.XP_COST.getInt())
                     .getMessage();
 
             setButton(11,
                     GuiUtils.createButtonItem(Settings.XP_ICON.getMaterial(CompatibleMaterial.EXPERIENCE_BOTTLE), itemName, itemLore),
-                    event -> buyTime(anchor, event.player, false));
+                    event -> buyTime(this.anchor, event.player, false));
         }
 
         if (EconomyManager.isEnabled() && Settings.ADD_TIME_WITH_ECONOMY.getBoolean()) {
-            String itemName = plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage();
-            String itemLore = plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
+            String itemName = this.plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage();
+            String itemLore = this.plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
                     // EconomyManager#formatEconomy adds its own prefix/suffix
                     .processPlaceholder("cost", EconomyManager.formatEconomy(Settings.ECONOMY_COST.getDouble()))
                     .getMessage();
 
             setButton(15,
                     GuiUtils.createButtonItem(Settings.ECO_ICON.getMaterial(CompatibleMaterial.SUNFLOWER), itemName, itemLore),
-                    event -> buyTime(anchor, event.player, true));
+                    event -> buyTime(this.anchor, event.player, true));
         }
     }
 

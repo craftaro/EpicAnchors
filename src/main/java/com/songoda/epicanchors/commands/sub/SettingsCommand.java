@@ -23,7 +23,7 @@ public class SettingsCommand extends AbstractCommand {
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        guiManager.showGUI((Player) sender, new PluginConfigGui(instance));
+        this.guiManager.showGUI((Player) sender, new PluginConfigGui(this.instance));
 
         return AbstractCommand.ReturnType.SUCCESS;
     }

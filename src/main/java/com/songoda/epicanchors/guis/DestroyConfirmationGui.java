@@ -46,18 +46,18 @@ public class DestroyConfirmationGui extends Gui {
     private void constructGUI() {
         AnchorGui.prepareGui(this.plugin, this, this.anchor);
 
-        String cancelLore = plugin.getLocale().getMessage("interface.button.cancelDestroyLore").getMessage();
-        String confirmLore = plugin.getLocale().getMessage("interface.button." +
+        String cancelLore = this.plugin.getLocale().getMessage("interface.button.cancelDestroyLore").getMessage();
+        String confirmLore = this.plugin.getLocale().getMessage("interface.button." +
                 (Settings.ALLOW_ANCHOR_BREAKING.getBoolean() ? "confirmDestroyLore" : "confirmDestroyLoreNoDrops"))
                 .getMessage();
 
         setButton(11, GuiUtils.createButtonItem(CompatibleMaterial.RED_TERRACOTTA,
-                plugin.getLocale().getMessage("interface.button.cancelDestroy").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.button.cancelDestroy").getMessage(),
                 cancelLore.isEmpty() ? new String[0] : new String[] {cancelLore}),
                 event -> this.handler.accept(null, false));
 
         setButton(15, GuiUtils.createButtonItem(CompatibleMaterial.GREEN_TERRACOTTA,
-                plugin.getLocale().getMessage("interface.button.confirmDestroy").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.button.confirmDestroy").getMessage(),
                 confirmLore.isEmpty() ? new String[0] : new String[] {confirmLore}),
                 event -> this.handler.accept(null, true));
     }

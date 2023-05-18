@@ -20,11 +20,11 @@ public class WorldListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void onWorldLoad(WorldLoadEvent e) {
-        initAnchorsInWorld.accept(e.getWorld());
+        this.initAnchorsInWorld.accept(e.getWorld());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onWorldUnload(WorldUnloadEvent e) {
-        deInitAnchorsInWorld.accept(e.getWorld());
+        this.deInitAnchorsInWorld.accept(e.getWorld());
     }
 }

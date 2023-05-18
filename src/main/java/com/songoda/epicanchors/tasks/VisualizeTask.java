@@ -30,7 +30,7 @@ public class VisualizeTask extends BukkitRunnable {
     }
 
     public void startTask() {
-        runTaskTimer(plugin, TASK_INTERVAL, TASK_INTERVAL);
+        runTaskTimer(this.plugin, TASK_INTERVAL, TASK_INTERVAL);
     }
 
     @Override
@@ -55,10 +55,10 @@ public class VisualizeTask extends BukkitRunnable {
                     Location pLoc = p.getLocation();
 
                     // start and stop chunk coordinates
-                    int cxi = (pLoc.getBlockX() >> 4) - radius;
-                    int cxn = cxi + radius * 2;
-                    int czi = (pLoc.getBlockZ() >> 4) - radius;
-                    int czn = czi + radius * 2;
+                    int cxi = (pLoc.getBlockX() >> 4) - this.radius;
+                    int cxn = cxi + this.radius * 2;
+                    int czi = (pLoc.getBlockZ() >> 4) - this.radius;
+                    int czn = czi + this.radius * 2;
 
                     // loop through the chunks to find applicable ones
                     for (int cx = cxi; cx < cxn; ++cx) {

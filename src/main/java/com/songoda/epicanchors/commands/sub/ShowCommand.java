@@ -30,7 +30,7 @@ public class ShowCommand extends AbstractCommand {
 
         boolean visualize = this.plugin.getAnchorManager().toggleChunkVisualized((Player) sender);
 
-        plugin.getLocale().getMessage("command.show." + (visualize ? "start" : "stop"))
+        this.plugin.getLocale().getMessage("command.show." + (visualize ? "start" : "stop"))
                 .sendPrefixedMessage(sender);
 
         return ReturnType.SUCCESS;

@@ -45,15 +45,13 @@ public final class EpicAnchors extends SongodaPlugin {
 
     @Override
     public void onPluginEnable() {
-        // Songoda Updater
         SongodaCore.registerPlugin(this, 31, CompatibleMaterial.END_PORTAL_FRAME);
 
         // Initialize database
         this.getLogger().info("Initializing SQLite...");
         DatabaseConnector dbCon = new SQLiteConnector(this);
         this.dataManager = new DataManager(dbCon, this);
-        AnchorMigration anchorMigration = new AnchorMigration(dbCon, this.dataManager,
-                new _1_InitialMigration());
+        AnchorMigration anchorMigration = new AnchorMigration(dbCon, this.dataManager, new _1_InitialMigration());
         anchorMigration.runMigrations();
 
         anchorMigration.migrateLegacyData(this);
@@ -74,7 +72,7 @@ public final class EpicAnchors extends SongodaPlugin {
 
         // Event Listener
         this.guiManager = new GuiManager(this);
-        guiManager.init();
+        this.guiManager.init();
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new WorldListener(
                         world -> this.anchorManager.initAnchorsAsync(world, null),

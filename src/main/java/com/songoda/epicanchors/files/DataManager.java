@@ -159,7 +159,7 @@ public class DataManager extends DataManagerAbstract {
 
                 for (int i : batchRes) {
                     if (i < 0 && i != Statement.SUCCESS_NO_INFO) {
-                        throw new AssertionError("Batch-INSERT failed for at least one statement with code " + i + "");
+                        throw new AssertionError("Batch-INSERT failed for at least one statement with code " + i);
                     }
                 }
             } catch (SQLException ex) {

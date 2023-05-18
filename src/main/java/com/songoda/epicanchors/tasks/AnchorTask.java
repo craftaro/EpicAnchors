@@ -69,7 +69,7 @@ public class AnchorTask extends BukkitRunnable {
                             WorldUtils.loadAnchoredChunk(chunk, this.plugin);
                         }
 
-                        if (!randomTicksFailed) {
+                        if (!this.randomTicksFailed) {
                             try {
                                 NmsManager.getWorld().randomTickChunk(chunk, randomTicks);
                             } catch (ReflectiveOperationException ex) {
@@ -77,11 +77,11 @@ public class AnchorTask extends BukkitRunnable {
                                         () -> "Failed to do random ticks on this server implementation(/version) - " +
                                                 "Skipping further random ticks.");
 
-                                randomTicksFailed = true;
+                                this.randomTicksFailed = true;
                             }
                         }
 
-                        if (!spawnerTicksFailed) {
+                        if (!this.spawnerTicksFailed) {
                             try {
                                 NmsManager.getWorld().tickInactiveSpawners(chunk, TASK_INTERVAL);
                             } catch (ReflectiveOperationException ex) {
@@ -89,7 +89,7 @@ public class AnchorTask extends BukkitRunnable {
                                         () -> "Failed to do spawner ticks on this server implementation(/version) - " +
                                                 "Skipping further spawner ticks.");
 
-                                spawnerTicksFailed = true;
+                                this.spawnerTicksFailed = true;
                             }
                         }
                     }
@@ -113,7 +113,7 @@ public class AnchorTask extends BukkitRunnable {
                 }
 
                 // Update holograms on queued anchors
-                anchorManager.updateHolograms(toUpdateHolo);
+                this.anchorManager.updateHolograms(toUpdateHolo);
             }
         } catch (Exception ex) {
             Utils.logException(this.plugin, ex);

@@ -32,7 +32,7 @@ public class GiveCommand extends AbstractCommand {
         if (target == null &&
                 !args[0].trim().equalsIgnoreCase("all") &&
                 !args[0].trim().equalsIgnoreCase("@a")) {
-            plugin.getLocale().newMessage("&cThat is not a player...").sendPrefixedMessage(sender);
+            this.plugin.getLocale().newMessage("&cThat is not a player...").sendPrefixedMessage(sender);
 
             return ReturnType.SYNTAX_ERROR;
         }
@@ -40,22 +40,22 @@ public class GiveCommand extends AbstractCommand {
         ItemStack itemStack;
 
         if (Utils.isInt(args[1]) && Integer.parseInt(args[1]) > 0) {
-            itemStack = plugin.getAnchorManager().createAnchorItem(Integer.parseInt(args[1]) * 20 * 60 * 60);
+            itemStack = this.plugin.getAnchorManager().createAnchorItem(Integer.parseInt(args[1]) * 20 * 60 * 60);
         } else if (args[1].equalsIgnoreCase("infinite")) {
-            itemStack = plugin.getAnchorManager().createAnchorItem(-1);
+            itemStack = this.plugin.getAnchorManager().createAnchorItem(-1);
         } else {
-            plugin.getLocale().newMessage("&cYou can only use positive whole numbers...").sendPrefixedMessage(sender);
+            this.plugin.getLocale().newMessage("&cYou can only use positive whole numbers...").sendPrefixedMessage(sender);
 
             return ReturnType.FAILURE;
         }
 
         if (target != null) {
             target.getInventory().addItem(itemStack);
-            plugin.getLocale().getMessage("command.give.success").sendPrefixedMessage(target);
+            this.plugin.getLocale().getMessage("command.give.success").sendPrefixedMessage(target);
         } else {
             for (Player online : Bukkit.getOnlinePlayers()) {
                 online.getInventory().addItem(itemStack);
-                plugin.getLocale().getMessage("command.give.success").sendPrefixedMessage(online);
+                this.plugin.getLocale().getMessage("command.give.success").sendPrefixedMessage(online);
             }
         }
 

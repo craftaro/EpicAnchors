@@ -37,7 +37,7 @@ public class AnchorListener implements Listener {
         if (item.hasItemMeta() &&
                 item.getItemMeta().hasDisplayName() &&
                 Settings.MATERIAL.getMaterial().getMaterial() == e.getBlock().getType()) {
-            if (!plugin.getAnchorManager().isReady(e.getBlock().getWorld())) {
+            if (!this.plugin.getAnchorManager().isReady(e.getBlock().getWorld())) {
                 e.setCancelled(true);
                 e.getPlayer().sendMessage("Anchors are still being initialized - Please wait a moment");    // TODO
             } else {
@@ -46,7 +46,7 @@ public class AnchorListener implements Listener {
                 if (ticksLeft != 0) {
                     boolean dropOnErr = e.getPlayer().getGameMode() != GameMode.CREATIVE;
 
-                    plugin.getAnchorManager().createAnchor(e.getBlock().getLocation(), e.getPlayer().getUniqueId(), ticksLeft,
+                    this.plugin.getAnchorManager().createAnchor(e.getBlock().getLocation(), e.getPlayer().getUniqueId(), ticksLeft,
                             (ex, result) -> {
                                 if (ex != null) {
                                     Utils.logException(this.plugin, ex, "SQLite");
@@ -59,7 +59,7 @@ public class AnchorListener implements Listener {
 
                                         if (dropOnErr) {
                                             e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(),
-                                                    plugin.getAnchorManager().createAnchorItem(ticksLeft, item.getType()));
+                                                    this.plugin.getAnchorManager().createAnchorItem(ticksLeft, item.getType()));
                                         }
                                     });
                                 }
@@ -72,10 +72,10 @@ public class AnchorListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockInteract(PlayerInteractEvent e) {
         if (e.getClickedBlock() == null ||
-                !plugin.getAnchorManager().isReady(e.getClickedBlock().getWorld())) return;
+                !this.plugin.getAnchorManager().isReady(e.getClickedBlock().getWorld())) return;
 
         Player p = e.getPlayer();
-        Anchor anchor = plugin.getAnchorManager().getAnchor(e.getClickedBlock());
+        Anchor anchor = this.plugin.getAnchorManager().getAnchor(e.getClickedBlock());
 
         if (anchor != null) {
             e.setCancelled(true);
@@ -90,7 +90,7 @@ public class AnchorListener implements Listener {
                                     Bukkit.getPluginManager().callEvent(blockBreakEvent);
 
                                     if (!blockBreakEvent.isCancelled()) {
-                                        plugin.getAnchorManager().destroyAnchor(anchor);
+                                        this.plugin.getAnchorManager().destroyAnchor(anchor);
                                     }
                                 }
                             }));
@@ -115,11 +115,11 @@ public class AnchorListener implements Listener {
                                     anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
                         }
                     } else {
-                        plugin.getGuiManager().showGUI(p, new AnchorGui(plugin, anchor));
+                        this.plugin.getGuiManager().showGUI(p, new AnchorGui(this.plugin, anchor));
                     }
                 }
             } else {
-                plugin.getLocale().getMessage("event.general.nopermission").sendMessage(p);
+                this.plugin.getLocale().getMessage("event.general.nopermission").sendMessage(p);
             }
         }
     }

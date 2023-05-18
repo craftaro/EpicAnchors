@@ -58,13 +58,13 @@ public class AnchorManager {
     }
 
     protected void saveAll() {
-        for (Set<Anchor> anchorSet : anchors.values()) {
+        for (Set<Anchor> anchorSet : this.anchors.values()) {
             this.dataManager.updateAnchors(anchorSet, null);
         }
     }
 
     protected void deInitAll() {
-        for (World world : anchors.keySet().toArray(new World[0])) {
+        for (World world : this.anchors.keySet().toArray(new World[0])) {
             deInitAnchors(world);
         }
     }
@@ -123,18 +123,18 @@ public class AnchorManager {
     protected void setReady() {
         this.ready = true;
 
-        Bukkit.getScheduler().runTaskTimer(plugin, this::saveAll, 20L * 60 * 5, 20L * 60 * 5);
+        Bukkit.getScheduler().runTaskTimer(this.plugin, this::saveAll, 20L * 60 * 5, 20L * 60 * 5);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isReady(World world) {
-        return this.ready && anchors.containsKey(world);
+        return this.ready && this.anchors.containsKey(world);
     }
 
     /* Getter */
 
     public Anchor[] getAnchors(@NotNull World world) {
-        Set<Anchor> set = anchors.get(world);
+        Set<Anchor> set = this.anchors.get(world);
 
         if (set != null) {
             return set.toArray(new Anchor[0]);
@@ -149,7 +149,7 @@ public class AnchorManager {
         }
 
         Location bLoc = b.getLocation();
-        Set<Anchor> set = anchors.get(b.getWorld());
+        Set<Anchor> set = this.anchors.get(b.getWorld());
 
         if (set != null) {
             for (Anchor anchor : set) {
@@ -171,7 +171,7 @@ public class AnchorManager {
             throw new IllegalStateException(ERR_WORLD_NOT_READY);
         }
 
-        Set<Anchor> set = anchors.get(chunk.getWorld());
+        Set<Anchor> set = this.anchors.get(chunk.getWorld());
 
         if (set != null) {
             for (Anchor anchor : set) {
@@ -237,7 +237,7 @@ public class AnchorManager {
                     Block b = loc.getBlock();
                     b.setType(Settings.MATERIAL.getMaterial().getMaterial());
 
-                    anchors.computeIfAbsent(anchor.getWorld(), k -> new HashSet<>())
+                    this.anchors.computeIfAbsent(anchor.getWorld(), k -> new HashSet<>())
                             .add(anchor);
 
                     updateHologram(anchor);
@@ -259,7 +259,7 @@ public class AnchorManager {
             throw new IllegalStateException(ERR_WORLD_NOT_READY);
         }
 
-        for (Set<Anchor> value : anchors.values()) {
+        for (Set<Anchor> value : this.anchors.values()) {
             value.remove(anchor);
         }
 
@@ -293,9 +293,9 @@ public class AnchorManager {
 
     @SuppressWarnings("unused")
     public void registerAccessCheck(AnchorAccessCheck accessCheck) {
-        if (!accessChecks.contains(accessCheck)) {
+        if (!this.accessChecks.contains(accessCheck)) {
             // Adding at the start of the list makes sure the default check is
-            accessChecks.add(accessCheck);
+            this.accessChecks.add(accessCheck);
         }
     }
 
@@ -306,7 +306,7 @@ public class AnchorManager {
      */
     @SuppressWarnings("unused")
     public boolean unregisterAccessCheck(AnchorAccessCheck accessCheck) {
-        return accessChecks.remove(accessCheck);
+        return this.accessChecks.remove(accessCheck);
     }
 
     public boolean hasAccess(@NotNull Anchor anchor, @NotNull OfflinePlayer p) {
@@ -314,7 +314,7 @@ public class AnchorManager {
     }
 
     /**
-     * Checks if a player has access to an Anchor. By default only the owner has access to an Anchor.
+     * Checks if a player has access to an Anchor. By default, only the owner has access to an Anchor.
      * <br>
      * Other plugins can grant access to other players (e.g. friends).
      * <br>
