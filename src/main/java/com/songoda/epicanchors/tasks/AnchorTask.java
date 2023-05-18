@@ -45,78 +45,108 @@ public class AnchorTask extends BukkitRunnable {
             for (World world : Bukkit.getWorlds()) {
                 if (!this.anchorManager.isReady(world)) return;
 
-                int randomTicks = WorldUtils.getRandomTickSpeed(world) * TASK_INTERVAL;
+                int randomTicksToDo = WorldUtils.getRandomTickSpeed(world) * TASK_INTERVAL;
 
                 Set<Chunk> alreadyTicked = new HashSet<>();
                 Anchor[] anchorsInWorld = this.anchorManager.getAnchors(world);
                 List<Anchor> toUpdateHolo = new ArrayList<>(anchorsInWorld.length);
 
-                // Skip all chunks with players in them
-                for (Player pInWorld : world.getPlayers()) {
-                    alreadyTicked.add(pInWorld.getLocation().getChunk());
-                }
-
+                List<Chunk> chunksWithPlayers = getChunksWithPlayers(world);
                 for (Anchor anchor : anchorsInWorld) {
                     Chunk chunk = anchor.getChunk();
 
-                    // Tick the anchor's chunk (but not multiple times)
                     if (alreadyTicked.add(chunk)) {
                         // Having a chunk loaded takes care of entities and weather (https://minecraft.fandom.com/wiki/Tick#Chunk_tick)
-                        if (!chunk.isLoaded()) {
-                            // Loading an already loaded chunk still fires the ChunkLoadEvent and might have a huge
-                            // impact on performance if other plugins do not expect that either...
+                        loadChunk(chunk);
 
-                            WorldUtils.loadAnchoredChunk(chunk, this.plugin);
-                        }
+                        executeTicksForInactiveSpawners(chunk);
 
-                        if (!this.randomTicksFailed) {
-                            try {
-                                NmsManager.getWorld().randomTickChunk(chunk, randomTicks);
-                            } catch (ReflectiveOperationException ex) {
-                                this.plugin.getLogger().log(Level.SEVERE, ex,
-                                        () -> "Failed to do random ticks on this server implementation(/version) - " +
-                                                "Skipping further random ticks.");
-
-                                this.randomTicksFailed = true;
-                            }
-                        }
-
-                        if (!this.spawnerTicksFailed) {
-                            try {
-                                NmsManager.getWorld().tickInactiveSpawners(chunk, TASK_INTERVAL);
-                            } catch (ReflectiveOperationException ex) {
-                                this.plugin.getLogger().log(Level.SEVERE, ex,
-                                        () -> "Failed to do spawner ticks on this server implementation(/version) - " +
-                                                "Skipping further spawner ticks.");
-
-                                this.spawnerTicksFailed = true;
-                            }
+                        if (!chunksWithPlayers.contains(chunk)) {
+                            executeRandomTick(chunk, randomTicksToDo);
                         }
                     }
 
-                    // TODO: Only update hologram if a player is nearby
-                    //       Simplify player location to chunks to potentially group players
-                    //       Use the server view distance to calculate minimum distance to count as not-nearby
-
-                    // Destroy anchors and queue hologram update
-                    if (!anchor.isInfinite()) {
-                        int ticksLeft = anchor.removeTicksLeft(3);
-
-                        if (ticksLeft == 0) {
-                            this.anchorManager.destroyAnchor(anchor);
-                        } else {
-                            toUpdateHolo.add(anchor);
-                        }
-                    } else {
+                    if (updateAnchorTimeLeftAndCheckIfHologramsNeedsUpdate(anchor)) {
                         toUpdateHolo.add(anchor);
                     }
                 }
 
-                // Update holograms on queued anchors
                 this.anchorManager.updateHolograms(toUpdateHolo);
             }
         } catch (Exception ex) {
             Utils.logException(this.plugin, ex);
         }
+    }
+
+    private List<Chunk> getChunksWithPlayers(World world) {
+        List<Player> playersInWorld = world.getPlayers();
+
+        List<Chunk> chunksWithPlayers = new ArrayList<>(playersInWorld.size());
+        for (Player p : playersInWorld) {
+            chunksWithPlayers.add(p.getLocation().getChunk());
+        }
+        return chunksWithPlayers;
+    }
+
+    private void loadChunk(Chunk chunk) {
+        if (chunk.isLoaded()) {
+            // Loading an already loaded chunk still fires the ChunkLoadEvent and might have a huge
+            // impact on performance if other plugins do not expect that either...
+            return;
+        }
+
+        WorldUtils.loadAnchoredChunk(chunk, this.plugin);
+    }
+
+    private void executeTicksForInactiveSpawners(Chunk chunk) {
+        if (this.spawnerTicksFailed) {
+            return;
+        }
+
+        try {
+            NmsManager.getWorld().tickInactiveSpawners(chunk, TASK_INTERVAL);
+        } catch (ReflectiveOperationException ex) {
+            this.plugin.getLogger().log(Level.SEVERE, ex,
+                    () -> "Failed to do spawner ticks on this server implementation(/version) - " +
+                            "Skipping further spawner ticks.");
+
+            this.spawnerTicksFailed = true;
+        }
+    }
+
+    private void executeRandomTick(Chunk chunk, int randomTicks) {
+        if (this.randomTicksFailed) {
+            return;
+        }
+
+        try {
+            NmsManager.getWorld().randomTickChunk(chunk, randomTicks);
+        } catch (ReflectiveOperationException ex) {
+            this.plugin.getLogger().log(Level.SEVERE, ex,
+                    () -> "Failed to do random ticks on this server implementation(/version) - " +
+                            "Skipping further random ticks.");
+
+            this.randomTicksFailed = true;
+        }
+    }
+
+    private boolean updateAnchorTimeLeftAndCheckIfHologramsNeedsUpdate(Anchor anchor) {
+        // TODO: Only update hologram if a player is nearby
+        //       Simplify player location to chunks to potentially group players
+        //       Use the server view distance to calculate minimum distance to count as not-nearby
+
+        if (!anchor.isInfinite()) {
+            int ticksLeft = anchor.removeTicksLeft(TASK_INTERVAL);
+
+            if (ticksLeft == 0) {
+                this.anchorManager.destroyAnchor(anchor);
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+
+        return false;
     }
 }
