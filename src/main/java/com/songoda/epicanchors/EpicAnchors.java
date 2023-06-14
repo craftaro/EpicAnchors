@@ -1,15 +1,15 @@
 package com.songoda.epicanchors;
 
-import com.songoda.core.SongodaCore;
-import com.songoda.core.SongodaPlugin;
-import com.songoda.core.commands.CommandManager;
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.configuration.Config;
-import com.songoda.core.database.DatabaseConnector;
-import com.songoda.core.database.SQLiteConnector;
-import com.songoda.core.gui.GuiManager;
-import com.songoda.core.hooks.EconomyManager;
-import com.songoda.core.hooks.HologramManager;
+import com.craftaro.core.SongodaCore;
+import com.craftaro.core.SongodaPlugin;
+import com.craftaro.core.commands.CommandManager;
+import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.configuration.Config;
+import com.craftaro.core.database.DatabaseConnector;
+import com.craftaro.core.database.SQLiteConnector;
+import com.craftaro.core.gui.GuiManager;
+import com.craftaro.core.hooks.EconomyManager;
+import com.craftaro.core.hooks.HologramManager;
 import com.songoda.epicanchors.commands.EpicAnchorsCommand;
 import com.songoda.epicanchors.commands.sub.GiveCommand;
 import com.songoda.epicanchors.commands.sub.ReloadCommand;

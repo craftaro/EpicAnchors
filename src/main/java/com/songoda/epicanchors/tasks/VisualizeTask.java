@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.tasks;
 
-import com.songoda.core.compatibility.CompatibleParticleHandler;
+import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.songoda.epicanchors.Anchor;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.files.Settings;

@@ -1,8 +1,8 @@
 package com.songoda.epicanchors.listener;
 
-import com.songoda.core.compatibility.CompatibleHand;
-import com.songoda.core.compatibility.CompatibleParticleHandler;
-import com.songoda.core.compatibility.CompatibleSound;
+import com.craftaro.core.compatibility.CompatibleHand;
+import com.craftaro.core.compatibility.CompatibleParticleHandler;
+import com.craftaro.core.compatibility.CompatibleSound;
 import com.songoda.epicanchors.Anchor;
 import com.songoda.epicanchors.AnchorManager;
 import com.songoda.epicanchors.EpicAnchors;

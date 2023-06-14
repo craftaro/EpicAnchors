@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.files.migration;
 
-import com.songoda.core.database.DataMigration;
+import com.craftaro.core.database.DataMigration;
 import com.songoda.epicanchors.files.DataManager;
 
 import java.sql.Connection;

@@ -1,7 +1,7 @@
 package com.songoda.epicanchors.commands;
 
-import com.songoda.core.commands.AbstractCommand;
-import com.songoda.core.commands.CommandManager;
+import com.craftaro.core.commands.AbstractCommand;
+import com.craftaro.core.commands.CommandManager;
 import com.songoda.epicanchors.EpicAnchors;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

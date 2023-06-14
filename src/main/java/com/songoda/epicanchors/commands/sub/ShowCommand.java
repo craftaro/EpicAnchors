@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.commands.sub;
 
-import com.songoda.core.commands.AbstractCommand;
+import com.craftaro.core.commands.AbstractCommand;
 import com.songoda.epicanchors.EpicAnchors;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;

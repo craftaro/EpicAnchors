@@ -1,10 +1,10 @@
 package com.songoda.epicanchors.files.migration;
 
-import com.songoda.core.configuration.Config;
-import com.songoda.core.configuration.ConfigSection;
-import com.songoda.core.database.DataMigration;
-import com.songoda.core.database.DataMigrationManager;
-import com.songoda.core.database.DatabaseConnector;
+import com.craftaro.core.configuration.Config;
+import com.craftaro.core.configuration.ConfigSection;
+import com.craftaro.core.database.DataMigration;
+import com.craftaro.core.database.DataMigrationManager;
+import com.craftaro.core.database.DatabaseConnector;
 import com.songoda.epicanchors.files.DataManager;
 import com.songoda.epicanchors.utils.ThreadSync;
 import org.bukkit.Location;

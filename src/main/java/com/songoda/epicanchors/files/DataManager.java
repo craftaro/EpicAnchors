@@ -1,7 +1,7 @@
 package com.songoda.epicanchors.files;
 
-import com.songoda.core.database.DataManagerAbstract;
-import com.songoda.core.database.DatabaseConnector;
+import com.craftaro.core.database.DataManagerAbstract;
+import com.craftaro.core.database.DatabaseConnector;
 import com.songoda.epicanchors.Anchor;
 import com.songoda.epicanchors.files.migration.AnchorMigration;
 import com.songoda.epicanchors.utils.Callback;
