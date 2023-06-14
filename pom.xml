@@ -61,6 +61,8 @@
 
                         <configuration>
                             <finalName>${project.name}-${project.version}</finalName>
+
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
                             <useDependencyReducedPomInJar>true</useDependencyReducedPomInJar>
                             <minimizeJar>true</minimizeJar>
 
