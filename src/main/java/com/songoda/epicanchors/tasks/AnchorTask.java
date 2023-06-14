@@ -1,6 +1,7 @@
 package com.songoda.epicanchors.tasks;
 
-import com.songoda.core.nms.NmsManager;
+import com.craftaro.core.nms.Nms;
+import com.craftaro.core.nms.UnsupportedServerVersionException;
 import com.songoda.epicanchors.Anchor;
 import com.songoda.epicanchors.AnchorManager;
 import com.songoda.epicanchors.EpicAnchors;
@@ -104,8 +105,8 @@ public class AnchorTask extends BukkitRunnable {
         }
 
         try {
-            NmsManager.getWorld().tickInactiveSpawners(chunk, TASK_INTERVAL);
-        } catch (ReflectiveOperationException ex) {
+            Nms.getImplementations().getWorld().tickInactiveSpawners(chunk, TASK_INTERVAL);
+        } catch (UnsupportedServerVersionException | ReflectiveOperationException | IncompatibleClassChangeError ex) {
             this.plugin.getLogger().log(Level.SEVERE, ex,
                     () -> "Failed to do spawner ticks on this server implementation(/version) - " +
                             "Skipping further spawner ticks.");
@@ -120,8 +121,8 @@ public class AnchorTask extends BukkitRunnable {
         }
 
         try {
-            NmsManager.getWorld().randomTickChunk(chunk, randomTicks);
-        } catch (ReflectiveOperationException ex) {
+            Nms.getImplementations().getWorld().randomTickChunk(chunk, randomTicks);
+        } catch (UnsupportedServerVersionException | ReflectiveOperationException | IncompatibleClassChangeError ex) {
             this.plugin.getLogger().log(Level.SEVERE, ex,
                     () -> "Failed to do random ticks on this server implementation(/version) - " +
                             "Skipping further random ticks.");
