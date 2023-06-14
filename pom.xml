@@ -83,13 +83,6 @@
                                 </filter>
 
                                 <filter>
-                                    <artifact>org.jetbrains:annotations</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
-                                </filter>
-
-                                <filter>
                                     <artifact>com.craftaro:CraftaroCore</artifact>
                                     <excludeDefaults>false</excludeDefaults>
                                     <includes>
@@ -143,7 +136,7 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.0.1</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
