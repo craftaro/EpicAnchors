@@ -52,14 +52,14 @@ jobs:
           name: ${{ github.event.repository.name }}
           path: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}/${{ env.DEPLOYMENT_ARTIFACT_SELECTOR }}
 
-      - name: Deploy to Maven repo
-        if: ${{ github.event_name == 'push' }}
-        uses: craftaro/GH-Commons/.github/actions/maven_deploy@master
-        with:
-          repository_url: ${{ secrets.MAVEN_REPO_URL_RELEASES }}
-          repository_url_snapshots: ${{ secrets.MAVEN_REPO_URL_SNAPSHOTS }}
-          maven_pom_path: ${{ env.DEPLOYMENT_POM_PATH }}
-          maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
+#      - name: Deploy to Maven repo
+#        if: ${{ github.event_name == 'push' }}
+#        uses: craftaro/GH-Commons/.github/actions/maven_deploy@master
+#        with:
+#          repository_url: ${{ secrets.MAVEN_REPO_URL_RELEASES }}
+#          repository_url_snapshots: ${{ secrets.MAVEN_REPO_URL_SNAPSHOTS }}
+#          maven_pom_path: ${{ env.DEPLOYMENT_POM_PATH }}
+#          maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
 
   discord_webhook:
     name: Send Discord Webhook
