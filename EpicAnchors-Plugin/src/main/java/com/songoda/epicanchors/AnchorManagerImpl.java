@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AnchorManagerImpl implements AnchorManager {
     private static final String ERR_WORLD_NOT_READY = "EpicAnchors has not finished initializing that world yet";
+    private static final String HOLOGRAM_PREFIX = "Anchor_";
 
     private final SongodaPlugin plugin;
     private final DataManager dataManager;
@@ -395,12 +396,12 @@ public class AnchorManagerImpl implements AnchorManager {
         for (Anchor anchor : anchors) {
             List<String> lines = Collections.singletonList(formatAnchorText(anchor.getTicksLeft(), true));
 
-            if (!HologramManager.isHologramLoaded("Anchor#" + anchor.getDbId())) {
-                HologramManager.createHologram("Anchor#" + anchor.getDbId(), anchor.getLocation(), lines);
+            if (!HologramManager.isHologramLoaded(HOLOGRAM_PREFIX + anchor.getDbId())) {
+                HologramManager.createHologram(HOLOGRAM_PREFIX + anchor.getDbId(), anchor.getLocation(), lines);
                 continue;
             }
 
-            hologramData.put("Anchor#" + anchor.getDbId(), lines);
+            hologramData.put(HOLOGRAM_PREFIX + anchor.getDbId(), lines);
         }
 
         // Create the holograms
@@ -472,6 +473,6 @@ public class AnchorManagerImpl implements AnchorManager {
     }
 
     private static void removeHologram(Anchor anchor) {
-        HologramManager.removeHologram("Anchor#" + anchor.getDbId());
+        HologramManager.removeHologram(HOLOGRAM_PREFIX + anchor.getDbId());
     }
 }
