@@ -24,7 +24,7 @@ public class EpicAnchorsCommand extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         sender.sendMessage("");
         this.plugin.getLocale().newMessage("&7Version " + this.plugin.getDescription().getVersion()
-                + " Created with <3 by &5&l&oSongoda").sendPrefixedMessage(sender);
+                + " Created with <3 by &5&l&oCraftaro").sendPrefixedMessage(sender);
 
         for (AbstractCommand cmd : this.commandManager.getAllCommands()) {
             if (cmd.getPermissionNode() == null || sender.hasPermission(cmd.getPermissionNode())) {
