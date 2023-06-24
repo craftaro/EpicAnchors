@@ -21,7 +21,6 @@
 
                 <executions>
                     <execution>
-                        <phase>site</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -37,14 +36,16 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.4.5</version>
-            </plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.12.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
