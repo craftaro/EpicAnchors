@@ -1,11 +1,11 @@
 package com.craftaro.epicanchors.guis;
 
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
-import com.craftaro.core.compatibility.CompatibleSound;
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.hooks.EconomyManager;
 import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XSound;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.core.utils.TimeUtils;
 import com.craftaro.epicanchors.EpicAnchors;
@@ -84,7 +84,7 @@ public class AnchorGui extends Gui {
             if (success) {
                 anchor.addTicksLeft(20 * 60 * 30);  // 30 minutes
 
-                p.playSound(p.getLocation(), CompatibleSound.ENTITY_PLAYER_LEVELUP.getSound(), 0.6F, 15);
+                XSound.ENTITY_PLAYER_LEVELUP.play(p, .6f, 15);
                 CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.getParticle(Settings.PARTICLE_UPGRADE.getString()),
                         anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
             } else {

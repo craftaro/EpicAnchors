@@ -3,9 +3,9 @@ package com.craftaro.epicanchors;
 import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
-import com.craftaro.core.compatibility.CompatibleSound;
 import com.craftaro.core.hooks.HologramManager;
 import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XSound;
 import com.craftaro.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.core.utils.TimeUtils;
@@ -287,7 +287,7 @@ public class AnchorManagerImpl implements AnchorManager {
         }
 
         // Particles & Sound
-        anchor.getWorld().playSound(anchorLoc, CompatibleSound.ENTITY_GENERIC_EXPLODE.getSound(), 10, 10);
+        XSound.ENTITY_GENERIC_EXPLODE.play(anchorLoc, 10, 10);
         CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.getParticle(Settings.PARTICLE_DESTROY.getString()),
                 anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
 

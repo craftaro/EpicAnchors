@@ -2,7 +2,7 @@ package com.craftaro.epicanchors.listener;
 
 import com.craftaro.core.compatibility.CompatibleHand;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
-import com.craftaro.core.compatibility.CompatibleSound;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XSound;
 import com.craftaro.epicanchors.AnchorManagerImpl;
 import com.craftaro.epicanchors.EpicAnchors;
 import com.craftaro.epicanchors.api.Anchor;
@@ -110,7 +110,7 @@ public class AnchorListener implements Listener {
                                 CompatibleHand.MAIN_HAND.takeItem(p, 1);
                             }
 
-                            p.playSound(p.getLocation(), CompatibleSound.ENTITY_PLAYER_LEVELUP.getSound(), .6F, 15);
+                            XSound.ENTITY_PLAYER_LEVELUP.play(p, .6f, 15);
                             CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.getParticle(Settings.PARTICLE_UPGRADE.getString()),
                                     anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
                         }
