@@ -53,7 +53,7 @@ public class AnchorListener implements Listener {
                                     e.getPlayer().sendMessage("Error creating anchor!"); // TODO
 
                                     Bukkit.getScheduler().runTask(this.plugin, () -> {
-                                        if (Settings.MATERIAL.getMaterial().getMaterial() == e.getBlock().getType()) {
+                                        if (Settings.MATERIAL.getMaterial().parseMaterial() == e.getBlock().getType()) {
                                             e.getBlock().setType(Material.AIR);
                                         }
 

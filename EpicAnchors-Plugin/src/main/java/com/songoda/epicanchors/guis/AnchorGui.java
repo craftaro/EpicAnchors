@@ -1,11 +1,11 @@
 package com.songoda.epicanchors.guis;
 
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.compatibility.CompatibleSound;
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.hooks.EconomyManager;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.core.utils.TimeUtils;
 import com.songoda.epicanchors.EpicAnchors;
@@ -42,7 +42,7 @@ public class AnchorGui extends Gui {
                     .getMessage();
 
             setButton(11,
-                    GuiUtils.createButtonItem(Settings.XP_ICON.getMaterial(CompatibleMaterial.EXPERIENCE_BOTTLE), itemName, itemLore),
+                    GuiUtils.createButtonItem(Settings.XP_ICON.getMaterial(XMaterial.EXPERIENCE_BOTTLE), itemName, itemLore),
                     event -> buyTime(this.anchor, event.player, false));
         }
 
@@ -54,7 +54,7 @@ public class AnchorGui extends Gui {
                     .getMessage();
 
             setButton(15,
-                    GuiUtils.createButtonItem(Settings.ECO_ICON.getMaterial(CompatibleMaterial.SUNFLOWER), itemName, itemLore),
+                    GuiUtils.createButtonItem(Settings.ECO_ICON.getMaterial(XMaterial.SUNFLOWER), itemName, itemLore),
                     event -> buyTime(this.anchor, event.player, true));
         }
     }

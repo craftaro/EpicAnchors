@@ -20,6 +20,8 @@
     <url>https://songoda.com/marketplace/product/31</url>
 
     <properties>
+        <craftaro.coreVersion>3.0.0-SNAPSHOT</craftaro.coreVersion>
+
         <maven.compiler.release>8</maven.compiler.release>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -44,6 +46,11 @@
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+
+        <repository>
+            <id>craftaro-minecraft-plugins</id>
+            <url>https://repo.craftaro.com/repository/minecraft-plugins/</url>
         </repository>
     </repositories>
 

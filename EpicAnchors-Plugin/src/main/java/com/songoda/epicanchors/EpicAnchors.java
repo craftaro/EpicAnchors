@@ -3,13 +3,13 @@ package com.songoda.epicanchors;
 import com.craftaro.core.SongodaCore;
 import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.commands.CommandManager;
-import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.configuration.Config;
 import com.craftaro.core.database.DatabaseConnector;
 import com.craftaro.core.database.SQLiteConnector;
 import com.craftaro.core.gui.GuiManager;
 import com.craftaro.core.hooks.EconomyManager;
 import com.craftaro.core.hooks.HologramManager;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.songoda.epicanchors.api.AnchorManager;
 import com.songoda.epicanchors.commands.EpicAnchorsCommand;
 import com.songoda.epicanchors.commands.sub.GiveCommand;
@@ -46,7 +46,7 @@ public final class EpicAnchors extends SongodaPlugin {
 
     @Override
     public void onPluginEnable() {
-        SongodaCore.registerPlugin(this, 31, CompatibleMaterial.END_PORTAL_FRAME);
+        SongodaCore.registerPlugin(this, 31, XMaterial.END_PORTAL_FRAME);
 
         // Initialize database
         this.getLogger().info("Initializing SQLite...");
