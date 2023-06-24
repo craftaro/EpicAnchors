@@ -14,6 +14,8 @@ env:
   DEPLOYMENT_POM_PATH: ./EpicAnchors-API/pom.xml
   DEPLOYMENT_ARTIFACT_DIR: ./EpicAnchors-API/target
   DEPLOYMENT_ARTIFACT_SELECTOR: EpicAnchors-API-*.jar
+  PLUGIN_ARTIFACT_DIR: ./EpicAnchors-Plugin/target
+  PLUGIN_ARTIFACT_SELECTOR: EpicAnchors-*.jar
 
 jobs:
   Build:
@@ -22,7 +24,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      # TODO: Make sure the project doesn't need additional setup steps or change the action to your own.
       - name: Prepare Workspace
         uses: craftaro/GH-Commons/.github/actions/setup_workspace@master
         with:
@@ -48,11 +49,17 @@ jobs:
           keystore_gpg_password: ${{ secrets.PLUGINS_JARSIGNER_KEYSTORE_GPG_PASSWORD }}
           keystore_password: ${{ secrets.PLUGINS_JARSIGNER_KEYSTORE_PASSWORD }}
 
-      - name: Upload Build Artifacts
+      - name: Upload Build Artifacts [API]
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}-API
+          path: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}/${{ env.DEPLOYMENT_ARTIFACT_SELECTOR }}
+
+      - name: Upload Build Artifacts [Plugin]
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}
-          path: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}/${{ env.DEPLOYMENT_ARTIFACT_SELECTOR }}
+          path: ${{ env.PLUGIN_ARTIFACT_DIR }}/${{ env.PLUGIN_ARTIFACT_SELECTOR }}
 
       - name: Deploy to Maven repo
         if: ${{ github.event_name == 'push' }}
@@ -62,6 +69,7 @@ jobs:
           repository_url_snapshots: ${{ vars.PLUGINS_MAVEN_REPO_URL_SNAPSHOT }}
           maven_pom_path: ${{ env.DEPLOYMENT_POM_PATH }}
           maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
+
       - name: Deploy parent pom.xml to Maven repo
         if: ${{ github.event_name == 'push' }}
         uses: craftaro/GH-Commons/.github/actions/maven_deploy@master
