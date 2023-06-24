@@ -11,9 +11,9 @@ on:
 permissions: read-all
 
 env:
-  DEPLOYMENT_POM_PATH: ./dependency-reduced-pom.xml
-  DEPLOYMENT_ARTIFACT_DIR: ./target
-  DEPLOYMENT_ARTIFACT_SELECTOR: EpicAnchors-*.jar
+  DEPLOYMENT_POM_PATH: ./EpicAnchors-API/pom.xml
+  DEPLOYMENT_ARTIFACT_DIR: ./EpicAnchors-API/target
+  DEPLOYMENT_ARTIFACT_SELECTOR: EpicAnchors-API-*.jar
 
 jobs:
   Build:
@@ -22,11 +22,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      # TODO: Make sure the project doesn't need additional setup steps or change the action to your own.
       - name: Prepare Workspace
         uses: craftaro/GH-Commons/.github/actions/setup_workspace@master
         with:
-          maven_username: ${{ secrets.MAVEN_REPO_USERNAME }}
-          maven_password: ${{ secrets.MAVEN_REPO_PASSWORD }}
+          maven_username: ${{ secrets.PLUGINS_MAVEN_REPO_USERNAME }}
+          maven_password: ${{ secrets.PLUGINS_MAVEN_REPO_PASSWORD }}
 
       - name: Set project version
         uses: craftaro/GH-Commons/.github/actions/maven_set_project_version@master
@@ -34,17 +35,18 @@ jobs:
           append_snapshot: ${{ github.ref_type == 'tag' && 'false' || 'true' }}
           version: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
           increment_version: ${{ github.ref_type == 'tag' && '' || 'patch' }}
+          increment_version_only_if_not_snapshot_version: ${{ github.ref == 'refs/heads/development' && 'true' || 'false' }}
 
       - name: Build with Maven
-        run: mvn -B -Duser.name="GitHub Actions on $GITHUB_REPOSITORY (id=$GITHUB_RUN_ID)" -DskipTests clean package
+        run: mvn -B -Duser.name="GitHub Actions on $GITHUB_REPOSITORY (id=$GITHUB_RUN_ID)" clean package
 
       - name: Sign jar archives
         uses: craftaro/GH-Commons/.github/actions/sign_jars@master
         with:
           jar_file_selector: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}/${{ env.DEPLOYMENT_ARTIFACT_SELECTOR }}
-          keystore_gpg_encrypted: ${{ secrets.JARSIGNER_KEYSTORE_ENCRYPTED }}
-          keystore_gpg_password: ${{ secrets.JARSIGNER_KEYSTORE_ENCRYPTED_PASSWORD }}
-          keystore_password: ${{ secrets.JARSIGNER_KEYSTORE_PASSWORD }}
+          keystore_gpg_encrypted: ${{ secrets.PLUGINS_JARSIGNER_KEYSTORE_GPG }}
+          keystore_gpg_password: ${{ secrets.PLUGINS_JARSIGNER_KEYSTORE_GPG_PASSWORD }}
+          keystore_password: ${{ secrets.PLUGINS_JARSIGNER_KEYSTORE_PASSWORD }}
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
@@ -52,14 +54,22 @@ jobs:
           name: ${{ github.event.repository.name }}
           path: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}/${{ env.DEPLOYMENT_ARTIFACT_SELECTOR }}
 
-#      - name: Deploy to Maven repo
-#        if: ${{ github.event_name == 'push' }}
-#        uses: craftaro/GH-Commons/.github/actions/maven_deploy@master
-#        with:
-#          repository_url: ${{ secrets.MAVEN_REPO_URL_RELEASES }}
-#          repository_url_snapshots: ${{ secrets.MAVEN_REPO_URL_SNAPSHOTS }}
-#          maven_pom_path: ${{ env.DEPLOYMENT_POM_PATH }}
-#          maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
+      - name: Deploy to Maven repo
+        if: ${{ github.event_name == 'push' }}
+        uses: craftaro/GH-Commons/.github/actions/maven_deploy@master
+        with:
+          repository_url: ${{ vars.PLUGINS_MAVEN_REPO_URL_RELEASE }}
+          repository_url_snapshots: ${{ vars.PLUGINS_MAVEN_REPO_URL_SNAPSHOT }}
+          maven_pom_path: ${{ env.DEPLOYMENT_POM_PATH }}
+          maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
+      - name: Deploy parent pom.xml to Maven repo
+        if: ${{ github.event_name == 'push' }}
+        uses: craftaro/GH-Commons/.github/actions/maven_deploy@master
+        with:
+          repository_url: ${{ vars.PLUGINS_MAVEN_REPO_URL_RELEASE }}
+          repository_url_snapshots: ${{ vars.PLUGINS_MAVEN_REPO_URL_SNAPSHOT }}
+          only_deploy_pom: true
+          maven_out_dir: ${{ env.DEPLOYMENT_ARTIFACT_DIR }}
 
   discord_webhook:
     name: Send Discord Webhook
