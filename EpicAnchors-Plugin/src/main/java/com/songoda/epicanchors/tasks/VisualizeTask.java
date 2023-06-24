@@ -1,7 +1,7 @@
 package com.songoda.epicanchors.tasks;
 
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
-import com.songoda.epicanchors.Anchor;
+import com.songoda.epicanchors.api.Anchor;
 import com.songoda.epicanchors.EpicAnchors;
 import com.songoda.epicanchors.files.Settings;
 import org.bukkit.Bukkit;
@@ -66,7 +66,7 @@ public class VisualizeTask extends BukkitRunnable {
                             Chunk chunk = world.getChunkAt(cx, cz);
 
                             if (loadedChunks.contains(chunk)) {
-                                chunksToVisualize.computeIfAbsent(chunk, k -> new HashSet<>())
+                                chunksToVisualize.computeIfAbsent(chunk, key -> new HashSet<>())
                                         .add(p);
                             }
                         }
@@ -91,17 +91,17 @@ public class VisualizeTask extends BukkitRunnable {
                                 startY = maxY - 1;
                             }
 
-                            Block b = entry.getKey().getBlock(x, startY, z);
+                            Block block = entry.getKey().getBlock(x, startY, z);
 
                             for (int i = 0; i < 12; ++i) {
-                                if (b.getType().isSolid()) break;
+                                if (block.getType().isSolid()) break;
 
-                                b = b.getRelative(BlockFace.DOWN);
+                                block = block.getRelative(BlockFace.DOWN);
                             }
 
-                            if (!b.isEmpty() && !b.getRelative(BlockFace.UP).getType().isOccluding()) {
+                            if (!block.isEmpty() && !block.getRelative(BlockFace.UP).getType().isOccluding()) {
                                 CompatibleParticleHandler.spawnParticles(particleType,
-                                        b.getLocation().add(.5, 1.5, .5),
+                                        block.getLocation().add(.5, 1.5, .5),
                                         0, 0, 0, 0, 1, p);
                             }
                         }

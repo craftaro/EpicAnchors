@@ -5,10 +5,13 @@ import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.compatibility.CompatibleSound;
 import com.craftaro.core.hooks.HologramManager;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.core.utils.TimeUtils;
+import com.songoda.epicanchors.api.Anchor;
 import com.songoda.epicanchors.api.AnchorAccessCheck;
+import com.songoda.epicanchors.api.AnchorManager;
 import com.songoda.epicanchors.files.DataManager;
 import com.songoda.epicanchors.files.Settings;
 import com.songoda.epicanchors.utils.Callback;
@@ -39,9 +42,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class AnchorManager {
+public class AnchorManagerImpl implements AnchorManager {
     private static final String ERR_WORLD_NOT_READY = "EpicAnchors has not finished initializing that world yet";
-    private static final String NBT_TICKS_KEY = "EpicAnchors_Ticks".toLowerCase();
 
     private final SongodaPlugin plugin;
     private final DataManager dataManager;
@@ -52,7 +54,7 @@ public class AnchorManager {
 
     private boolean ready;
 
-    public AnchorManager(SongodaPlugin plugin, DataManager dataManager) {
+    public AnchorManagerImpl(SongodaPlugin plugin, DataManager dataManager) {
         this.plugin = Objects.requireNonNull(plugin);
         this.dataManager = Objects.requireNonNull(dataManager);
     }
@@ -82,12 +84,12 @@ public class AnchorManager {
 
         this.dataManager.getAnchors(world, (ex, result) -> {
             if (ex == null) {
-                this.anchors.computeIfAbsent(world, k -> new HashSet<>());
+                this.anchors.computeIfAbsent(world, key -> new HashSet<>());
 
                 for (Anchor anchor : result) {
-                    anchor.init(this.plugin);
+                    ((AnchorImpl) anchor).init(this.plugin);
 
-                    this.anchors.computeIfAbsent(anchor.getWorld(), k -> new HashSet<>())
+                    this.anchors.computeIfAbsent(anchor.getWorld(), key -> new HashSet<>())
                             .add(anchor);
                 }
 
@@ -115,7 +117,7 @@ public class AnchorManager {
             this.dataManager.updateAnchors(tmpAnchors, null);
 
             for (Anchor anchor : tmpAnchors) {
-                anchor.deInit(this.plugin);
+                ((AnchorImpl) anchor).deInit(this.plugin);
             }
         }
     }
@@ -126,13 +128,14 @@ public class AnchorManager {
         Bukkit.getScheduler().runTaskTimer(this.plugin, this::saveAll, 20L * 60 * 5, 20L * 60 * 5);
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    @Override
     public boolean isReady(World world) {
         return this.ready && this.anchors.containsKey(world);
     }
 
     /* Getter */
 
+    @Override
     public Anchor[] getAnchors(@NotNull World world) {
         Set<Anchor> set = this.anchors.get(world);
 
@@ -143,13 +146,14 @@ public class AnchorManager {
         return new Anchor[0];
     }
 
-    public @Nullable Anchor getAnchor(@NotNull Block b) {
-        if (!isReady(b.getWorld())) {
+    @Override
+    public @Nullable Anchor getAnchor(@NotNull Block block) {
+        if (!isReady(block.getWorld())) {
             throw new IllegalStateException(ERR_WORLD_NOT_READY);
         }
 
-        Location bLoc = b.getLocation();
-        Set<Anchor> set = this.anchors.get(b.getWorld());
+        Location bLoc = block.getLocation();
+        Set<Anchor> set = this.anchors.get(block.getWorld());
 
         if (set != null) {
             for (Anchor anchor : set) {
@@ -162,10 +166,12 @@ public class AnchorManager {
         return null;
     }
 
-    public boolean isAnchor(@NotNull Block b) {
-        return getAnchor(b) != null;
+    @Override
+    public boolean isAnchor(@NotNull Block block) {
+        return getAnchor(block) != null;
     }
 
+    @Override
     public boolean hasAnchor(@NotNull Chunk chunk) {
         if (!isReady(chunk.getWorld())) {
             throw new IllegalStateException(ERR_WORLD_NOT_READY);
@@ -184,11 +190,13 @@ public class AnchorManager {
         return false;
     }
 
+    @Override
     @SuppressWarnings("unused")
     public List<Anchor> searchAnchors(Location center, double searchRadius) {
         return searchAnchors(center, searchRadius, false);
     }
 
+    @Override
     public List<Anchor> searchAnchors(Location center, double searchRadius, boolean ignoreHeight) {
         List<Anchor> result = new ArrayList<>();
 
@@ -214,12 +222,7 @@ public class AnchorManager {
 
     /* Create 'n Destroy */
 
-    /**
-     * Creates a new anchor at a given location
-     *
-     * @param loc   The block location for the anchor
-     * @param ticks The amount of ticks the anchor lives or -1 for infinite
-     */
+    @Override
     public void createAnchor(@NotNull Location loc, @NotNull UUID owner, int ticks, @Nullable Callback<Anchor> callback) {
         if (!isReady(loc.getWorld())) {
             throw new IllegalStateException(ERR_WORLD_NOT_READY);
@@ -234,10 +237,10 @@ public class AnchorManager {
                 }
             } else {
                 Bukkit.getScheduler().runTask(this.plugin, () -> {
-                    Block b = loc.getBlock();
-                    b.setType(Settings.MATERIAL.getMaterial().getMaterial());
+                    Block block = loc.getBlock();
+                    block.setType(Settings.MATERIAL.getMaterial().parseMaterial());
 
-                    this.anchors.computeIfAbsent(anchor.getWorld(), k -> new HashSet<>())
+                    this.anchors.computeIfAbsent(anchor.getWorld(), key -> new HashSet<>())
                             .add(anchor);
 
                     updateHologram(anchor);
@@ -250,10 +253,12 @@ public class AnchorManager {
         });
     }
 
+    @Override
     public void destroyAnchor(@NotNull Anchor anchor) {
         destroyAnchor(anchor, false);
     }
 
+    @Override
     public void destroyAnchor(@NotNull Anchor anchor, boolean forceSkipItemDrop) {
         if (!isReady(anchor.getWorld())) {
             throw new IllegalStateException(ERR_WORLD_NOT_READY);
@@ -269,7 +274,7 @@ public class AnchorManager {
         Block anchorBlock = anchorLoc.getBlock();
         Material anchorMaterial = anchorBlock.getType();
 
-        if (anchorBlock.getType() == Settings.MATERIAL.getMaterial().getMaterial()) {
+        if (anchorBlock.getType() == Settings.MATERIAL.getMaterial().parseMaterial()) {
             anchorBlock.setType(Material.AIR);
         }
 
@@ -285,13 +290,13 @@ public class AnchorManager {
         CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.getParticle(Settings.PARTICLE_DESTROY.getString()),
                 anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
 
-        anchor.deInit(this.plugin);
+        ((AnchorImpl) anchor).deInit(this.plugin);
         this.dataManager.deleteAnchorAsync(anchor);
     }
 
     /* Anchor access */
 
-    @SuppressWarnings("unused")
+    @Override
     public void registerAccessCheck(AnchorAccessCheck accessCheck) {
         if (!this.accessChecks.contains(accessCheck)) {
             // Adding at the start of the list makes sure the default check is
@@ -299,31 +304,17 @@ public class AnchorManager {
         }
     }
 
-    /**
-     * @param accessCheck The {@link AnchorAccessCheck} to remove
-     *
-     * @return true if the {@link AnchorAccessCheck} has been found and removed, false otherwise
-     */
-    @SuppressWarnings("unused")
+    @Override
     public boolean unregisterAccessCheck(AnchorAccessCheck accessCheck) {
         return this.accessChecks.remove(accessCheck);
     }
 
+    @Override
     public boolean hasAccess(@NotNull Anchor anchor, @NotNull OfflinePlayer p) {
         return hasAccess(anchor, p.getUniqueId());
     }
 
-    /**
-     * Checks if a player has access to an Anchor. By default, only the owner has access to an Anchor.
-     * <br>
-     * Other plugins can grant access to other players (e.g. friends).
-     * <br>
-     * Legacy anchors without an owner automatically grant access to all players.
-     *
-     * @return true if the player may access the Anchor, false otherwise
-     *
-     * @see #registerAccessCheck(AnchorAccessCheck)
-     */
+    @Override
     public boolean hasAccess(@NotNull Anchor anchor, @NotNull UUID uuid) {
         if (anchor.isLegacy() || anchor.getOwner().equals(uuid)) return true;
 
@@ -338,18 +329,21 @@ public class AnchorManager {
 
     /* Anchor item */
 
+    @Override
     public ItemStack createAnchorItem(int ticks) {
         return createAnchorItem(ticks, Settings.MATERIAL.getMaterial());
     }
 
+    @Override
     public ItemStack createAnchorItem(int ticks, Material material) {
-        return createAnchorItem(ticks, CompatibleMaterial.getMaterial(material));
+        return createAnchorItem(ticks, CompatibleMaterial.getMaterial(material).get());
     }
 
-    public ItemStack createAnchorItem(int ticks, CompatibleMaterial material) {
+    @Override
+    public ItemStack createAnchorItem(int ticks, XMaterial material) {
         if (ticks <= 0 && ticks != -1) throw new IllegalArgumentException();
 
-        ItemStack item = material.getItem();
+        ItemStack item = material.parseItem();
         ItemMeta meta = item.getItemMeta();
 
         assert meta != null;
@@ -363,43 +357,9 @@ public class AnchorManager {
         return nbtItem.getItem();
     }
 
-    public static int getTicksFromItem(ItemStack item) {
-        if (item == null || item.getType() == Material.AIR) {
-            return 0;
-        }
-
-        NBTItem nbtItem = new NBTItem(item);
-
-        if (nbtItem.hasTag(NBT_TICKS_KEY)) {
-            return nbtItem.getInteger(NBT_TICKS_KEY);
-        }
-
-        // Legacy code (pre v2) to stay cross-version compatible
-        if (Settings.MATERIAL.getMaterial().getMaterial() == item.getType()) {
-            if (nbtItem.hasTag("ticks")) {
-                int result = nbtItem.getInteger("ticks");
-
-                return result == -99 ? -1 : result;
-            }
-
-            // Tries to get the ticks remaining from hidden text
-            if (item.hasItemMeta() &&
-                    item.getItemMeta().hasDisplayName() &&
-                    item.getItemMeta().getDisplayName().contains(":")) {
-                try {
-                    int result = Integer.parseInt(item.getItemMeta().getDisplayName().replace("§", "").split(":")[0]);
-
-                    return result == -99 ? -1 : result;
-                } catch (NumberFormatException ignore) {
-                }
-            }
-        }
-
-        return 0;
-    }
-
     /* Chunk visualization */
 
+    @Override
     public boolean toggleChunkVisualized(Player p) {
         boolean visualize = !hasChunksVisualized(p);
 
@@ -408,6 +368,7 @@ public class AnchorManager {
         return visualize;
     }
 
+    @Override
     public void setChunksVisualized(Player p, boolean visualize) {
         if (visualize) {
             this.visualizedChunk.add(p);
@@ -416,6 +377,7 @@ public class AnchorManager {
         }
     }
 
+    @Override
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasChunksVisualized(Player p) {
         return this.visualizedChunk.contains(p);
@@ -423,6 +385,7 @@ public class AnchorManager {
 
     /* Holograms */
 
+    @Override
     public void updateHolograms(List<Anchor> anchors) {
         // are holograms enabled?
         if (!Settings.HOLOGRAMS.getBoolean() || !HologramManager.getManager().isEnabled()) return;
@@ -471,6 +434,41 @@ public class AnchorManager {
         }
 
         return TextUtils.formatText(Settings.NAME_TAG.getString().replace("{REMAINING}", remaining));
+    }
+
+    public static int getTicksFromItem(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR) {
+            return 0;
+        }
+
+        NBTItem nbtItem = new NBTItem(item);
+
+        if (nbtItem.hasTag(NBT_TICKS_KEY)) {
+            return nbtItem.getInteger(NBT_TICKS_KEY);
+        }
+
+        // Legacy code (pre v2) to stay cross-version compatible
+        if (Settings.MATERIAL.getMaterial().parseMaterial() == item.getType()) {
+            if (nbtItem.hasTag("ticks")) {
+                int result = nbtItem.getInteger("ticks");
+
+                return result == -99 ? -1 : result;
+            }
+
+            // Tries to get the ticks remaining from hidden text
+            if (item.hasItemMeta() &&
+                    item.getItemMeta().hasDisplayName() &&
+                    item.getItemMeta().getDisplayName().contains(":")) {
+                try {
+                    int result = Integer.parseInt(item.getItemMeta().getDisplayName().replace("§", "").split(":")[0]);
+
+                    return result == -99 ? -1 : result;
+                } catch (NumberFormatException ignore) {
+                }
+            }
+        }
+
+        return 0;
     }
 
     private static void removeHologram(Anchor anchor) {

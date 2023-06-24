@@ -8,8 +8,8 @@ import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.hooks.EconomyManager;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.core.utils.TimeUtils;
-import com.songoda.epicanchors.Anchor;
 import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.api.Anchor;
 import com.songoda.epicanchors.files.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -112,7 +112,7 @@ public class AnchorGui extends Gui {
                 ChatColor.GRAY + TimeUtils.makeReadable((long) ((anchor.getTicksLeft() / 20.0) * 1000)) + " remaining.";
 
         gui.setItem(13, GuiUtils.createButtonItem(plugin.getAnchorManager().createAnchorItem(
-                anchor.getTicksLeft(), anchor.getLocation().getBlock().getType()),
+                        anchor.getTicksLeft(), anchor.getLocation().getBlock().getType()),
                 itemName, itemLore));
     }
 

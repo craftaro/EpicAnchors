@@ -63,7 +63,7 @@ public class GiveCommand extends AbstractCommand {
     }
 
     @Override
-    protected List<String> onTab(CommandSender commandSender, String... args) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         if (args.length == 1) {
             Set<String> players = new HashSet<>();
 

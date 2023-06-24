@@ -1,5 +1,6 @@
 package com.songoda.epicanchors;
 
+import com.songoda.epicanchors.api.Anchor;
 import com.songoda.epicanchors.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Anchor {
+public class AnchorImpl implements Anchor {
     private final int dbId;
 
     private final UUID owner;
@@ -20,7 +21,7 @@ public class Anchor {
     private final Location location;
     private int ticksLeft;
 
-    public Anchor(int dbId, @Nullable UUID owner, @NotNull Location location, int ticksLeft) {
+    public AnchorImpl(int dbId, @Nullable UUID owner, @NotNull Location location, int ticksLeft) {
         if (dbId <= 0) throw new IllegalArgumentException("Invalid value for dbId");
         if (ticksLeft <= 0 && ticksLeft != -1) throw new IllegalArgumentException("Invalid value for ticksLeft");
 
@@ -66,34 +67,42 @@ public class Anchor {
         }
     }
 
+    @Override
     public int getDbId() {
         return this.dbId;
     }
 
+    @Override
     public UUID getOwner() {
         return this.owner;
     }
 
+    @Override
     public boolean isLegacy() {
         return this.owner == null;
     }
 
+    @Override
     public @NotNull Location getLocation() {
         return this.location.clone();
     }
 
+    @Override
     public @NotNull World getWorld() {
         return this.location.getWorld();
     }
 
+    @Override
     public @NotNull Chunk getChunk() {
         return this.location.getChunk();
     }
 
+    @Override
     public int getTicksLeft() {
         return this.ticksLeft;
     }
 
+    @Override
     @SuppressWarnings("unused")
     public void setTicksLeft(int ticksLeft) {
         if (ticksLeft < 0) throw new IllegalArgumentException("Invalid value for ticksLeft");
@@ -101,6 +110,7 @@ public class Anchor {
         this.ticksLeft = ticksLeft;
     }
 
+    @Override
     @SuppressWarnings("UnusedReturnValue")
     public int addTicksLeft(int ticks) {
         if (!isInfinite()) {
@@ -110,6 +120,7 @@ public class Anchor {
         return this.ticksLeft;
     }
 
+    @Override
     public int removeTicksLeft(int ticks) {
         if (!isInfinite()) {
             this.ticksLeft -= ticks;
@@ -122,6 +133,7 @@ public class Anchor {
         return this.ticksLeft;
     }
 
+    @Override
     public boolean isInfinite() {
         return this.ticksLeft == -1;
     }

@@ -2,7 +2,8 @@ package com.songoda.epicanchors.files;
 
 import com.craftaro.core.database.DataManagerAbstract;
 import com.craftaro.core.database.DatabaseConnector;
-import com.songoda.epicanchors.Anchor;
+import com.songoda.epicanchors.api.Anchor;
+import com.songoda.epicanchors.AnchorImpl;
 import com.songoda.epicanchors.files.migration.AnchorMigration;
 import com.songoda.epicanchors.utils.Callback;
 import com.songoda.epicanchors.utils.UpdateCallback;
@@ -247,7 +248,7 @@ public class DataManager extends DataManagerAbstract {
     private Anchor extractAnchor(ResultSet rs) throws SQLException {
         String ownerStr = rs.getString("owner");
 
-        return new Anchor(rs.getInt("id"),
+        return new AnchorImpl(rs.getInt("id"),
                 ownerStr != null ? UUID.fromString(ownerStr) : null,
                 new Location(Bukkit.getWorld(rs.getString("world_name")),
                         rs.getInt("x"),

@@ -2,9 +2,9 @@ package com.songoda.epicanchors.tasks;
 
 import com.craftaro.core.nms.Nms;
 import com.craftaro.core.nms.UnsupportedServerVersionException;
-import com.songoda.epicanchors.Anchor;
-import com.songoda.epicanchors.AnchorManager;
 import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.api.Anchor;
+import com.songoda.epicanchors.api.AnchorManager;
 import com.songoda.epicanchors.utils.Utils;
 import com.songoda.epicanchors.utils.WorldUtils;
 import org.bukkit.Bukkit;

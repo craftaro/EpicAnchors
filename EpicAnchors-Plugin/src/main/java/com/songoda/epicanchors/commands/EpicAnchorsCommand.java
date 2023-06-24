@@ -38,7 +38,7 @@ public class EpicAnchorsCommand extends AbstractCommand {
     }
 
     @Override
-    protected List<String> onTab(CommandSender commandSender, String... strings) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         return Collections.emptyList();
     }
 

@@ -3,9 +3,9 @@ package com.songoda.epicanchors.listener;
 import com.craftaro.core.compatibility.CompatibleHand;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.compatibility.CompatibleSound;
-import com.songoda.epicanchors.Anchor;
-import com.songoda.epicanchors.AnchorManager;
+import com.songoda.epicanchors.AnchorManagerImpl;
 import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.api.Anchor;
 import com.songoda.epicanchors.files.Settings;
 import com.songoda.epicanchors.guis.AnchorGui;
 import com.songoda.epicanchors.guis.DestroyConfirmationGui;
@@ -36,12 +36,12 @@ public class AnchorListener implements Listener {
 
         if (item.hasItemMeta() &&
                 item.getItemMeta().hasDisplayName() &&
-                Settings.MATERIAL.getMaterial().getMaterial() == e.getBlock().getType()) {
+                Settings.MATERIAL.getMaterial().parseMaterial() == e.getBlock().getType()) {
             if (!this.plugin.getAnchorManager().isReady(e.getBlock().getWorld())) {
                 e.setCancelled(true);
                 e.getPlayer().sendMessage("Anchors are still being initialized - Please wait a moment");    // TODO
             } else {
-                int ticksLeft = AnchorManager.getTicksFromItem(item);
+                int ticksLeft = AnchorManagerImpl.getTicksFromItem(item);
 
                 if (ticksLeft != 0) {
                     boolean dropOnErr = e.getPlayer().getGameMode() != GameMode.CREATIVE;
@@ -81,7 +81,7 @@ public class AnchorListener implements Listener {
             e.setCancelled(true);
 
             if (p.hasPermission("EpicAnchors.admin") ||
-                    this.plugin.getAnchorManager().hasAccess(anchor, p)) {
+                    this.plugin.getAnchorManager().hasAccess(anchor, p.getUniqueId())) {
                 if (e.getAction() == Action.LEFT_CLICK_BLOCK) { // Destroy anchor
                     this.plugin.getGuiManager().showGUI(e.getPlayer(),
                             new DestroyConfirmationGui(this.plugin, anchor, (ex, result) -> {
@@ -96,7 +96,7 @@ public class AnchorListener implements Listener {
                             }));
                 } else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) { // Manage anchor
                     ItemStack item = CompatibleHand.MAIN_HAND.getItem(e.getPlayer());
-                    int itemTicks = AnchorManager.getTicksFromItem(item);
+                    int itemTicks = AnchorManagerImpl.getTicksFromItem(item);
 
                     if (itemTicks != 0) {
                         if (!anchor.isInfinite()) {

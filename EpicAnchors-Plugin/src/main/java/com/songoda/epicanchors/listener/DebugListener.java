@@ -83,22 +83,22 @@ public class DebugListener implements Listener {
         if (e.isSneaking()) {
             e.getPlayer().sendMessage("§e§lEntities");
             for (Entity entity : chunk.getEntities()) {
-                count.compute(entity.getType().name(), (k, v) -> v == null ? 1 : v + 1);
+                count.compute(entity.getType().name(), (key, value) -> value == null ? 1 : value + 1);
             }
         } else {
             e.getPlayer().sendMessage("§e§lTileEntities");
             for (BlockState blockState : chunk.getTileEntities()) {
-                count.compute(blockState.getType().name(), (k, v) -> v == null ? 1 : v + 1);
+                count.compute(blockState.getType().name(), (key, value) -> value == null ? 1 : value + 1);
             }
         }
 
-        Map<String, Integer> m = count.entrySet().stream()
+        Map<String, Integer> sortedEntitiyCount = count.entrySet()
+                .stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (e1, e2) -> e1, LinkedHashMap::new));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
-        for (Map.Entry<String, Integer> entry : m.entrySet()) {
-            String entityName = WordUtils.capitalize(entry.getKey().toLowerCase(), new char[] {'_'}).replace("_", "");
+        for (Map.Entry<String, Integer> entry : sortedEntitiyCount.entrySet()) {
+            String entityName = WordUtils.capitalize(entry.getKey().toLowerCase(), new char[]{'_'}).replace("_", "");
 
             e.getPlayer().sendMessage("§a" + entityName + "§7:§r " + entry.getValue());
         }

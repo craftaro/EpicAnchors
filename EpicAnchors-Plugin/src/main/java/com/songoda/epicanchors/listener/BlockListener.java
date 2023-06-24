@@ -1,6 +1,6 @@
 package com.songoda.epicanchors.listener;
 
-import com.songoda.epicanchors.AnchorManager;
+import com.songoda.epicanchors.api.AnchorManager;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -67,8 +67,8 @@ public class BlockListener implements Listener {
     public void onPortalCreation(PortalCreateEvent e) {
         if (!this.manager.isReady(e.getWorld())) return;
 
-        for (Block b : e.getBlocks()) {
-            if (this.manager.isAnchor(b)) {
+        for (Block block : e.getBlocks()) {
+            if (this.manager.isAnchor(block)) {
                 e.setCancelled(true);
                 break;
             }

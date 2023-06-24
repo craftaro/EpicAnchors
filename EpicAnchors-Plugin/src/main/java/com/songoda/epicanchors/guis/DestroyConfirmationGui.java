@@ -5,8 +5,8 @@ import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.gui.methods.Closable;
 import com.craftaro.core.utils.TextUtils;
-import com.songoda.epicanchors.Anchor;
 import com.songoda.epicanchors.EpicAnchors;
+import com.songoda.epicanchors.api.Anchor;
 import com.songoda.epicanchors.files.Settings;
 import com.songoda.epicanchors.utils.Callback;
 

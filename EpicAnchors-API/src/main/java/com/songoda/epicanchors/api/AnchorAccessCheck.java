@@ -1,6 +1,5 @@
 package com.songoda.epicanchors.api;
 
-import com.songoda.epicanchors.Anchor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;

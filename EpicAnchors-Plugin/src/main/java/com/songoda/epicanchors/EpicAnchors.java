@@ -10,6 +10,7 @@ import com.craftaro.core.database.SQLiteConnector;
 import com.craftaro.core.gui.GuiManager;
 import com.craftaro.core.hooks.EconomyManager;
 import com.craftaro.core.hooks.HologramManager;
+import com.songoda.epicanchors.api.AnchorManager;
 import com.songoda.epicanchors.commands.EpicAnchorsCommand;
 import com.songoda.epicanchors.commands.sub.GiveCommand;
 import com.songoda.epicanchors.commands.sub.ReloadCommand;
@@ -35,7 +36,7 @@ import java.util.logging.Level;
 
 public final class EpicAnchors extends SongodaPlugin {
     private GuiManager guiManager;
-    private AnchorManager anchorManager;
+    private AnchorManagerImpl anchorManager;
 
     private DataManager dataManager;
 
@@ -55,7 +56,8 @@ public final class EpicAnchors extends SongodaPlugin {
         anchorMigration.runMigrations();
 
         anchorMigration.migrateLegacyData(this);
-        this.anchorManager = new AnchorManager(this, this.dataManager);
+        this.anchorManager = new AnchorManagerImpl(this, this.dataManager);
+        EpicAnchorsApi.initApi(this.anchorManager);
 
         // Economy [1/2]
         EconomyManager.load();
