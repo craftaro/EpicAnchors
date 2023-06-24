@@ -3,7 +3,7 @@ description: ${project.parent.description}
 version: ${project.version}
 api-version: 1.13
 
-main: com.songoda.epicanchors.EpicAnchors
+main: com.craftaro.epicanchors.EpicAnchors
 softdepend:
   - Holograms
   - HolographicDisplays
