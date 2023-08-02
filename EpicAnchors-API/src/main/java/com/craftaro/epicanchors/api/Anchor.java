@@ -1,5 +1,6 @@
 package com.craftaro.epicanchors.api;
 
+import com.craftaro.core.database.Data;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -7,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public interface Anchor {
+public interface Anchor extends Data {
     int getDbId();
 
     UUID getOwner();

@@ -3,6 +3,8 @@ package com.craftaro.epicanchors;
 import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
+import com.craftaro.core.database.Data;
+import com.craftaro.core.database.DataManager;
 import com.craftaro.core.hooks.HologramManager;
 import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.third_party.com.cryptomorin.xseries.XSound;
@@ -12,9 +14,9 @@ import com.craftaro.core.utils.TimeUtils;
 import com.craftaro.epicanchors.api.Anchor;
 import com.craftaro.epicanchors.api.AnchorAccessCheck;
 import com.craftaro.epicanchors.api.AnchorManager;
-import com.craftaro.epicanchors.files.DataManager;
 import com.craftaro.epicanchors.files.Settings;
 import com.craftaro.epicanchors.utils.Callback;
+import com.craftaro.epicanchors.utils.DataHelper;
 import com.craftaro.epicanchors.utils.UpdateCallback;
 import com.craftaro.epicanchors.utils.Utils;
 import org.bukkit.Bukkit;
@@ -31,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,7 +65,8 @@ public class AnchorManagerImpl implements AnchorManager {
 
     protected void saveAll() {
         for (Set<Anchor> anchorSet : this.anchors.values()) {
-            this.dataManager.updateAnchors(anchorSet, null);
+            Collection<Data> asData = new ArrayList<>(anchorSet.size());
+            this.dataManager.saveBatch(asData);
         }
     }
 
@@ -83,7 +87,7 @@ public class AnchorManagerImpl implements AnchorManager {
 
         long start = System.nanoTime();
 
-        this.dataManager.getAnchors(world, (ex, result) -> {
+        DataHelper.getAnchors(world, (ex, result) -> {
             if (ex == null) {
                 this.anchors.computeIfAbsent(world, key -> new HashSet<>());
 
@@ -114,8 +118,10 @@ public class AnchorManagerImpl implements AnchorManager {
     protected void deInitAnchors(@NotNull World world) {
         Set<Anchor> tmpAnchors = this.anchors.remove(world);
 
+
         if (tmpAnchors != null) {
-            this.dataManager.updateAnchors(tmpAnchors, null);
+            Collection<Data> asData = new ArrayList<>(tmpAnchors.size());
+            this.dataManager.saveBatch(asData);
 
             for (Anchor anchor : tmpAnchors) {
                 ((AnchorImpl) anchor).deInit(this.plugin);
@@ -229,27 +235,19 @@ public class AnchorManagerImpl implements AnchorManager {
             throw new IllegalStateException(ERR_WORLD_NOT_READY);
         }
 
-        this.dataManager.insertAnchorAsync(loc, Objects.requireNonNull(owner), ticks, (ex, anchor) -> {
-            if (ex != null) {
-                if (callback != null) {
-                    callback.accept(ex, null);
-                } else {
-                    Utils.logException(this.plugin, ex, "SQLite");
-                }
-            } else {
-                Bukkit.getScheduler().runTask(this.plugin, () -> {
-                    Block block = loc.getBlock();
-                    block.setType(Settings.MATERIAL.getMaterial().parseMaterial());
+        Anchor anchor = new AnchorImpl(dataManager.getNextId("anchors"), owner, loc, ticks);
+        this.dataManager.save(anchor);
+        Bukkit.getScheduler().runTask(this.plugin, () -> { //TODO: Do we need to run this sync, or we are already on the main thread?
+            Block block = loc.getBlock();
+            block.setType(Settings.MATERIAL.getMaterial().parseMaterial());
 
-                    this.anchors.computeIfAbsent(anchor.getWorld(), key -> new HashSet<>())
-                            .add(anchor);
+            this.anchors.computeIfAbsent(anchor.getWorld(), key -> new HashSet<>())
+                    .add(anchor);
 
-                    updateHologram(anchor);
+            updateHologram(anchor);
 
-                    if (callback != null) {
-                        callback.accept(null, anchor);
-                    }
-                });
+            if (callback != null) {
+                callback.accept(null, anchor);
             }
         });
     }
@@ -292,7 +290,7 @@ public class AnchorManagerImpl implements AnchorManager {
                 anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
 
         ((AnchorImpl) anchor).deInit(this.plugin);
-        this.dataManager.deleteAnchorAsync(anchor);
+        this.dataManager.delete(anchor);
     }
 
     /* Anchor access */
