@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
-public class AnchorMigration extends DataMigration {
-    public AnchorMigration() {
+public class _2_AnchorMigration extends DataMigration {
+    public _2_AnchorMigration() {
         super(2);
     }
 

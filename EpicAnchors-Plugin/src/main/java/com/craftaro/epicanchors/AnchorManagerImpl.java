@@ -66,7 +66,7 @@ public class AnchorManagerImpl implements AnchorManager {
     protected void saveAll() {
         for (Set<Anchor> anchorSet : this.anchors.values()) {
             Collection<Data> asData = new ArrayList<>(anchorSet.size());
-            this.dataManager.saveBatch(asData);
+            this.dataManager.saveBatchSync(asData);
         }
     }
 
@@ -121,7 +121,7 @@ public class AnchorManagerImpl implements AnchorManager {
 
         if (tmpAnchors != null) {
             Collection<Data> asData = new ArrayList<>(tmpAnchors.size());
-            this.dataManager.saveBatch(asData);
+            this.dataManager.saveBatchSync(asData);
 
             for (Anchor anchor : tmpAnchors) {
                 ((AnchorImpl) anchor).deInit(this.plugin);
@@ -236,7 +236,7 @@ public class AnchorManagerImpl implements AnchorManager {
         }
 
         Anchor anchor = new AnchorImpl(dataManager.getNextId("anchors"), owner, loc, ticks);
-        this.dataManager.save(anchor);
+        this.dataManager.saveSync(anchor);
         Bukkit.getScheduler().runTask(this.plugin, () -> { //TODO: Do we need to run this sync, or we are already on the main thread?
             Block block = loc.getBlock();
             block.setType(Settings.MATERIAL.getMaterial().parseMaterial());
@@ -290,7 +290,7 @@ public class AnchorManagerImpl implements AnchorManager {
                 anchor.getLocation().add(.5, .5, .5), 100, .5, .5, .5);
 
         ((AnchorImpl) anchor).deInit(this.plugin);
-        this.dataManager.delete(anchor);
+        this.dataManager.deleteSync(anchor);
     }
 
     /* Anchor access */
