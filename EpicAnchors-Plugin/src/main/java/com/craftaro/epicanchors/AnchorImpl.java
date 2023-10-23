@@ -1,7 +1,5 @@
 package com.craftaro.epicanchors;
 
-import com.craftaro.core.database.Data;
-import com.craftaro.core.database.SerializedLocation;
 import com.craftaro.epicanchors.api.Anchor;
 import com.craftaro.epicanchors.utils.WorldUtils;
 import org.bukkit.Bukkit;
@@ -12,8 +10,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,15 +20,6 @@ public class AnchorImpl implements Anchor {
 
     private final Location location;
     private int ticksLeft;
-
-    /**
-     * Default constructor for deserialization.
-     */
-    public AnchorImpl() {
-        dbId = 0;
-        owner = null;
-        location = null;
-    }
 
     public AnchorImpl(int dbId, @Nullable UUID owner, @NotNull Location location, int ticksLeft) {
         if (dbId <= 0) throw new IllegalArgumentException("Invalid value for dbId");
@@ -149,30 +136,5 @@ public class AnchorImpl implements Anchor {
     @Override
     public boolean isInfinite() {
         return this.ticksLeft == -1;
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", dbId);
-        map.putAll(SerializedLocation.of(location));
-        map.put("ticks_left", ticksLeft);
-        map.put("owner", owner == null ? null : owner.toString());
-        return map;
-    }
-
-    @Override
-    public Data deserialize(Map<String, Object> map) {
-        return new AnchorImpl(
-                (int) map.get("id"),
-                map.get("owner") == null ? null : UUID.fromString((String) map.get("owner")),
-                SerializedLocation.of(map),
-                (int) map.get("ticks_left")
-        );
-    }
-
-    @Override
-    public String getTableName() {
-        return "anchors";
     }
 }

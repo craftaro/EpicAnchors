@@ -49,7 +49,7 @@ public class AnchorListener implements Listener {
                     this.plugin.getAnchorManager().createAnchor(e.getBlock().getLocation(), e.getPlayer().getUniqueId(), ticksLeft,
                             (ex, result) -> {
                                 if (ex != null) {
-                                    Utils.logException(this.plugin, ex, "SQL");
+                                    Utils.logException(this.plugin, ex, "SQLite");
                                     e.getPlayer().sendMessage("Error creating anchor!"); // TODO
 
                                     Bukkit.getScheduler().runTask(this.plugin, () -> {

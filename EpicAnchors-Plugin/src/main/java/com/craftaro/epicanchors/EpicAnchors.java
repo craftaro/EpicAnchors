@@ -30,7 +30,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,6 +37,8 @@ import java.util.logging.Level;
 public final class EpicAnchors extends SongodaPlugin {
     private GuiManager guiManager;
     private AnchorManagerImpl anchorManager;
+
+    private DataManager dataManager;
 
     @Override
     public void onPluginLoad() {
@@ -48,15 +49,13 @@ public final class EpicAnchors extends SongodaPlugin {
         SongodaCore.registerPlugin(this, 31, XMaterial.END_PORTAL_FRAME);
 
         // Initialize database
-//        this.getLogger().info("Initializing SQLite...");
-//        DatabaseConnector dbCon = new SQLiteConnector(this);
-//        this.dataManager = new DataManager(dbCon, this);
-//        AnchorMigration anchorMigration = new AnchorMigration(dbCon, this.dataManager, new _1_InitialMigration());
-//        anchorMigration.runMigrations();
-//        anchorMigration.migrateLegacyData(this);
+        this.getLogger().info("Initializing SQLite...");
+        DatabaseConnector dbCon = new SQLiteConnector(this);
+        this.dataManager = new DataManager(dbCon, this);
+        AnchorMigration anchorMigration = new AnchorMigration(dbCon, this.dataManager, new _1_InitialMigration());
+        anchorMigration.runMigrations();
 
-        initDatabase(Arrays.asList(new _1_InitialMigration(), new AnchorMigration()));
-
+        anchorMigration.migrateLegacyData(this);
         this.anchorManager = new AnchorManagerImpl(this, this.dataManager);
         EpicAnchorsApi.initApi(this.anchorManager);
 
@@ -101,7 +100,7 @@ public final class EpicAnchors extends SongodaPlugin {
         if (this.dataManager != null) {
             this.anchorManager.deInitAll();
 
-            this.dataManager.shutdown();
+            this.dataManager.close();
         }
 
         // Remove all holograms
