@@ -1,6 +1,8 @@
 package com.craftaro.epicanchors.utils;
 
+import com.craftaro.core.database.Data;
 import com.craftaro.core.database.DataManager;
+import com.craftaro.core.third_party.org.jooq.Queries;
 import com.craftaro.core.third_party.org.jooq.Query;
 import com.craftaro.core.third_party.org.jooq.Record1;
 import com.craftaro.core.third_party.org.jooq.Result;
@@ -8,13 +10,17 @@ import com.craftaro.core.third_party.org.jooq.impl.DSL;
 import com.craftaro.epicanchors.AnchorImpl;
 import com.craftaro.epicanchors.EpicAnchors;
 import com.craftaro.epicanchors.api.Anchor;
-import com.craftaro.epicanchors.files.migration._2_AnchorMigration;
+import com.craftaro.epicanchors.files.migration.AnchorMigration;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class DataHelper {
@@ -62,7 +68,7 @@ public class DataHelper {
     }
 
 
-    public static void migrateAnchor(List<_2_AnchorMigration.LegacyAnchorEntry> anchorQueue, UpdateCallback callback) {
+    public static void migrateAnchor(List<AnchorMigration.LegacyAnchorEntry> anchorQueue, UpdateCallback callback) {
         DataManager dataManager = EpicAnchors.getPlugin(EpicAnchors.class).getDataManager();
 
         //recreate it with Jooq
@@ -71,7 +77,7 @@ public class DataHelper {
             connection.setAutoCommit(false);
             try {
                 List<Query> queries = new ArrayList<>();
-                for (_2_AnchorMigration.LegacyAnchorEntry entry : anchorQueue) {
+                for (AnchorMigration.LegacyAnchorEntry entry : anchorQueue) {
                     queries.add(dslContext.insertInto(DSL.table(dataManager.getTablePrefix() + "anchors"))
                             .columns(
                                     DSL.field("world_name"),

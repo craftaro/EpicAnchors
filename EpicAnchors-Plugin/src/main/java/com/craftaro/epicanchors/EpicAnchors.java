@@ -4,6 +4,8 @@ import com.craftaro.core.SongodaCore;
 import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.commands.CommandManager;
 import com.craftaro.core.configuration.Config;
+import com.craftaro.core.database.DatabaseConnector;
+import com.craftaro.core.database.SQLiteConnector;
 import com.craftaro.core.gui.GuiManager;
 import com.craftaro.core.hooks.EconomyManager;
 import com.craftaro.core.hooks.HologramManager;
@@ -14,8 +16,9 @@ import com.craftaro.epicanchors.commands.sub.GiveCommand;
 import com.craftaro.epicanchors.commands.sub.ReloadCommand;
 import com.craftaro.epicanchors.commands.sub.SettingsCommand;
 import com.craftaro.epicanchors.commands.sub.ShowCommand;
+import com.craftaro.epicanchors.files.DataManager;
 import com.craftaro.epicanchors.files.Settings;
-import com.craftaro.epicanchors.files.migration._2_AnchorMigration;
+import com.craftaro.epicanchors.files.migration.AnchorMigration;
 import com.craftaro.epicanchors.files.migration._1_InitialMigration;
 import com.craftaro.epicanchors.listener.AnchorListener;
 import com.craftaro.epicanchors.listener.BlockListener;
@@ -44,7 +47,15 @@ public final class EpicAnchors extends SongodaPlugin {
     public void onPluginEnable() {
         SongodaCore.registerPlugin(this, 31, XMaterial.END_PORTAL_FRAME);
 
-        initDatabase(Arrays.asList(new _1_InitialMigration(), new _2_AnchorMigration()));
+        // Initialize database
+//        this.getLogger().info("Initializing SQLite...");
+//        DatabaseConnector dbCon = new SQLiteConnector(this);
+//        this.dataManager = new DataManager(dbCon, this);
+//        AnchorMigration anchorMigration = new AnchorMigration(dbCon, this.dataManager, new _1_InitialMigration());
+//        anchorMigration.runMigrations();
+//        anchorMigration.migrateLegacyData(this);
+
+        initDatabase(Arrays.asList(new _1_InitialMigration(), new AnchorMigration()));
 
         this.anchorManager = new AnchorManagerImpl(this, this.dataManager);
         EpicAnchorsApi.initApi(this.anchorManager);

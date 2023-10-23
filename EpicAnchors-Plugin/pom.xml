@@ -56,7 +56,6 @@
                                     <excludeDefaults>false</excludeDefaults>
                                     <includes>
                                         <include>**/nms/v*/**</include>
-                                        <include>**/core/third_party/org/h2/**</include>
                                     </includes>
                                 </filter>
                             </filters>
