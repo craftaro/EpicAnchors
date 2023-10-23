@@ -1,7 +1,9 @@
 package com.craftaro.epicanchors.files.migration;
 
 import com.craftaro.core.database.DataMigration;
+import com.craftaro.core.database.DatabaseConnector;
 import com.craftaro.epicanchors.EpicAnchors;
+import com.craftaro.epicanchors.files.DataManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,8 +15,8 @@ public class _1_InitialMigration extends DataMigration {
     }
 
     @Override
-    public void migrate(Connection connection, String tablePrefix) throws SQLException {
-        try (Statement statement = connection.createStatement()) {
+    public void migrate(DatabaseConnector databaseConnector, String tablePrefix) throws SQLException {
+        try (Statement statement = databaseConnector.getConnection().createStatement()) {
             statement.execute("CREATE TABLE " + EpicAnchors.getPlugin(EpicAnchors.class).getDataManager().getTablePrefix() + "anchors (" +
                     "id INTEGER NOT NULL," +
                     "world_name TEXT NOT NULL," +
