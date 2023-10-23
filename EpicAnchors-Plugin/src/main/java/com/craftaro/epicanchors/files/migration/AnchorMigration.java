@@ -3,9 +3,7 @@ package com.craftaro.epicanchors.files.migration;
 import com.craftaro.core.configuration.Config;
 import com.craftaro.core.configuration.ConfigSection;
 import com.craftaro.core.database.DataMigration;
-import com.craftaro.core.database.DatabaseConnector;
 import com.craftaro.epicanchors.EpicAnchors;
-import com.craftaro.epicanchors.files.DataManager;
 import com.craftaro.epicanchors.utils.DataHelper;
 import com.craftaro.epicanchors.utils.ThreadSync;
 import org.bukkit.Location;
@@ -21,13 +19,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 public class AnchorMigration extends DataMigration {
-
     public AnchorMigration() {
         super(2);
     }
 
     @Override
-    public void migrate(DatabaseConnector databaseConnector, String tablePrefix) {
+    public void migrate(Connection connection, String tablePrefix) {
         Plugin plugin = EpicAnchors.getPlugin(EpicAnchors.class);
         long start = System.nanoTime();
 
