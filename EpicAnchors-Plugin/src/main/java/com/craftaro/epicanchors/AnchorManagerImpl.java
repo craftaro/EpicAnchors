@@ -12,7 +12,7 @@ import com.craftaro.core.utils.TimeUtils;
 import com.craftaro.epicanchors.api.Anchor;
 import com.craftaro.epicanchors.api.AnchorAccessCheck;
 import com.craftaro.epicanchors.api.AnchorManager;
-import com.craftaro.epicanchors.files.DataManager;
+import com.craftaro.epicanchors.files.AnchorsDataManager;
 import com.craftaro.epicanchors.files.Settings;
 import com.craftaro.epicanchors.utils.Callback;
 import com.craftaro.epicanchors.utils.UpdateCallback;
@@ -47,7 +47,7 @@ public class AnchorManagerImpl implements AnchorManager {
     private static final String HOLOGRAM_PREFIX = "Anchor_";
 
     private final SongodaPlugin plugin;
-    private final DataManager dataManager;
+    private final AnchorsDataManager dataManager;
 
     private final Map<World, Set<Anchor>> anchors = new HashMap<>(3);
     private final Set<Player> visualizedChunk = new HashSet<>();
@@ -55,7 +55,7 @@ public class AnchorManagerImpl implements AnchorManager {
 
     private boolean ready;
 
-    public AnchorManagerImpl(SongodaPlugin plugin, DataManager dataManager) {
+    public AnchorManagerImpl(SongodaPlugin plugin, AnchorsDataManager dataManager) {
         this.plugin = Objects.requireNonNull(plugin);
         this.dataManager = Objects.requireNonNull(dataManager);
     }
@@ -105,7 +105,7 @@ public class AnchorManagerImpl implements AnchorManager {
                 if (callback != null) {
                     callback.accept(ex);
                 } else {
-                    Utils.logException(this.plugin, ex, "SQLite");
+                    Utils.logException(this.plugin, ex, "H2");
                 }
             }
         });
@@ -234,7 +234,7 @@ public class AnchorManagerImpl implements AnchorManager {
                 if (callback != null) {
                     callback.accept(ex, null);
                 } else {
-                    Utils.logException(this.plugin, ex, "SQLite");
+                    Utils.logException(this.plugin, ex, "H2");
                 }
             } else {
                 Bukkit.getScheduler().runTask(this.plugin, () -> {

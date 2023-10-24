@@ -1,17 +1,16 @@
 package com.craftaro.epicanchors.files;
 
-import com.craftaro.core.database.DataManagerAbstract;
+import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.database.DatabaseConnector;
 import com.craftaro.epicanchors.AnchorImpl;
 import com.craftaro.epicanchors.api.Anchor;
-import com.craftaro.epicanchors.files.migration.AnchorMigration;
+import com.craftaro.epicanchors.files.migration.LegacyYamlAnchorsMigrator;
 import com.craftaro.epicanchors.utils.Callback;
 import com.craftaro.epicanchors.utils.UpdateCallback;
 import com.craftaro.epicanchors.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,38 +27,35 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class DataManager extends DataManagerAbstract {
+public class AnchorsDataManager {
     private final ExecutorService thread = Executors.newSingleThreadExecutor();
+    private final SongodaPlugin plugin;
 
-    private final String anchorTable;
-
-    public DataManager(DatabaseConnector databaseConnector, Plugin plugin) {
-        super(databaseConnector, plugin);
-
-        this.anchorTable = getTableName(super.getTablePrefix(), "anchors");
+    public AnchorsDataManager(SongodaPlugin plugin) {
+        this.plugin = plugin;
     }
 
     public void close() {
-        if (!this.thread.isShutdown()) {
-            this.thread.shutdown();
-
-            try {
-                if (!this.thread.awaitTermination(60, TimeUnit.SECONDS)) {
-                    // Try stopping the thread forcefully (there is basically no hope left for the data)
-                    this.thread.shutdownNow();
-                }
-            } catch (InterruptedException ex) {
-                Utils.logException(super.plugin, ex);
-            }
-
-            this.databaseConnector.closeConnection();
+        if (this.thread.isShutdown()) {
+            return;
         }
+
+        this.thread.shutdown();
+        try {
+            if (!this.thread.awaitTermination(60, TimeUnit.SECONDS)) {
+                // Try stopping the thread forcefully (there is basically no hope left for the data)
+                this.thread.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            Utils.logException(this.plugin, ex);
+        }
+
+        this.plugin.getDataManager().shutdown();
     }
 
     public void exists(@NotNull String worldName, int x, int y, int z, @NotNull Callback<Boolean> callback) {
-        this.databaseConnector.connect((con) -> {
-            try (PreparedStatement ps = con.prepareStatement("SELECT id FROM " + this.anchorTable +
-                    " WHERE world_name =? AND x =? AND y =? AND z=?;")) {
+        getDatabaseConnector().connect((con) -> {
+            try (PreparedStatement ps = con.prepareStatement("SELECT id FROM " + getAnchorTable() + " WHERE world_name =? AND x =? AND y =? AND z=?;")) {
                 ps.setString(1, worldName);
                 ps.setInt(2, x);
                 ps.setInt(3, y);
@@ -77,9 +73,8 @@ public class DataManager extends DataManagerAbstract {
     public void getAnchors(@Nullable World world, @NotNull Callback<List<Anchor>> callback) {
         List<Anchor> result = new ArrayList<>();
 
-        this.databaseConnector.connect((con) -> {
-            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM " + this.anchorTable +
-                    (world != null ? " WHERE world_name =?" : "") + ";")) {
+        getDatabaseConnector().connect((con) -> {
+            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM " + getAnchorTable() + (world != null ? " WHERE world_name =?" : "") + ";")) {
                 if (world != null) {
                     ps.setString(1, world.getName());
                 }
@@ -102,11 +97,10 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void insertAnchor(Location loc, UUID owner, int ticks, Callback<Anchor> callback) {
-        this.databaseConnector.connect((con) -> {
-            try (PreparedStatement ps = con.prepareStatement("INSERT INTO " + this.anchorTable +
-                    "(owner, world_name,x,y,z, ticks_left) VALUES (?,?,?,?,?, ?);");// Future SQLite version might support 'RETURNING *'
-                 PreparedStatement psFetch = con.prepareStatement("SELECT * FROM " + this.anchorTable +
-                         " WHERE world_name =? AND x =? AND y =? AND z=?;")) {
+        getDatabaseConnector().connect((con) -> {
+            try (PreparedStatement ps = con.prepareStatement("INSERT INTO " + getAnchorTable() + "(owner, world_name,x,y,z, ticks_left) VALUES (?,?,?,?,?, ?);"); // Future SQLite version might support 'RETURNING *'
+                 PreparedStatement psFetch = con.prepareStatement("SELECT * FROM " + getAnchorTable() + " WHERE world_name =? AND x =? AND y =? AND z=?;")
+            ) {
                 ps.setString(1, owner != null ? owner.toString() : null);
 
                 ps.setString(2, Objects.requireNonNull(loc.getWorld()).getName());
@@ -137,15 +131,14 @@ public class DataManager extends DataManagerAbstract {
         });
     }
 
-    public void migrateAnchor(List<AnchorMigration.LegacyAnchorEntry> anchorEntries, UpdateCallback callback) {
-        this.databaseConnector.connect((con) -> {
+    public void migrateAnchor(List<LegacyYamlAnchorsMigrator.LegacyAnchorEntry> anchorEntries, UpdateCallback callback) {
+        getDatabaseConnector().connect((con) -> {
             con.setAutoCommit(false);
 
             SQLException err = null;
 
-            try (PreparedStatement ps = con.prepareStatement("INSERT INTO " + this.anchorTable +
-                    "(world_name,x,y,z, ticks_left) VALUES (?,?,?,?, ?);")) {
-                for (AnchorMigration.LegacyAnchorEntry entry : anchorEntries) {
+            try (PreparedStatement ps = con.prepareStatement("INSERT INTO " + getAnchorTable() + "(world_name,x,y,z, ticks_left) VALUES (?,?,?,?, ?);")) {
+                for (LegacyYamlAnchorsMigrator.LegacyAnchorEntry entry : anchorEntries) {
                     ps.setString(1, entry.worldName);
                     ps.setInt(2, entry.x);
                     ps.setInt(3, entry.y);
@@ -182,14 +175,13 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void updateAnchors(Collection<Anchor> anchors, UpdateCallback callback) {
-        this.databaseConnector.connect((con) -> {
+        getDatabaseConnector().connect((con) -> {
             con.setAutoCommit(false);
 
             SQLException err = null;
 
             for (Anchor anchor : anchors) {
-                try (PreparedStatement ps = con.prepareStatement("UPDATE " + this.anchorTable +
-                        " SET ticks_left =? WHERE id =?;")) {
+                try (PreparedStatement ps = con.prepareStatement("UPDATE " + getAnchorTable() + " SET ticks_left =? WHERE id =?;")) {
                     ps.setInt(1, anchor.getTicksLeft());
                     ps.setInt(2, anchor.getDbId());
 
@@ -220,9 +212,8 @@ public class DataManager extends DataManagerAbstract {
 
     public void deleteAnchorAsync(Anchor anchor, UpdateCallback callback) {
         this.thread.execute(() ->
-                this.databaseConnector.connect((con) -> {
-                    try (PreparedStatement ps = con.prepareStatement("DELETE FROM " + this.anchorTable +
-                            " WHERE id =?;")) {
+                getDatabaseConnector().connect((con) -> {
+                    try (PreparedStatement ps = con.prepareStatement("DELETE FROM " + getAnchorTable() + " WHERE id =?;")) {
                         ps.setInt(1, anchor.getDbId());
 
                         ps.executeUpdate();
@@ -235,14 +226,16 @@ public class DataManager extends DataManagerAbstract {
         );
     }
 
-    public static String getTableName(String prefix, String name) {
-        String result = prefix + name;
+    public String getAnchorTable() {
+        return getAnchorTable(this.plugin.getDataManager().getTablePrefix());
+    }
 
-        if (!result.matches("[a-z0-9_]+")) {
-            throw new IllegalStateException("The generated table name '" + result + "' contains invalid characters");
-        }
+    public static String getAnchorTable(String prefix) {
+        return prefix + "anchors";
+    }
 
-        return result;
+    private DatabaseConnector getDatabaseConnector() {
+        return this.plugin.getDataManager().getDatabaseConnector();
     }
 
     private Anchor extractAnchor(ResultSet rs) throws SQLException {
@@ -261,7 +254,7 @@ public class DataManager extends DataManagerAbstract {
         if (callback != null) {
             callback.accept(ex);
         } else if (ex != null) {
-            Utils.logException(this.plugin, ex, "SQLite");
+            Utils.logException(this.plugin, ex, "H2");
         }
     }
 
@@ -269,7 +262,7 @@ public class DataManager extends DataManagerAbstract {
         if (callback != null) {
             callback.accept(ex, null);
         } else {
-            Utils.logException(this.plugin, ex, "SQLite");
+            Utils.logException(this.plugin, ex, "H2");
         }
     }
 }

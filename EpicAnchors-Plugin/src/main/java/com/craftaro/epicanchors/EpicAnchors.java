@@ -4,8 +4,6 @@ import com.craftaro.core.SongodaCore;
 import com.craftaro.core.SongodaPlugin;
 import com.craftaro.core.commands.CommandManager;
 import com.craftaro.core.configuration.Config;
-import com.craftaro.core.database.DatabaseConnector;
-import com.craftaro.core.database.SQLiteConnector;
 import com.craftaro.core.gui.GuiManager;
 import com.craftaro.core.hooks.EconomyManager;
 import com.craftaro.core.hooks.HologramManager;
@@ -16,9 +14,9 @@ import com.craftaro.epicanchors.commands.sub.GiveCommand;
 import com.craftaro.epicanchors.commands.sub.ReloadCommand;
 import com.craftaro.epicanchors.commands.sub.SettingsCommand;
 import com.craftaro.epicanchors.commands.sub.ShowCommand;
-import com.craftaro.epicanchors.files.DataManager;
+import com.craftaro.epicanchors.files.AnchorsDataManager;
 import com.craftaro.epicanchors.files.Settings;
-import com.craftaro.epicanchors.files.migration.AnchorMigration;
+import com.craftaro.epicanchors.files.migration.LegacyYamlAnchorsMigrator;
 import com.craftaro.epicanchors.files.migration._1_InitialMigration;
 import com.craftaro.epicanchors.listener.AnchorListener;
 import com.craftaro.epicanchors.listener.BlockListener;
@@ -38,7 +36,7 @@ public final class EpicAnchors extends SongodaPlugin {
     private GuiManager guiManager;
     private AnchorManagerImpl anchorManager;
 
-    private DataManager dataManager;
+    private AnchorsDataManager dataManager;
 
     @Override
     public void onPluginLoad() {
@@ -48,14 +46,8 @@ public final class EpicAnchors extends SongodaPlugin {
     public void onPluginEnable() {
         SongodaCore.registerPlugin(this, 31, XMaterial.END_PORTAL_FRAME);
 
-        // Initialize database
-        this.getLogger().info("Initializing SQLite...");
-        DatabaseConnector dbCon = new SQLiteConnector(this);
-        this.dataManager = new DataManager(dbCon, this);
-        AnchorMigration anchorMigration = new AnchorMigration(dbCon, this.dataManager, new _1_InitialMigration());
-        anchorMigration.runMigrations();
+        initializeDataManager();
 
-        anchorMigration.migrateLegacyData(this);
         this.anchorManager = new AnchorManagerImpl(this, this.dataManager);
         EpicAnchorsApi.initApi(this.anchorManager);
 
@@ -149,5 +141,20 @@ public final class EpicAnchors extends SongodaPlugin {
 
     public AnchorManager getAnchorManager() {
         return this.anchorManager;
+    }
+
+    @Override
+    public Config getDatabaseConfig() {
+        Config staticDatabaseConfig = new Config();
+        staticDatabaseConfig.set("Connection Settings.Type", "H2");
+        staticDatabaseConfig.set("Connection Settings.Pool Size", 1);
+        return staticDatabaseConfig;
+    }
+
+    private void initializeDataManager() {
+        super.initDatabase(new _1_InitialMigration());
+
+        this.dataManager = new AnchorsDataManager(this);
+        LegacyYamlAnchorsMigrator.migrateLegacyData(this, this.dataManager);
     }
 }

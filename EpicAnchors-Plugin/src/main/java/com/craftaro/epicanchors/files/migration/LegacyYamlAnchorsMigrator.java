@@ -2,10 +2,7 @@ package com.craftaro.epicanchors.files.migration;
 
 import com.craftaro.core.configuration.Config;
 import com.craftaro.core.configuration.ConfigSection;
-import com.craftaro.core.database.DataMigration;
-import com.craftaro.core.database.DataMigrationManager;
-import com.craftaro.core.database.DatabaseConnector;
-import com.craftaro.epicanchors.files.DataManager;
+import com.craftaro.epicanchors.files.AnchorsDataManager;
 import com.craftaro.epicanchors.utils.ThreadSync;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
@@ -18,16 +15,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
-public class AnchorMigration extends DataMigrationManager {
-    private final DataManager dataManager;
-
-    public AnchorMigration(DatabaseConnector databaseConnector, DataManager dataManager, DataMigration... migrations) {
-        super(databaseConnector, dataManager, migrations);
-
-        this.dataManager = dataManager;
-    }
-
-    public void migrateLegacyData(Plugin plugin) {
+public class LegacyYamlAnchorsMigrator {
+    public static void migrateLegacyData(Plugin plugin, AnchorsDataManager dataManager) {
         long start = System.nanoTime();
 
         AtomicBoolean abortMigration = new AtomicBoolean(false);
@@ -67,7 +56,7 @@ public class AnchorMigration extends DataMigrationManager {
                 int z = Location.locToBlock(Double.parseDouble(locArgs[3]));
 
                 int finalTicksLeft = ticksLeft;
-                this.dataManager.exists(worldName, x, y, z, (ex, anchorExists) -> {
+                dataManager.exists(worldName, x, y, z, (ex, anchorExists) -> {
                     if (ex == null) {
                         if (anchorExists) {
                             cfgSection.set(locationStr, null);
@@ -94,7 +83,7 @@ public class AnchorMigration extends DataMigrationManager {
 
             if (!abortMigration.get()) {
                 int finalMigratedAnchors = migratedAnchors;
-                this.dataManager.migrateAnchor(anchorQueue, ex -> {
+                dataManager.migrateAnchor(anchorQueue, ex -> {
                     long end = System.nanoTime();
 
                     if (ex == null) {
@@ -114,7 +103,7 @@ public class AnchorMigration extends DataMigrationManager {
         }
     }
 
-    private String[] deserializeLegacyLocation(String str) {
+    private static String[] deserializeLegacyLocation(String str) {
         if (str == null || str.isEmpty()) {
             return new String[0];
         }

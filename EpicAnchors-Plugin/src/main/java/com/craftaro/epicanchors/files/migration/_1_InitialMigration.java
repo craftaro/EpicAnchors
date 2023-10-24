@@ -1,7 +1,7 @@
 package com.craftaro.epicanchors.files.migration;
 
 import com.craftaro.core.database.DataMigration;
-import com.craftaro.epicanchors.files.DataManager;
+import com.craftaro.epicanchors.files.AnchorsDataManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,16 +15,17 @@ public class _1_InitialMigration extends DataMigration {
     @Override
     public void migrate(Connection connection, String tablePrefix) throws SQLException {
         try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE " + DataManager.getTableName(tablePrefix, "anchors") + "(" +
-                    "id INTEGER NOT NULL," +
-                    "world_name TEXT NOT NULL," +
-                    "x INTEGER NOT NULL," +
-                    "y INTEGER NOT NULL," +
-                    "z INTEGER NOT NULL," +
-                    "ticks_left INTEGER NOT NULL," +
-                    "owner VARCHAR(36)," +
-                    "PRIMARY KEY(id AUTOINCREMENT)" +
-                    ");");
+            statement.execute(
+                    "CREATE TABLE " + AnchorsDataManager.getAnchorTable(tablePrefix) +
+                            "(" +
+                            "id INTEGER NOT NULL PRIMARY KEY auto_increment," +
+                            "world_name TEXT NOT NULL," +
+                            "x INTEGER NOT NULL," +
+                            "y INTEGER NOT NULL," +
+                            "z INTEGER NOT NULL," +
+                            "ticks_left INTEGER NOT NULL," +
+                            "owner VARCHAR(36)" +
+                            ");");
         }
     }
 }
