@@ -2,7 +2,6 @@ package com.craftaro.epicanchors.listener;
 
 import com.craftaro.core.compatibility.CompatibleHand;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XSound;
 import com.craftaro.epicanchors.AnchorManagerImpl;
 import com.craftaro.epicanchors.EpicAnchors;
 import com.craftaro.epicanchors.api.Anchor;
@@ -10,6 +9,7 @@ import com.craftaro.epicanchors.files.Settings;
 import com.craftaro.epicanchors.guis.AnchorGui;
 import com.craftaro.epicanchors.guis.DestroyConfirmationGui;
 import com.craftaro.epicanchors.utils.Utils;
+import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;

@@ -3,12 +3,12 @@ package com.craftaro.epicanchors.guis;
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.gui.methods.Closable;
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.epicanchors.EpicAnchors;
 import com.craftaro.epicanchors.api.Anchor;
 import com.craftaro.epicanchors.files.Settings;
 import com.craftaro.epicanchors.utils.Callback;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 
 public class DestroyConfirmationGui extends Gui {
     private final EpicAnchors plugin;

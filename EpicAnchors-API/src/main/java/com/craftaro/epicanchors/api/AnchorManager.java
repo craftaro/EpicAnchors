@@ -1,7 +1,7 @@
 package com.craftaro.epicanchors.api;
 
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.epicanchors.utils.Callback;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;

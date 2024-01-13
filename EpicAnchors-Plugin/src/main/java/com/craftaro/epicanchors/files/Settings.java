@@ -5,8 +5,8 @@ import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.configuration.Config;
 import com.craftaro.core.configuration.ConfigSetting;
 import com.craftaro.core.hooks.EconomyManager;
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.epicanchors.EpicAnchors;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Settings {
