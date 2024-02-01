@@ -25,7 +25,7 @@ jobs:
         uses: craftaro/GH-Commons/.github/actions/setup_workspace@master
 
       - name: 'Cache: SonarCloud'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
