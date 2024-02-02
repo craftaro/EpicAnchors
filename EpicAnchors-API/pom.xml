@@ -28,6 +28,7 @@
                 </executions>
 
                 <configuration>
+                    <doclint>all,-missing</doclint>
                     <links>
                         <link>https://hub.spigotmc.org/javadocs/spigot/</link>
                     </links>
