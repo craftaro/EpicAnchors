@@ -4,154 +4,63 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.songoda</groupId>
-    <artifactId>EpicAnchors</artifactId>
-    <version>2.2.7</version>
+    <groupId>com.craftaro</groupId>
+    <artifactId>EpicAnchors-Parent</artifactId>
+    <packaging>pom</packaging>
+    <version>3.1.1</version>
+    <!-- Run 'mvn versions:set -DgenerateBackupPoms=false -DnewVersion=X.Y.Z-DEV' to update version recursively -->
+
+    <modules>
+        <module>EpicAnchors-API</module>
+        <module>EpicAnchors-Plugin</module>
+    </modules>
 
     <name>EpicAnchors</name>
     <description>Allow your players to keep chunks loaded for a limited amount of time for a cost.</description>
-    <url>https://songoda.com/marketplace/product/31</url>
+    <url>https://craftaro.com/marketplace/product/31</url>
 
     <properties>
-        <java.version>1.8</java.version>
-        <java.release>8</java.release>
+        <craftaro.coreVersion>3.0.1-SNAPSHOT</craftaro.coreVersion>
+
+        <maven.compiler.release>8</maven.compiler.release>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <sonar.projectKey>songoda_EpicAnchors</sonar.projectKey>
-        <sonar.organization>songoda</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
     </properties>
 
     <issueManagement>
-        <url>https://support.songoda.com/servicedesk/customer/portal/3</url>
-        <system>Jira Service Desk</system>
+        <url>https://discord.gg/craftaro</url>
+        <system>Discord server</system>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/songoda/EpicAnchors</url>
-        <connection>scm:git:git:github.com/songoda/EpicAnchors.git</connection>
+        <url>https://github.com/craftaro/EpicAnchors</url>
+        <connection>scm:git:git://github.com/craftaro/EpicAnchors.git</connection>
     </scm>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-
-                    <release>${java.release}</release>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.4.1</version>
-
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-
-                        <configuration>
-                            <finalName>${project.name}-${project.version}</finalName>
-
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <minimizeJar>true</minimizeJar>
-
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.songoda.core</pattern>
-                                    <shadedPattern>com.songoda.epicanchors.core</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>epicanchors.nms</pattern>
-                                    <shadedPattern>com.songoda.epicanchors.nms</shadedPattern>
-                                </relocation>
-                            </relocations>
-
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-
-                                    <excludes>
-                                        <exclude>META-INF/**</exclude>
-                                        <exclude>LICENSE</exclude>
-                                        <exclude>LICENSE.**</exclude>
-                                    </excludes>
-                                </filter>
-
-                                <filter>
-                                    <artifact>org.jetbrains:annotations</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
-                                </filter>
-
-                                <filter>
-                                    <artifact>com.songoda:epicanchors-v*</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-    </build>
 
     <repositories>
         <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>craftaro-minecraft-plugins</id>
+            <url>https://repo.craftaro.com/repository/minecraft-plugins/</url>
         </repository>
 
         <repository>
-            <id>songoda-public</id>
-            <url>https://repo.songoda.com/repository/public/</url>
+            <id>SpigotMC</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>SongodaCore</artifactId>
-            <version>2.6.20</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- Dev dependencies -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>24.0.1</version>
-            <scope>compile</scope>
+            <version>24.1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

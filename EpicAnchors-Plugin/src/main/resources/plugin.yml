@@ -1,0 +1,30 @@
+name: ${project.parent.name}
+description: ${project.parent.description}
+version: ${project.version}
+api-version: 1.13
+
+main: com.craftaro.epicanchors.EpicAnchors
+softdepend:
+  - Holograms
+  - HolographicDisplays
+  - Vault
+  - DecentHolograms
+
+author: Craftaro
+authors: [ SpraxDev ]
+website: ${project.parent.url}
+
+commands:
+  EpicAnchors:
+    aliases:
+      - ea
+
+permissions:
+  EpicAnchors.cmd.show:
+    default: true
+
+  EpicAnchors.admin:
+    children:
+      EpicAnchors.cmd.reload: true
+      EpicAnchors.cmd.settings: true
+      EpicAnchors.cmd.give: true
