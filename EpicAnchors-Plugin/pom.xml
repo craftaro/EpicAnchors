@@ -60,7 +60,6 @@
                                     </includes>
                                     <excludes>
                                         <exclude>**/third_party/org/apache/**</exclude>
-                                        <exclude>**/third_party/net/kyori/**</exclude>
                                         <exclude>**/third_party/com/zaxxer/**</exclude>
                                         <exclude>**/third_party/org/jooq/**</exclude>
                                         <exclude>**/third_party/org/mariadb/**</exclude>
