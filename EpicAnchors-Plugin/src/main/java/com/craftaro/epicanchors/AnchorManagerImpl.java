@@ -416,7 +416,7 @@ public class AnchorManagerImpl implements AnchorManager {
         String remaining;
 
         if (ticks < 0) {
-            remaining = this.plugin.getLocale().getMessage("Infinite").getMessage();
+            remaining = this.plugin.getLocale().getMessage("Infinite").toText();
         } else {
             long millis = (ticks / 20L) * 1000L;
 
