@@ -1,9 +1,11 @@
 package com.craftaro.epicanchors.guis;
 
+import com.craftaro.core.chat.AdventureUtils;
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.hooks.EconomyManager;
+import com.craftaro.core.third_party.net.kyori.adventure.text.Component;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.core.utils.TimeUtils;
 import com.craftaro.epicanchors.EpicAnchors;
@@ -26,7 +28,7 @@ public class AnchorGui extends Gui {
         this.anchor = anchor;
 
         setRows(3);
-        setTitle(TextUtils.formatText(plugin.getLocale().getMessage("interface.anchor.title").getMessage()));
+        setTitle(plugin.getLocale().getMessage("interface.anchor.title").getMessage());
 
         constructGUI();
         runPreparedGuiTask(this.plugin, this, this.anchor);
@@ -36,8 +38,8 @@ public class AnchorGui extends Gui {
         prepareGui(this.plugin, this, this.anchor);
 
         if (Settings.ADD_TIME_WITH_XP.getBoolean()) {
-            String itemName = this.plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage();
-            String itemLore = this.plugin.getLocale().getMessage("interface.button.addtimewithxplore")
+            Component itemName = this.plugin.getLocale().getMessage("interface.button.addtimewithxp").getMessage();
+            Component itemLore = this.plugin.getLocale().getMessage("interface.button.addtimewithxplore")
                     .processPlaceholder("cost", Settings.XP_COST.getInt())
                     .getMessage();
 
@@ -47,8 +49,8 @@ public class AnchorGui extends Gui {
         }
 
         if (EconomyManager.isEnabled() && Settings.ADD_TIME_WITH_ECONOMY.getBoolean()) {
-            String itemName = this.plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage();
-            String itemLore = this.plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
+            Component itemName = this.plugin.getLocale().getMessage("interface.button.addtimewitheconomy").getMessage();
+            Component itemLore = this.plugin.getLocale().getMessage("interface.button.addtimewitheconomylore")
                     // EconomyManager#formatEconomy adds its own prefix/suffix
                     .processPlaceholder("cost", EconomyManager.formatEconomy(Settings.ECONOMY_COST.getDouble()))
                     .getMessage();
@@ -106,10 +108,10 @@ public class AnchorGui extends Gui {
         gui.mirrorFill(1, 0, false, true, glass2);
         gui.mirrorFill(1, 1, false, true, glass3);
 
-        String itemName = plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage();
-        String itemLore = anchor.isInfinite() ?
-                ChatColor.GRAY + "Infinite" :
-                ChatColor.GRAY + TimeUtils.makeReadable((long) ((anchor.getTicksLeft() / 20.0) * 1000)) + " remaining.";
+        Component itemName = plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage();
+        Component itemLore = AdventureUtils.formatComponent(anchor.isInfinite() ?
+                "§7Infinite" :
+                "§7" + TimeUtils.makeReadable((long) ((anchor.getTicksLeft() / 20.0) * 1000)) + " remaining.");
 
         gui.setItem(13, GuiUtils.createButtonItem(plugin.getAnchorManager().createAnchorItem(
                         anchor.getTicksLeft(), anchor.getLocation().getBlock().getType()),
@@ -121,7 +123,7 @@ public class AnchorGui extends Gui {
             if (anchor.getTicksLeft() == 0) {
                 gui.close();
             } else {
-                String itemName = plugin.getLocale().getMessage("interface.anchor.smalltitle").getMessage();
+                String itemName = plugin.getLocale().getMessage("interface.anchor.smalltitle").toText();
                 String itemLore = anchor.isInfinite() ?
                         ChatColor.GRAY + "Infinite" :
                         ChatColor.GRAY + TimeUtils.makeReadable((long) ((anchor.getTicksLeft() / 20.0) * 1000)) + " remaining.";

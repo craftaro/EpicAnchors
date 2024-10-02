@@ -7,7 +7,7 @@
     <groupId>com.craftaro</groupId>
     <artifactId>EpicAnchors-Parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.1.1</version>
+    <version>3.3.0</version>
     <!-- Run 'mvn versions:set -DgenerateBackupPoms=false -DnewVersion=X.Y.Z-DEV' to update version recursively -->
 
     <modules>
@@ -20,7 +20,7 @@
     <url>https://craftaro.com/marketplace/product/31</url>
 
     <properties>
-        <craftaro.coreVersion>3.0.1-SNAPSHOT</craftaro.coreVersion>
+        <craftaro.coreVersion>3.5.0-SNAPSHOT</craftaro.coreVersion>
 
         <maven.compiler.release>8</maven.compiler.release>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -44,8 +44,8 @@
 
     <repositories>
         <repository>
-            <id>craftaro-minecraft-plugins</id>
-            <url>https://repo.craftaro.com/repository/minecraft-plugins/</url>
+            <id>songoda-minecraft-plugins</id>
+            <url>https://repo.songoda.com/repository/minecraft-plugins/</url>
         </repository>
 
         <repository>
